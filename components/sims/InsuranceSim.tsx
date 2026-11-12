@@ -187,7 +187,7 @@ export default function InsuranceSim({ color, colorInk }: { color: string; color
           <button
             type="button"
             onClick={() => decide("buy")}
-            className="inline-flex flex-1 items-center justify-center rounded-xl bg-ink px-6 py-4 text-base font-semibold text-white transition-transform hover:-translate-y-0.5"
+            className="inline-flex flex-1 items-center justify-center rounded-[14px] border-2 border-ink bg-[var(--signal)] px-6 py-4 text-base font-extrabold text-ink shadow-[0_4px_0_var(--ink)] active:translate-y-1 active:shadow-none transition-transform hover:-translate-y-0.5"
           >
             買
           </button>
@@ -225,7 +225,7 @@ export default function InsuranceSim({ color, colorInk }: { color: string; color
             type="button"
             onClick={next}
             disabled={submitting}
-            className="inline-flex w-full items-center justify-center rounded-xl bg-ink px-6 py-4 text-base font-semibold text-white transition-transform hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50"
+            className="inline-flex w-full items-center justify-center rounded-[14px] border-2 border-ink bg-[var(--signal)] px-6 py-4 text-base font-extrabold text-ink shadow-[0_4px_0_var(--ink)] active:translate-y-1 active:shadow-none transition-transform hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {round + 1 >= PRODUCTS.length ? (submitting ? "結算中…" : "看結果") : "下一位業務員"}
           </button>

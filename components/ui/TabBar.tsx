@@ -2,16 +2,27 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { LIFE_SIM } from "@/lib/flags";
 import { Icon, type IconName } from "./icons";
 import s from "./ui.module.css";
 
-/** 06 E6.1: four tabs, single-word labels; they navigate, never act. */
-export const TABS: { href: string; label: string; icon: IconName }[] = [
-  { href: "/today", label: "今天", icon: "today" },
-  { href: "/status", label: "狀態", icon: "me" },
-  { href: "/map", label: "路線", icon: "map" },
-  { href: "/moves", label: "行動", icon: "bolt" },
-];
+/**
+ * 06 E6.1: the tabs navigate, never act; single-word labels. 2026-11-12:
+ * a course platform's three (my learning, the catalogue, grades). With the
+ * life simulation on (lib/flags.ts) its two tabs come back.
+ */
+export const TABS: { href: string; label: string; icon: IconName }[] = LIFE_SIM
+  ? [
+      { href: "/today", label: "今天", icon: "today" },
+      { href: "/status", label: "狀態", icon: "me" },
+      { href: "/map", label: "路線", icon: "map" },
+      { href: "/moves", label: "行動", icon: "bolt" },
+    ]
+  : [
+      { href: "/today", label: "學習", icon: "today" },
+      { href: "/map", label: "課程", icon: "map" },
+      { href: "/grades", label: "成績", icon: "award" },
+    ];
 
 /**
  * 06 E7.13, restyled 2026-10-24: a floating Liquid Glass pill on a phone, a
@@ -28,7 +39,7 @@ export function TabBar() {
         <span className={s.tabBrandEn}>Finline</span>
       </Link>
       {TABS.map((t) => {
-        // a course page belongs to 路線
+        // a course page belongs to the catalogue tab
         const on = path === t.href || path.startsWith(`${t.href}/`) || (t.href === "/map" && path.startsWith("/line/"));
         return (
           <Link key={t.href} href={t.href} className={s.tab} aria-current={on ? "page" : undefined}>

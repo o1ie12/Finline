@@ -147,7 +147,8 @@ test("05 A6: the score line matches whether the station is done", () => {
   const fail1 = scoreStatus("station", { total: 4, passed: false, stationDone: false });
   const fail2 = scoreStatus("station", { total: 4, passed: false, stationDone: true });
   // 06 G9 item 4: never "done" and "not passed" in one line.
-  assert.equal(fail1, "這一站還沒完成。再做一次，或先去這個月，之後再回來。");
+  // 2026-11-12: the month is offered only with the life simulation on (off in tests).
+  assert.equal(fail1, "這一站還沒完成。再做一次，或先往下上，之後再回來。");
   assert.equal(fail2, "這一站完成了。先看建議答案，想再練可以再做一次。");
   // 10 PROG-3: the fail line says 還沒完成, never that the station is done.
   assert.ok(!(fail2.includes("還沒過關") || fail1.includes("完成了") || fail1.includes("這一站完成")));

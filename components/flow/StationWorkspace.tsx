@@ -16,6 +16,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { renderMaterial } from "@/components/documents";
 import { FLOW_STEPS } from "@/content/flow";
+import { LIFE_SIM } from "@/lib/flags";
 import { LessonCardView } from "@/components/tasks/LessonCardView";
 import type { SubmitPayload, SubmitResult } from "@/components/tasks/StationFlow";
 import {
@@ -57,6 +58,8 @@ export interface StationWorkspaceProps {
   onSubmit(payload: SubmitPayload): Promise<SubmitResult>;
   onSaveTool?(name: string): Promise<void>;
   onContinue(): void;
+  /** The button that leaves the finished station (default: 繼續). */
+  continueLabel?: string;
   initialHookAnswer?: string | null;
   redo?: { steps: string[]; carry: Record<string, unknown> } | null;
   onRedo?(steps: string[], carry: Record<string, unknown>): void;
@@ -73,7 +76,8 @@ export interface StationWorkspaceProps {
 }
 
 // 11 COPY-1: the stops are content/flow.ts's, shared with the landing and /lines.
-const STOPS = FLOW_STEPS.map((st) => st.label);
+// 2026-11-12: without the life simulation the month is not a stop.
+const STOPS = FLOW_STEPS.filter((st) => LIFE_SIM || st.id !== "life").map((st) => st.label);
 
 export function StationWorkspace({
   lesson,
@@ -85,6 +89,7 @@ export function StationWorkspace({
   onSubmit,
   onSaveTool,
   onContinue,
+  continueLabel,
   initialHookAnswer = null,
   redo = null,
   onRedo,
@@ -231,7 +236,7 @@ export function StationWorkspace({
     <ol className={w.how} aria-label="怎麼做">
       <li><b>1</b>先回答下面的「想一想」，沒有標準答案。</li>
       <li><b>2</b>讀{sideDocs.length ? "旁邊的文件" : "每題裡的資料"}，回答全部 {asked.length} 題。卡住了按「看提示」，不扣分。</li>
-      <li><b>3</b>按「送出答案」，看你的答案和建議答案差在哪，再把結果帶進這個月。</li>
+      <li><b>3</b>按「送出答案」，看你的答案和建議答案差在哪{LIFE_SIM ? "，再把結果帶進這個月" : ""}。</li>
     </ol>
   );
 
@@ -245,7 +250,7 @@ export function StationWorkspace({
           <p>{head}</p>
           <h1>{stationName}：{task.title}</h1>
         </div>
-        <ol className={w.stops} aria-label="這一站的四步">
+        <ol className={w.stops} aria-label={`這個單元的 ${STOPS.length} 步`}>
           {STOPS.map((label, i) => (
             <li key={label} data-state={i < stopAt ? "done" : i === stopAt ? "on" : undefined} aria-current={i === stopAt ? "step" : undefined}>
               <span className={w.stopDot} aria-hidden="true">{i < stopAt ? <Icon name="check" size={12} strokeWidth={3} /> : i + 1}</span>
@@ -398,7 +403,7 @@ export function StationWorkspace({
               {canRedo ? (
                 <>
                   <button type="button" className={w.textBtn} onClick={onContinue}>
-                    {mode === "library" ? "完成" : "進入這個月"}
+                    {mode === "library" ? "完成" : (continueLabel ?? (LIFE_SIM ? "進入這個月" : "繼續"))}
                   </button>
                   <button type="button" className={w.primary} onClick={redoNow}>
                     再做一次（{missed.length} 題）
@@ -406,7 +411,7 @@ export function StationWorkspace({
                 </>
               ) : (
                 <button type="button" className={w.primary} onClick={onContinue}>
-                  {mode === "library" ? "完成" : "進入這個月"}
+                  {mode === "library" ? "完成" : (continueLabel ?? (LIFE_SIM ? "進入這個月" : "繼續"))}
                   <Icon name="chevron" size={18} />
                 </button>
               )}

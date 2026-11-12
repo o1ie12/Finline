@@ -1,0 +1,425 @@
+/*
+  學習 and 成績 (2026-11-12, second pass): the signed-in pages. The course
+  you are in is a block in its line's color with the platform sign; the
+  program is twelve plates; a course's grades sit under a band in its color.
+  Shared parts are in kit.module.css, course tiles in catalogue.module.css.
+*/
+.page {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.inner {
+  width: 100%;
+  max-width: 1140px;
+  box-sizing: border-box;
+  margin: 0 auto;
+  padding: 24px var(--gutter) 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+@media (min-width: 840px) {
+  .inner {
+    padding: 34px 32px 48px 8px;
+  }
+}
+.hello h1 {
+  margin: 0;
+  font: 900 2.25rem/1.2 var(--font-voice);
+}
+.hello p {
+  margin: 6px 0 0;
+  font-size: 1.0625rem;
+  line-height: 1.6;
+  color: var(--ink-2);
+}
+
+/* ---- the course you are in ---- */
+.cont {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px 40px;
+  padding: 26px 22px 28px;
+  border-radius: 24px;
+  border: 2px solid var(--ink);
+  background: var(--line);
+  color: var(--line-on);
+}
+@media (min-width: 840px) {
+  .cont {
+    padding: 34px 36px 36px;
+  }
+}
+.contMain {
+  flex: 999 1 340px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.kicker {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  font-size: 0.9375rem;
+  font-weight: 700;
+}
+.contTitle {
+  margin: 2px 0 0;
+  font: 900 2.75rem/1.15 var(--font-voice);
+  letter-spacing: 0.02em;
+}
+.contText {
+  margin: 0;
+  max-width: 480px;
+  font-size: 1.0625rem;
+  font-weight: 500;
+  line-height: 1.6;
+}
+.contActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 10px;
+  padding-bottom: 4px;
+}
+.contArt {
+  flex: 1 1 280px;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 14px;
+}
+.contArt > :first-child {
+  border: 2px solid var(--ink);
+  box-shadow: 6px 6px 0 rgba(20, 23, 26, 0.28);
+}
+.contDots {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 12px 16px;
+  border-radius: 14px;
+  border: 2px solid var(--ink);
+  background: var(--surface);
+  color: var(--line);
+}
+.contDots b {
+  font: 800 1.125rem/1 var(--font-ui);
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---- the program: twelve plates ---- */
+.program {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 22px 20px 24px;
+  border-radius: 20px;
+  background: var(--sign);
+  color: var(--sign-ink);
+}
+@media (min-width: 840px) {
+  .program {
+    padding: 26px 30px 28px;
+  }
+}
+.programHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px 16px;
+}
+.programHead h2 {
+  margin: 0;
+  font: 900 1.375rem/1.3 var(--font-voice);
+}
+.programHead span {
+  font: 800 0.9375rem/1.4 var(--font-ui);
+  color: var(--board-amber);
+}
+.programTracks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px 32px;
+}
+.programTracks p {
+  margin: 0 0 8px;
+  font: 700 0.75rem/1.4 var(--font-ui);
+  letter-spacing: 0.1em;
+  color: var(--sign-ink-2);
+}
+.programTracks ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.programTracks a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 40px;
+  padding: 0 12px;
+  box-sizing: border-box;
+  border-radius: 10px;
+  border: 2px solid rgba(255, 255, 255, 0.32);
+  /* the line's color as a bar, so a dark line still shows on the dark board */
+  box-shadow: inset 8px 0 0 var(--line);
+  padding-left: 18px;
+  color: var(--sign-ink);
+  font: 800 0.9375rem/1 var(--font-voice);
+  text-decoration: none;
+  transition: transform 120ms var(--ease-out);
+}
+/* started: lit; finished: filled with the line's color */
+.programTracks a[data-state="started"] {
+  background: rgba(255, 255, 255, 0.16);
+  border-color: var(--board-amber);
+}
+.programTracks a[data-state="done"] {
+  background: var(--line);
+  border-color: var(--sign-ink);
+  color: var(--line-on);
+  box-shadow: none;
+  padding-left: 12px;
+}
+@media (hover: hover) {
+  .programTracks a:hover {
+    transform: translateY(-2px);
+  }
+}
+
+/* ---- groups of course tiles ---- */
+.group {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.h2 {
+  margin: 0;
+  padding: 0 4px;
+  font: 900 1.5rem/1.3 var(--font-voice);
+}
+.h2 small {
+  margin-left: 10px;
+  font: 700 0.875rem/1 var(--font-ui);
+  color: var(--ink-3);
+}
+.more {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 24px;
+  margin: 0;
+  padding: 0 4px;
+  font-size: 0.9375rem;
+}
+.more a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--ink);
+  font-weight: 700;
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+}
+
+/* ---- 成績 ---- */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin: 0;
+  border-radius: 20px;
+  border: 2px solid var(--ink);
+  background: var(--sign);
+  color: var(--sign-ink);
+  overflow: hidden;
+}
+@media (min-width: 760px) {
+  .stats {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+.stats > div {
+  padding: 16px 20px 18px;
+  box-shadow: 1px 0 0 rgba(255, 255, 255, 0.16), 0 1px 0 rgba(255, 255, 255, 0.16);
+}
+.stats dt {
+  font: 700 0.75rem/1.4 var(--font-ui);
+  letter-spacing: 0.1em;
+  color: var(--sign-ink-2);
+}
+.stats dd {
+  margin: 2px 0 0;
+  font: 800 1.875rem/1.2 var(--font-ui);
+  font-variant-numeric: tabular-nums;
+  color: var(--board-amber);
+}
+.gradeCard {
+  border-radius: 20px;
+  border: 2px solid var(--ink);
+  background: var(--surface);
+  overflow: hidden;
+}
+.gradeHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 18px;
+  background: var(--line);
+  color: var(--line-on);
+  border-bottom: 2px solid var(--ink);
+}
+.gradeHead a {
+  color: inherit;
+  font: 900 1.5rem/1.3 var(--font-voice);
+  text-decoration: none;
+}
+.gradeHead a:hover {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.gradeHead em {
+  margin-left: auto;
+  font-style: normal;
+  font: 800 0.9375rem/1.4 var(--font-ui);
+}
+.tableWrap {
+  overflow-x: auto;
+}
+.table {
+  width: 100%;
+  min-width: 560px;
+  border-collapse: collapse;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+}
+.table th,
+.table td {
+  padding: 12px 16px;
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid var(--hairline-strong);
+}
+.table tbody tr:last-child th,
+.table tbody tr:last-child td {
+  border-bottom: 0;
+}
+.table thead th {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--ink-3);
+  background: var(--surface-2);
+  white-space: nowrap;
+}
+.table tbody th {
+  font-weight: 700;
+}
+.table tbody td:first-child {
+  font: 800 1rem/1.5 var(--font-ui);
+}
+.table small {
+  display: block;
+  font-size: 0.8125rem;
+  font-weight: 400;
+  color: var(--ink-3);
+}
+.table a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+  padding: 0 12px;
+  border-radius: 8px;
+  border: 2px solid var(--ink);
+  color: var(--ink);
+  font-weight: 800;
+  text-decoration: none;
+  white-space: nowrap;
+}
+@media (hover: hover) {
+  .table a:hover {
+    background: var(--signal);
+  }
+}
+/* the best score as a bar, the pass mark as a tick */
+.score {
+  position: relative;
+  display: block;
+  width: 140px;
+  max-width: 100%;
+  height: 12px;
+  margin: 4px 0 6px;
+  box-sizing: border-box;
+  border-radius: 6px;
+  border: 2px solid var(--ink);
+  background: var(--surface);
+  overflow: hidden;
+}
+.score span {
+  display: block;
+  height: 100%;
+  background: var(--good);
+}
+.score[data-tone="warn"] span {
+  background: var(--signal);
+}
+.score i {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  margin-left: -1px;
+  background: var(--ink);
+}
+.grade {
+  font-weight: 700;
+}
+.grade[data-tone="good"] {
+  color: var(--good);
+}
+.grade[data-tone="warn"] {
+  color: var(--warn);
+}
+.grade[data-tone="none"] {
+  font-weight: 500;
+  color: var(--ink-3);
+}
+.emptyCard {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 28px 24px 32px;
+  border-radius: 20px;
+  background: var(--surface);
+}
+.empty {
+  margin: 0;
+  font-size: 1.0625rem;
+  line-height: 1.7;
+  color: var(--ink-2);
+}
+.fine {
+  margin: 0;
+  padding: 0 4px;
+  font-size: 0.8125rem;
+  line-height: 1.6;
+  color: var(--ink-3);
+}
+.page :is(a):focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+  border-radius: 6px;
+}

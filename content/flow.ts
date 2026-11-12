@@ -14,4 +14,4 @@ export const FLOW_STEPS = [
 ] as const;
 
 /** Said once where the stops are listed. */
-export const FLOW_EXTRAS = "看提示和延伸閱讀都是選讀，不是停靠站。";
+export const FLOW_EXTRAS = "看提示和延伸閱讀都是選讀，不算在步驟裡。";

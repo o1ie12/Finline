@@ -25,7 +25,8 @@ test("flow-copy-e: no page under app/ types 想一想 or 先懂 (they come from 
 test("flow-copy-e: the stops are the station screen's four; 先懂 is not one", () => {
   assert.deepEqual(FLOW_STEPS.map((s) => s.label), ["想一想", "任務", "對答案", "人生"]);
   const landing = readFileSync("components/landing/Landing.tsx", "utf8");
-  assert.match(landing, /\{STOPS\.length\} 個停靠/);
+  // 2026-11-12: the landing counts the steps it lists (the month only with the life simulation on).
+  assert.match(landing, /\{STOPS\.length\} 個步驟/);
   assert.ok(!/先懂/.test(landing));
 });
 

@@ -4,6 +4,7 @@ import { lineFacts } from "@/lib/stationFacts";
 import Link from "next/link";
 import { stationLetterCode } from "@/lib/design/lineCode";
 import { lineVars } from "@/lib/design/lineVars";
+import { LIFE_SIM } from "@/lib/flags";
 import { LINES, START_LINE, endStation, getLine, type LineMeta, type LineSlug } from "@/lib/lines";
 import { lineStats } from "@/lib/lineStats";
 import { getModule } from "@/lib/modules";
@@ -17,7 +18,8 @@ const FEATURED: LineSlug[] = [START_LINE, ...(["xinyong", "cunqian", "zhapian"] 
 const BOARD: LineSlug[] = [START_LINE, ...(["xinyong", "cunqian", "qixin", "zhapian", "touzi"] as LineSlug[]).filter((s) => s !== START_LINE)].slice(0, 5) as LineSlug[];
 
 // 11 COPY-1, COPY-2: the stops and the minutes come from data, never typed.
-const STOPS = FLOW_STEPS.map((st) => ({ title: st.label, body: st.meaning }));
+// 2026-11-12: without the life simulation the month is not a step (lib/flags.ts).
+const STOPS = FLOW_STEPS.filter((st) => LIFE_SIM || st.id !== "life").map((st) => ({ title: st.label, body: st.meaning }));
 const ALL_MINUTES = LINES.flatMap((l) => lineFacts(l).stations.map((st) => st.minutes));
 const MIN_MINUTES = Math.min(...ALL_MINUTES);
 const MAX_MINUTES = Math.max(...ALL_MINUTES);
@@ -65,12 +67,15 @@ export function Landing() {
             一站一站學。
           </h1>
           <p className={s.lede}>
-            給台灣高中生的免費理財課。{LINES.length} 條路線、{stations} 站：每一站讀一份真的帳單、契約或薪資單，做一個決定；每條線的終點是一場模擬。
+            給台灣高中生的免費理財課程。{LINES.length} 門課、{stations} 個單元，照順序排成一個學程：每個單元讀一份真的帳單、契約或薪資單，做一份計分的實作任務。
           </p>
           <div className={s.heroCta}>
             <Link href={`/line/${START_LINE}`} className={s.primary}>
-              從{credit.name}上車
+              從第一門課開始
               <Arrow />
+            </Link>
+            <Link href="/lines" className={s.more}>
+              看課程目錄
             </Link>
             <span className={s.heroNote}>
               免費 · 不用 email
@@ -142,11 +147,11 @@ export function Landing() {
         <div className={s.sectionHead}>
           <SectionTag code="FL02" color="var(--metro-blue)">
             <h2 id="lines-h" className={s.h2}>
-              從這幾條線開始
+              從核心課程開始
             </h2>
           </SectionTag>
           <Link href="/lines" className={s.more}>
-            全部 {LINES.length} 條路線 →
+            全部 {LINES.length} 門課程 →
           </Link>
         </div>
         <div className={s.lines}>
@@ -172,7 +177,7 @@ export function Landing() {
                   <span>{endStation(line).name}</span>
                 </span>
                 <span className={s.lineMeta}>
-                  {total} 站 · 約 {minutes} 分鐘
+                  {total} 個單元 · 約 {minutes} 分鐘
                 </span>
               </Link>
             );
@@ -184,7 +189,7 @@ export function Landing() {
       <section className={s.section} aria-labelledby="how-h">
         <SectionTag code="FL03" color="var(--metro-red)">
           <h2 id="how-h" className={s.h2}>
-            一站約 {MIN_MINUTES} 到 {MAX_MINUTES} 分鐘，{STOPS.length} 個停靠
+            一個單元約 {MIN_MINUTES} 到 {MAX_MINUTES} 分鐘，{STOPS.length} 個步驟
           </h2>
         </SectionTag>
         <div className={`${s.glass} ${s.stopsCard}`}>

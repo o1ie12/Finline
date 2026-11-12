@@ -141,7 +141,7 @@ export default function InvestReplay({ initialView }: { initialView: SimPortfoli
           type="button"
           onClick={allocate}
           disabled={submitting || remaining < 0 || total <= 0}
-          className="inline-flex w-full items-center justify-center rounded-xl bg-ink px-6 py-4 text-base font-semibold text-white transition-transform hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50"
+          className="inline-flex w-full items-center justify-center rounded-[14px] border-2 border-ink bg-[var(--signal)] px-6 py-4 text-base font-extrabold text-ink shadow-[0_4px_0_var(--ink)] active:translate-y-1 active:shadow-none transition-transform hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50"
         >
           {submitting ? "配置中…" : "開始模擬"}
         </button>
@@ -235,7 +235,7 @@ export default function InvestReplay({ initialView }: { initialView: SimPortfoli
             type="button"
             onClick={reveal}
             disabled={submitting}
-            className="mt-3 inline-flex items-center justify-center rounded-xl bg-ink px-5 py-3 text-base font-semibold text-white hover:-translate-y-0.5 disabled:opacity-50"
+            className="mt-3 inline-flex items-center justify-center rounded-[14px] border-2 border-ink bg-[var(--signal)] px-5 py-3 text-base font-extrabold text-ink shadow-[0_4px_0_var(--ink)] active:translate-y-1 active:shadow-none hover:-translate-y-0.5 disabled:opacity-50"
           >
             揭曉結果
           </button>
@@ -279,7 +279,7 @@ export default function InvestReplay({ initialView }: { initialView: SimPortfoli
                 type="button"
                 onClick={submitRebalance}
                 disabled={submitting}
-                className="inline-flex items-center justify-center rounded-xl bg-ink px-5 py-3 text-sm font-semibold text-white disabled:opacity-50"
+                className="inline-flex items-center justify-center rounded-[14px] border-2 border-ink bg-[var(--signal)] px-5 py-3 text-sm font-extrabold text-ink shadow-[0_4px_0_var(--ink)] active:translate-y-1 active:shadow-none disabled:opacity-50"
               >
                 確認調整
               </button>

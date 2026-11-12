@@ -2,9 +2,8 @@ import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import { StationRunner } from "@/components/station/StationRunner";
 import { countTaskAttempts } from "@/lib/db";
-import { stationLetterCode } from "@/lib/design/lineCode";
 import { lineVars } from "@/lib/design/lineVars";
-import { FLOW_V2 } from "@/lib/flags";
+import { FLOW_V2, LIFE_SIM } from "@/lib/flags";
 import { endStation, getLine } from "@/lib/lines";
 import { getCurrentStudent } from "@/lib/session";
 import { turnThenRide } from "@/lib/stationNav";
@@ -53,9 +52,11 @@ export default async function EndStationPage({
         attempt={attempt}
         goal={profile.goal ? { amount: profile.goal.amount, months: profile.goal.months } : null}
         mode="terminal"
-        continueHref={turnThenRide({ href: `/line/${line.slug}`, lineName: line.name, lineColor: line.color, stationName: "回到路線", blurb: "", lineEnName: line.enName.toUpperCase(), stationCode: "" })}
+        // 2026-11-12: the course's last module returns to the course page.
+        continueLabel={LIFE_SIM ? undefined : "回到課程"}
+        continueHref={!LIFE_SIM ? `/line/${line.slug}` : turnThenRide({ href: `/line/${line.slug}`, lineName: line.name, lineColor: line.color, stationName: "回到路線", blurb: "", lineEnName: line.enName.toUpperCase(), stationCode: "" })}
         initialHook={sanitizeHook(terminal.hook.options, hook)}
-        design={{ stationName: end.name, kicker: `${line.name} · ${stationLetterCode(line, line.stationModules.length + 1)}`, exitHref: "/today", foldExpert: true }}
+        design={{ stationName: end.name, kicker: `${line.name} · 單元 ${line.stationModules.length + 1} / ${line.stationModules.length + 1}`, exitHref: `/line/${line.slug}`, foldExpert: true }}
       />
     </div>
   );

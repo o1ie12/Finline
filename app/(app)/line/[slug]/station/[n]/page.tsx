@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import { StationRunner } from "@/components/station/StationRunner";
 import { countTaskAttempts, getTaskResults } from "@/lib/db";
+import { FLOW_V2, LIFE_SIM } from "@/lib/flags";
 import { getLine } from "@/lib/lines";
 import { effectiveMode } from "@/lib/modeModel";
 import { getModule } from "@/lib/modules";
@@ -11,7 +12,6 @@ import { getCurrentStudent } from "@/lib/session";
 import { lessonForPage } from "@/lib/tasks/prepare";
 import { lessonForStation } from "@/lib/tasks/registry";
 import { sanitizeHook } from "@/lib/tasks/sanitize";
-import { stationLetterCode } from "@/lib/design/lineCode";
 import { lineVars } from "@/lib/design/lineVars";
 
 export async function generateMetadata({ params }: { params: Promise<{ n: string }> }): Promise<Metadata> {
@@ -49,6 +49,10 @@ export default async function StationPage({
   // 10 FLOW-2: the how-to lines on a student's first 3 stations only.
   const otherStations = new Set(results.filter((r) => r.station_id !== null && r.task_set_id !== lesson.task.id).map((r) => r.task_set_id));
   const howTo = otherStations.size < 3;
+  const index = line.stationModules.indexOf(num) + 1;
+  // The line's last module runs at /end when it is a task set (06 G0).
+  const last = /\/simulation$/.test(stop.href);
+  const nextHref = last && FLOW_V2 && line.sim.taskEnd ? `/line/${line.slug}/end` : stop.href.replace(/^\/line\/([^/]+)\/course\//, "/line/$1/station/");
   return (
     <div style={{ ...lineVars(line), display: "flex", flexDirection: "column", flex: 1, minHeight: 0 }}>
     <StationRunner
@@ -59,10 +63,13 @@ export default async function StationPage({
       attempt={attempt}
       goal={profile.goal ? { amount: profile.goal.amount, months: profile.goal.months } : null}
       mode="station"
-      // 10 FLOW-4: the month, then 今天 with the next card; no ride within a line.
-      continueHref={lesson.lifeGameTurn ? "/turn" : stop.href.replace(/^\/line\/([^/]+)\/course\//, "/line/$1/station/")}
+      // 2026-11-12: a module leads to the next module (the last one to the
+      // course's final). With the life simulation on, a month comes between
+      // (10 FLOW-4).
+      continueHref={LIFE_SIM && lesson.lifeGameTurn ? "/turn" : nextHref}
+      continueLabel={LIFE_SIM ? undefined : last ? "前往期末" : "下一個單元"}
       initialHook={sanitizeHook(lesson.hook.options, hook)}
-      design={{ stationName: mod.station, kicker: `${line.name} · ${stationLetterCode(line, line.stationModules.indexOf(num) + 1)}`, exitHref: "/today", readingHref: `/line/${line.slug}/course/${num}?read=1`, foldExpert: line.stationModules.indexOf(num) > 0, howTo }}
+      design={{ stationName: mod.station, kicker: `${line.name} · 單元 ${index} / ${line.stationModules.length + 1}`, exitHref: `/line/${line.slug}`, readingHref: `/line/${line.slug}/course/${num}?read=1`, foldExpert: line.stationModules.indexOf(num) > 0, howTo }}
     />
     </div>
   );

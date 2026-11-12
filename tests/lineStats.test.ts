@@ -25,10 +25,19 @@ test("G5-2: 站 counts every station and the last one; 分鐘 sums all of them",
 });
 
 test("G5-2: the landing, /lines, the line page and 今天 read the same count", () => {
-  for (const f of ["components/landing/Landing.tsx", "components/LineCard.tsx", "app/(app)/line/[slug]/page.tsx", "lib/routeBoard.ts"]) {
+  for (const f of ["components/landing/Landing.tsx", "components/LineCard.tsx", "lib/routeBoard.ts"]) {
     const src = readFileSync(f, "utf8");
     assert.match(src, /lineStats\(/, `${f} uses lineStats`);
     assert.doesNotMatch(src, /lineMinutes\(|stationModules\.length/, `${f} computes no count of its own`);
+  }
+  // 2026-11-12: the course page and the catalogue read the syllabus
+  // (lib/curriculum.ts), which takes every count from lib/stationFacts.ts;
+  // tests/curriculum.test.ts holds its totals to lineStats.
+  assert.match(readFileSync("lib/curriculum.ts", "utf8"), /stationFacts\(/);
+  assert.match(readFileSync("app/(app)/line/[slug]/page.tsx", "utf8"), /courseOutline\(/);
+  assert.match(readFileSync("lib/programView.ts", "utf8"), /programOutline\(/);
+  for (const f of ["app/(app)/line/[slug]/page.tsx", "components/course/CoursePage.tsx", "components/course/Catalogue.tsx", "lib/programView.ts"]) {
+    assert.doesNotMatch(readFileSync(f, "utf8"), /lineMinutes\(|stationModules\.length/, `${f} computes no count of its own`);
   }
 });
 

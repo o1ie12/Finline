@@ -129,6 +129,7 @@
 
 /* ---------- E7.3 buttons ---------- */
 .btn {
+  /* 2026-11-12: a real button: an ink edge it is pressed down onto. */
   position: relative;
   display: inline-flex;
   align-items: center;
@@ -138,43 +139,46 @@
   width: 100%;
   height: 52px;
   padding: 0 var(--s-5);
-  border: 0;
-  border-radius: var(--r-md);
-  font: 700 1.0625rem/1 var(--font-ui);
+  border: 2px solid var(--ink);
+  border-radius: 14px;
+  box-shadow: 0 4px 0 var(--ink);
+  font: 800 1.0625rem/1 var(--font-voice);
   text-decoration: none;
   cursor: pointer;
-  transition: transform var(--dur-press) var(--spring-snappy), background-color var(--dur-press) var(--ease-out);
+  transition: transform 90ms var(--ease-out), box-shadow 90ms var(--ease-out);
 }
 .btn:active {
-  transform: scale(0.97);
+  transform: translateY(4px);
+  box-shadow: 0 0 0 var(--ink);
 }
 .primary {
-  background: var(--ink);
-  color: var(--ink-inv);
+  /* the platform-edge yellow: the one action color */
+  background: var(--go-bg, var(--signal));
+  color: var(--ink);
 }
 .primary:active {
-  background: color-mix(in oklab, var(--ink), #fff 14%);
+  background: var(--go-bg, var(--signal));
 }
 @media (hover: hover) {
   .primary:hover {
-    background: color-mix(in oklab, var(--ink), #fff 8%);
+    transform: translateY(-1px);
+    box-shadow: 0 5px 0 var(--ink);
   }
 }
 .secondary {
-  background: var(--surface-2);
-  box-shadow: inset 0 0 0 1px var(--hairline-strong);
+  background: var(--surface);
   color: var(--ink);
 }
 .secondary:active {
-  background: var(--track);
+  background: var(--surface-2);
 }
 .destructive {
-  background: var(--surface-2);
-  box-shadow: inset 0 0 0 1px var(--hairline-strong);
+  background: var(--surface);
   color: var(--bad);
 }
 .btn[aria-disabled="true"] {
   background: var(--track);
+  border-color: var(--ink-3);
   box-shadow: none;
   color: var(--ink-3);
   cursor: default;
@@ -606,16 +610,16 @@
   bottom: max(16px, env(safe-area-inset-bottom));
   z-index: 10;
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  /* as many columns as there are tabs */
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
   gap: 4px;
   height: 66px;
   padding: 6px;
   box-sizing: border-box;
-  border-radius: 33px;
-  background: var(--glass);
-  -webkit-backdrop-filter: var(--glass-blur);
-  backdrop-filter: var(--glass-blur);
-  border: 1px solid var(--glass-edge);
+  border-radius: 22px;
+  background: var(--surface);
+  border: 2px solid var(--ink);
   box-shadow: var(--glass-shadow);
 }
 .tab {
@@ -631,10 +635,10 @@
   text-decoration: none;
 }
 .tab[aria-current="page"] {
-  background: var(--glass-strong);
+  background: var(--signal);
   color: var(--ink);
-  font-weight: 700;
-  box-shadow: 0 1px 2px rgba(20, 23, 26, 0.06);
+  font-weight: 800;
+  box-shadow: inset 0 0 0 2px var(--ink);
 }
 .tabBrand,
 .tabSettings {
@@ -655,7 +659,7 @@
     margin: 0;
     padding: 24px 12px;
     border: 0;
-    border-right: 1px solid var(--hairline);
+    border-right: 2px solid var(--ink);
     border-radius: 0;
     background: var(--surface);
     -webkit-backdrop-filter: none;
@@ -666,16 +670,16 @@
     flex-direction: row;
     justify-content: flex-start;
     gap: 12px;
-    height: 44px;
+    height: 46px;
     padding: 0 12px;
-    border-radius: 14px;
-    font: 500 0.9375rem/1 var(--font-ui);
+    border-radius: 12px;
+    font: 700 1rem/1 var(--font-voice);
   }
   .tab[aria-current="page"] {
-    background: var(--paper);
-    font-weight: 700;
-    box-shadow: inset 3px 0 0 var(--ink);
-    border-radius: 4px 10px 10px 4px;
+    background: var(--signal);
+    font-weight: 800;
+    box-shadow: inset 0 0 0 2px var(--ink);
+    border-radius: 12px;
   }
   .tabBrand {
     display: flex;

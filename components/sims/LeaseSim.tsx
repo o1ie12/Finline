@@ -125,7 +125,7 @@ export default function LeaseSim({ color, colorInk }: { color: string; colorInk:
         <button
           type="button"
           onClick={() => setPhase("playing")}
-          className="inline-flex w-full items-center justify-center rounded-xl bg-ink px-6 py-4 text-base font-semibold text-white transition-transform hover:-translate-y-0.5"
+          className="inline-flex w-full items-center justify-center rounded-[14px] border-2 border-ink bg-[var(--signal)] px-6 py-4 text-base font-extrabold text-ink shadow-[0_4px_0_var(--ink)] active:translate-y-1 active:shadow-none transition-transform hover:-translate-y-0.5"
         >
           開始檢查合約
         </button>
@@ -183,7 +183,7 @@ export default function LeaseSim({ color, colorInk }: { color: string; colorInk:
         type="button"
         onClick={submitNow}
         disabled={timeUp || submitting}
-        className="inline-flex w-full items-center justify-center rounded-xl bg-ink px-6 py-4 text-base font-semibold text-white transition-transform hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50"
+        className="inline-flex w-full items-center justify-center rounded-[14px] border-2 border-ink bg-[var(--signal)] px-6 py-4 text-base font-extrabold text-ink shadow-[0_4px_0_var(--ink)] active:translate-y-1 active:shadow-none transition-transform hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50"
       >
         {submitting ? "結算中…" : "送出檢查結果"}
       </button>

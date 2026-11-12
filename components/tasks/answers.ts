@@ -4,6 +4,7 @@
  * editing; 「送出」 checks it is complete and turns it into the answer.
  */
 
+import { LIFE_SIM } from "@/lib/flags";
 import { parseNumberAnswer } from "@/lib/tasks/scoring";
 import type { TaskStep } from "@/lib/tasks/types";
 
@@ -148,5 +149,5 @@ export function scoreStatus(
   // completes the station (A6) without calling it a pass.
   if (r.stationDone) return "這一站完成了。先看建議答案，想再練可以再做一次。";
   // 10 PROG-3: say plainly that it is not done, and that leaving is fine.
-  return "這一站還沒完成。再做一次，或先去這個月，之後再回來。";
+  return LIFE_SIM ? "這一站還沒完成。再做一次，或先去這個月，之後再回來。" : "這一站還沒完成。再做一次，或先往下上，之後再回來。";
 }

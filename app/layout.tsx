@@ -32,7 +32,7 @@ const NOTO_TC_HREF =
 // and (game) layouts, not here: the Part E shell does not use it.
 
 // 11 META-1: one description everywhere until a page sets its own.
-const DESCRIPTION = "錢途是給台灣高中生的免費理財課。12 條路線、54 站，每一站讀一份真的帳單、契約或薪資單，做一個決定。";
+const DESCRIPTION = "錢途是給台灣高中生的免費理財課程。12 門課、54 個單元，每個單元讀一份真的帳單、契約或薪資單，做一份計分的實作任務。";
 const OG_TITLE = "錢途 Finline | 給台灣高中生的免費理財課";
 
 export const metadata: Metadata = {

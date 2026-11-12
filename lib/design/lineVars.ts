@@ -34,3 +34,14 @@ export function lineVars(line: Pick<LineMeta, "color" | "colorInk" | "lineInk">)
     "--line-on": on,
   } as CSSProperties;
 }
+
+const SIGNAL = "#f8b61c"; // --signal, app/tokens.css
+
+/**
+ * The action button's ground on a block in the line's color (2026-11-12):
+ * the platform yellow, or white where the line's own color is too close to
+ * it to read as a button (信用線, 創業線).
+ */
+export function goVars(line: Pick<LineMeta, "color">): CSSProperties {
+  return { "--go-bg": ratio(SIGNAL, line.color) < 1.6 ? "var(--surface)" : "var(--signal)" } as CSSProperties;
+}

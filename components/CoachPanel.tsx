@@ -131,7 +131,7 @@ export default function CoachPanel({
           <button
             type="button"
             onClick={requestCoach}
-            className="inline-flex items-center justify-center rounded-lg bg-ink px-4 py-2 text-sm font-semibold text-white hover:-translate-y-0.5"
+            className="inline-flex items-center justify-center rounded-[14px] border-2 border-ink bg-[var(--signal)] px-4 py-2 text-sm font-extrabold text-ink shadow-[0_4px_0_var(--ink)] active:translate-y-1 active:shadow-none hover:-translate-y-0.5"
           >
             請教練看看我的選擇
           </button>

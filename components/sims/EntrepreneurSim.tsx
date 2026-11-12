@@ -141,7 +141,7 @@ export default function EntrepreneurSim({ color }: { color: string; colorInk: st
             type="button"
             disabled={submitting}
             onClick={() => submit({ priceId, prepId, raiseAfterShock: false })}
-            className="w-full rounded-xl bg-ink px-5 py-4 text-base font-semibold text-white disabled:opacity-50"
+            className="w-full rounded-[14px] border-2 border-ink bg-[var(--signal)] px-5 py-4 text-base font-extrabold text-ink shadow-[0_4px_0_var(--ink)] active:translate-y-1 active:shadow-none disabled:opacity-50"
           >
             看結算
           </button>
@@ -172,7 +172,7 @@ export default function EntrepreneurSim({ color }: { color: string; colorInk: st
             type="button"
             disabled={submitting}
             onClick={() => submit({ priceId, prepId, raiseAfterShock: true })}
-            className="rounded-xl bg-ink px-5 py-4 text-base font-semibold text-white disabled:opacity-50"
+            className="rounded-[14px] border-2 border-ink bg-[var(--signal)] px-5 py-4 text-base font-extrabold text-ink shadow-[0_4px_0_var(--ink)] active:translate-y-1 active:shadow-none disabled:opacity-50"
           >
             漲價到 {formatNT(price.pricePerCup + PRICE_RAISE)}/杯
           </button>

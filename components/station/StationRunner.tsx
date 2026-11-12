@@ -26,6 +26,7 @@ export function StationRunner({
   goal,
   mode,
   continueHref,
+  continueLabel,
   fullLessonHref,
   fullLessonLabel,
   initialHook = null,
@@ -39,6 +40,8 @@ export function StationRunner({
   goal: { amount: number; months: number } | null;
   mode: "station" | "library" | "terminal";
   continueHref: string;
+  /** The label of the button that goes there (the workspace's default otherwise). */
+  continueLabel?: string;
   fullLessonHref?: string;
   fullLessonLabel?: string;
   /** A hook answered before hydration, from ?hook= (05 A8.6). */
@@ -127,6 +130,7 @@ export function StationRunner({
         onSubmit={submit}
         onSaveTool={saveTool}
         onContinue={() => router.push(continueHref)}
+        continueLabel={continueLabel}
         initialHookAnswer={hook}
         redo={redo && redo.from + 1 === attempt ? { steps: redo.steps, carry: redo.carry } : null}
         onRedo={

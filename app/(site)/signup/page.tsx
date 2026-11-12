@@ -42,10 +42,6 @@ export default async function SignupPage({
 
   return (
     <div className="relative overflow-hidden">
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -right-52 -top-60 h-[700px] w-[700px] rounded-full bg-[#d7e7f6] opacity-80 blur-[140px]"
-      />
       <div className="relative mx-auto grid max-w-[1200px] items-center gap-10 px-4 py-10 sm:px-6 lg:grid-cols-2 lg:gap-14 lg:py-14">
         <div className="flex flex-col gap-5">
           {tap ? (
@@ -68,7 +64,7 @@ export default async function SignupPage({
           <p className="max-w-[460px] text-base font-semibold leading-[1.7] text-ink">未滿 18 歲請讓家長或老師知道你在使用。</p>
           <div
             aria-hidden="true"
-            className="mt-2 hidden h-[188px] w-[300px] -rotate-[4deg] overflow-hidden rounded-[22px] bg-[#14171a] shadow-[0_30px_60px_rgba(20,23,26,.3)] lg:block"
+            className="mt-2 hidden h-[188px] w-[300px] -rotate-[4deg] overflow-hidden rounded-[22px] border-2 border-ink bg-[#14171a] shadow-[8px_8px_0_rgba(20,23,26,.25)] lg:block"
           >
             <div className="h-2.5" style={{ background: "var(--stripe)" }} />
             <div className="flex flex-col gap-1.5 px-6 py-[22px] text-white">

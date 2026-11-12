@@ -47,34 +47,38 @@
   box-shadow: var(--glass-shadow);
 }
 .primary {
+  /* 2026-11-12: the platform yellow on an ink edge (components/course/kit). */
   align-self: flex-start;
   display: inline-flex;
   align-items: center;
   gap: 12px;
   height: 58px;
   padding: 0 30px;
-  border-radius: 29px;
-  background: var(--ink);
-  color: var(--ink-inv);
-  font-size: 1.125rem;
-  font-weight: 700;
+  box-sizing: border-box;
+  border: 2px solid var(--ink);
+  border-radius: 16px;
+  background: var(--signal);
+  box-shadow: 0 5px 0 var(--ink);
+  color: var(--ink);
+  font: 800 1.1875rem/1 var(--font-voice);
   text-decoration: none;
-  transition: transform 0.2s;
+  transition: transform 90ms, box-shadow 90ms;
 }
 .primary:hover {
-  transform: translateY(-2px);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 0 var(--ink);
 }
 .secondary {
   height: 44px;
   padding: 0 18px;
-  border: 0;
-  border-radius: 22px;
+  border: 2px solid var(--ink);
+  border-radius: 12px;
   background: var(--surface);
-  box-shadow: inset 0 0 0 1px var(--hairline-strong);
+  box-shadow: 0 3px 0 var(--ink);
   color: var(--ink);
   font: inherit;
-  font-size: 0.875rem;
-  font-weight: 600;
+  font-size: 0.9375rem;
+  font-weight: 800;
   cursor: pointer;
 }
 .primary:focus-visible,
@@ -360,15 +364,17 @@
   gap: 12px;
 }
 .more {
-  /* 11 UI-1: a 44px tap target, no visual change. */
+  /* 11 UI-1: a 44px tap target. */
   display: inline-flex;
   align-items: center;
   min-height: 44px;
   padding: 0 4px;
-  font-size: 0.9375rem;
-  font-weight: 700;
-  color: var(--focus);
-  text-decoration: none;
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--ink);
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
 }
 
 /* FL02 */
@@ -383,17 +389,17 @@
   flex-direction: column;
   gap: 10px;
   padding: 20px 20px 22px;
-  border-radius: 28px;
-  border-top: 6px solid var(--line);
+  border-radius: 18px;
+  border: 2px solid var(--ink);
+  border-top: 14px solid var(--line);
   background: var(--surface);
-  box-shadow: var(--e2);
   color: var(--ink);
   text-decoration: none;
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition: transform 120ms, box-shadow 120ms;
 }
 .lineCard:hover {
-  transform: translateY(-3px);
-  box-shadow: var(--e3);
+  transform: translate(-2px, -2px);
+  box-shadow: 4px 4px 0 var(--ink);
 }
 .lineName {
   display: flex;
@@ -458,22 +464,27 @@
   border-radius: 32px;
 }
 .stops {
+  /* as many columns as there are steps (content/flow.ts) */
   position: relative;
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
   margin: 0;
   padding: 0;
   list-style: none;
 }
 .stops::before {
+  display: none;
+}
+/* the line from the stop before to this one */
+.stops li + li::before {
   content: "";
   position: absolute;
-  left: 10%;
-  right: 10%;
-  top: 9px;
+  top: 10px;
+  left: -50%;
+  right: 50%;
   height: 8px;
-  border-radius: 4px;
-  background: var(--metro-red);
+  background: var(--ink);
 }
 .stops li {
   position: relative;
@@ -485,11 +496,14 @@
   text-align: center;
 }
 .stopDot {
-  width: 26px;
-  height: 26px;
-  border-radius: 13px;
-  background: var(--surface);
-  box-shadow: inset 0 0 0 6px var(--metro-red);
+  position: relative;
+  z-index: 1;
+  width: 28px;
+  height: 28px;
+  box-sizing: border-box;
+  border-radius: 14px;
+  border: 2px solid var(--ink);
+  background: var(--signal);
 }
 .stopNo {
   font-size: 0.75rem;
@@ -511,9 +525,9 @@
 .rules {
   margin: 22px 0 0;
   padding: 6px 28px;
-  border-radius: 28px;
+  border-radius: 20px;
+  border: 2px solid var(--ink);
   background: var(--surface);
-  box-shadow: var(--e2);
 }
 .rule {
   display: grid;
@@ -853,11 +867,17 @@
     padding: 24px 20px;
   }
   .stops {
+    grid-auto-flow: row;
     grid-template-columns: minmax(0, 1fr);
     gap: 20px;
   }
+  .stops li + li::before {
+    display: none;
+  }
   .stops::before {
-    left: 12px;
+    display: block;
+    background: var(--ink);
+    left: 11px;
     right: auto;
     top: 10px;
     bottom: 10px;
@@ -933,7 +953,7 @@
   background: var(--surface);
   -webkit-backdrop-filter: none;
   backdrop-filter: none;
-  border: 1px solid var(--hairline);
+  border: 2px solid var(--ink);
   box-shadow: none;
 }
 .stopsNote {

@@ -527,7 +527,7 @@ export default function TourOverlay({
             <button
               type="button"
               onClick={onNext}
-              className="rounded-lg bg-ink px-3 py-1.5 text-sm font-semibold text-white transition-opacity hover:opacity-90"
+              className="rounded-[14px] border-2 border-ink bg-[var(--signal)] px-3 py-1.5 text-sm font-extrabold text-ink shadow-[0_4px_0_var(--ink)] active:translate-y-1 active:shadow-none transition-opacity hover:opacity-90"
             >
               {isLast ? "開始使用" : "下一步"}
             </button>

@@ -6,7 +6,7 @@ import { pageMeta } from "@/lib/pageMeta";
 export const metadata: Metadata = {
   ...pageMeta({
     title: "錢途 Finline | 給台灣高中生的免費理財課",
-    description: "錢途是給台灣高中生的免費理財課。12 條路線、54 站，每一站讀一份真的帳單、契約或薪資單，做一個決定。",
+    description: "錢途是給台灣高中生的免費理財課程。12 門課、54 個單元，每個單元讀一份真的帳單、契約或薪資單，做一份計分的實作任務。",
     path: "/",
   }),
   title: { absolute: "錢途 Finline | 給台灣高中生的免費理財課" },

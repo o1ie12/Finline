@@ -3,6 +3,7 @@ import { notFound, redirect } from "next/navigation";
 import { StationRunner } from "@/components/station/StationRunner";
 import { countTaskAttempts } from "@/lib/db";
 import { lineVars } from "@/lib/design/lineVars";
+import { LIFE_SIM } from "@/lib/flags";
 import { getLine } from "@/lib/lines";
 import { readProfile } from "@/lib/studentProfile";
 import { getCurrentStudent } from "@/lib/session";
@@ -49,8 +50,8 @@ export default async function BonusTaskPage({
         mode="library"
         initialHook={sanitizeHook(found.lesson.hook.options, hook)}
         // 10 FLOW-4: the month, then 今天; no ride within a line.
-        continueHref="/turn"
-        design={{ stationName: found.task.title, kicker: `${line.name} · 加碼任務`, exitHref: "/today" }}
+        continueHref={LIFE_SIM ? "/turn" : `/line/${line.slug}`}
+        design={{ stationName: found.task.title, kicker: `${line.name} · 加碼任務`, exitHref: `/line/${line.slug}` }}
       />
     </div>
   );

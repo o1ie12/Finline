@@ -9,3 +9,10 @@
 - **Migrations 21-26:** `life_game_saves`, `students.avatar`, `daily_activity`, `task_results`, class life rooms (`class_rooms.kind/seed`, `class_participants.team`), RLS on `line_completions`. Each has a down file; `supabase/test/run-redesign-migrations.sh` tests them on a throwaway cluster.
 - **Profile** gains optional `goal`, `careerPriority`, `savedTools`, `seenFullRides`, `onboardedVersion`; 信用線's `creditRecord` now comes from the statement task at station 4.
 - **Plan and sources:** `docs/redesign/plan.md` (decisions, conflicts), `docs/redesign/sources.md` (verified figures).
+
+## Course platform (2026-11-12)
+
+- **Program → course → module → item.** A line is a course (code, track, topic area, prerequisites, objectives in `content/curriculum.ts`); a station is a module. `lib/curriculum.ts` `courseOutline(slug)` derives the syllabus (items, minutes, scored questions, pass mark, documents) from the line's content; never type a count or a module list by hand. `tests/curriculum.test.ts` holds it to `lineStats`.
+- **Pages.** `/line/[slug]` = the course page (`components/course/CoursePage.tsx`); `/lines` and the 課程 tab (`/map`) = the catalogue (`Catalogue.tsx`); `/today` = 學習 (`LearnHome.tsx`); `/grades` = 成績. Grades use one rule (`lib/grades.ts`): best attempt; a second-attempt completion under the pass mark is 已完成，未達標, never 通過.
+- **Life simulation** is out of the main path behind `NEXT_PUBLIC_LIFE_SIM` (`lib/flags.ts`, default off): a finished module goes to the next module. The engine and `/turn`, `/status`, `/moves` remain; `=1` and a redeploy restores the tabs, the 人生 step and the month between modules.
+- **Copy rules still apply** to the new pages (`scripts/check-content.ts`): no 證書/認證/證照/資格, no reviews or outcome numbers without real data. Report: `docs/redesign/12-curriculum.md`.

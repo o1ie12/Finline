@@ -2,7 +2,7 @@ import Link from "next/link";
 import HomeLink from "@/components/HomeLink";
 
 const LINKS = [
-  { href: "/lines", label: "所有路線" },
+  { href: "/lines", label: "課程目錄" },
   { href: "/transfer", label: "轉乘站" },
   { href: "/about", label: "關於我們" },
   { href: "/partnerships", label: "合作夥伴" },
@@ -12,7 +12,7 @@ const LINKS = [
 
 export default function SiteFooter() {
   return (
-    <footer className="border-t border-hairline">
+    <footer className="border-t-2 border-ink">
       <div className="mx-auto flex max-w-[1200px] flex-col gap-4 px-4 pb-10 pt-7 text-[13px] text-ink-soft sm:flex-row sm:flex-wrap sm:items-start sm:justify-between sm:px-6">
         <div className="max-w-md">
           <p>
@@ -32,7 +32,7 @@ export default function SiteFooter() {
               </li>
             ))}
             <li>
-              <HomeLink className="inline-flex min-h-11 items-center rounded hover:text-ink">我的路線圖</HomeLink>
+              <HomeLink className="inline-flex min-h-11 items-center rounded hover:text-ink">我的學習</HomeLink>
             </li>
           </ul>
         </nav>

@@ -19,7 +19,7 @@
 }
 .title {
   margin: 0;
-  font: 900 2rem/2.5rem var(--font-voice);
+  font: 900 2.25rem/1.2 var(--font-voice);
 }
 .intro {
   margin: 0;
@@ -32,19 +32,18 @@
   gap: 10px;
 }
 .panel {
+  /* 2026-11-12: a plain white panel holds text; no edge, no shadow. */
   display: flex;
   flex-direction: column;
   gap: 12px;
-  padding: 20px 22px;
-  border-radius: var(--r-xl);
+  padding: 22px 24px;
+  border-radius: 20px;
   background: var(--surface);
-  border: 1px solid var(--hairline);
-  box-shadow: var(--e1);
 }
 .label {
   margin: 0;
-  font: 700 0.875rem/1.3rem var(--font-ui);
-  color: var(--ink-2);
+  font: 800 1rem/1.4 var(--font-voice);
+  color: var(--ink);
 }
 .grid {
   display: grid;
@@ -64,18 +63,19 @@
   gap: 6px;
   min-height: 48px;
   padding: 0 20px;
-  border-radius: 24px;
-  font: 700 0.9375rem/1 var(--font-ui);
+  box-sizing: border-box;
+  border: 2px solid var(--ink);
+  border-radius: 14px;
+  box-shadow: 0 4px 0 var(--ink);
+  font: 800 1rem/1 var(--font-voice);
+  color: var(--ink);
   text-decoration: none;
 }
 .primary {
-  background: var(--ink);
-  color: var(--ink-inv);
+  background: var(--go-bg, var(--signal));
 }
 .secondary {
   background: var(--surface);
-  color: var(--ink);
-  box-shadow: inset 0 0 0 1px var(--hairline-strong);
 }
 .primary:focus-visible,
 .secondary:focus-visible {
@@ -87,11 +87,10 @@
   flex-direction: column;
   gap: 8px;
   padding: 18px;
-  border-radius: 20px;
+  border-radius: 18px;
   background: var(--surface);
-  border: 1px solid var(--hairline);
-  border-top: 5px solid var(--line, var(--ink));
-  box-shadow: var(--e1);
+  border: 2px solid var(--ink);
+  border-top: 10px solid var(--line, var(--ink));
 }
 .tool[data-locked] {
   background: var(--surface-2);

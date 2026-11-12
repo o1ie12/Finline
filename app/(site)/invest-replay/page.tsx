@@ -44,7 +44,7 @@ export default async function InvestReplayPage() {
         {!notConfigured && (
           <Link
             href="/signup"
-            className="mt-6 inline-flex items-center justify-center rounded-xl bg-ink px-5 py-3 text-base font-semibold text-white hover:-translate-y-0.5"
+            className="mt-6 inline-flex items-center justify-center rounded-[14px] border-2 border-ink bg-[var(--signal)] px-5 py-3 text-base font-extrabold text-ink shadow-[0_4px_0_var(--ink)] active:translate-y-1 active:shadow-none hover:-translate-y-0.5"
           >
             建立帳號或輸入代碼
           </Link>
@@ -62,7 +62,7 @@ export default async function InvestReplayPage() {
         </p>
         <Link
           href="/line/touzi"
-          className="mt-6 inline-flex items-center justify-center rounded-xl bg-ink px-5 py-3 text-base font-semibold text-white hover:-translate-y-0.5"
+          className="mt-6 inline-flex items-center justify-center rounded-[14px] border-2 border-ink bg-[var(--signal)] px-5 py-3 text-base font-extrabold text-ink shadow-[0_4px_0_var(--ink)] active:translate-y-1 active:shadow-none hover:-translate-y-0.5"
         >
           前往投資線
         </Link>

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { LearnHome } from "@/components/course/LearnHome";
 import { PageHeader } from "@/components/page/Page";
 import { RouteBoard } from "@/components/today/RouteBoard";
 import { nt } from "@/components/play/playModel";
@@ -10,16 +11,18 @@ import { isHiddenTask } from "@/lib/tasks/hidden";
 import { getLatestSimulationRunsByLine, getLineCompletions, getProgress, getTaskResults } from "@/lib/db";
 import { stationLetterCode } from "@/lib/design/lineCode";
 import { lineVars } from "@/lib/design/lineVars";
+import { LIFE_SIM } from "@/lib/flags";
 import { loadGameHome } from "@/lib/gameHome";
 import { getLine } from "@/lib/lines";
 import { effectiveMode } from "@/lib/modeModel";
 import { needsOnboarding } from "@/lib/onboarding";
 import { allLineStatuses } from "@/lib/progressModel";
+import { programView } from "@/lib/programView";
 import { routeBoard } from "@/lib/routeBoard";
 import { getCurrentStudent } from "@/lib/session";
 import s from "@/components/today/today.module.css";
 
-export const metadata: Metadata = { title: "今天" };
+export const metadata: Metadata = { title: LIFE_SIM ? "今天" : "我的學習" };
 
 /**
  * 今天 (2026-10-24 redesign): where to continue, the life simulation at a
@@ -31,9 +34,14 @@ export default async function TodayPage() {
   // 06 G5 item 8: signed out, 今天 goes to sign-up (which also has the code login).
   // 11 COPY-4: signed out, 今天 sends you to sign-up and back.
   if (!student) redirect("/signup?next=/today");
-  if (needsOnboarding(student)) redirect("/onboarding/goal");
+  if (LIFE_SIM && needsOnboarding(student)) redirect("/onboarding/goal");
 
   const mode = effectiveMode(student.mode);
+  if (!LIFE_SIM) {
+    // 2026-11-12: a course platform's home: the courses, no game state.
+    const [progress, runsByLine, completed] = await Promise.all([getProgress(student.id), getLatestSimulationRunsByLine(student.id), getLineCompletions(student.id)]);
+    return <LearnHome name={student.name} courses={programView({ statuses: allLineStatuses(progress, runsByLine, mode, completed), progress, runsByLine, mode })} />;
+  }
   const [data, results, progress, runsByLine, sticky] = await Promise.all([
     loadGameHome(student),
     getTaskResults(student.id).catch(() => []),
