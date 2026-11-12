@@ -6,9 +6,9 @@
  */
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { AREAS, COURSES, COURSE_FAQ, DEFAULT_PASS, PROGRAM, STEP_RUBRIC, TRACKS, type AreaId } from "@/content/curriculum";
+import { AREAS, COURSES, COURSE_FAQ, DEFAULT_PASS, MOMENTS, PROGRAM, STEP_RUBRIC, TRACKS, type AreaId } from "@/content/curriculum";
 import { courseOutline, durationText, programOutline } from "@/lib/curriculum";
-import { bestAttempts, moduleGrade } from "@/lib/grades";
+import { MASTERY, bestAttempts, moduleGrade } from "@/lib/grades";
 import { LINES, START_LINE } from "@/lib/lines";
 import { lineStats } from "@/lib/lineStats";
 import { programView } from "@/lib/programView";
@@ -90,6 +90,26 @@ test("grades: the best attempt counts; a second-attempt completion is never a pa
   assert.equal(moduleGrade({ pass: null, simulation: true }, true, null).text, "已完成");
   // 3 of 5 is exactly the pass mark.
   assert.equal(moduleGrade(m, true, { score: 3, total: 5, attempts: 1 }).passed, true);
+});
+
+test("grades: the level follows the best score (練習中, 達標, 精熟)", () => {
+  const m = { pass: 0.6, simulation: false };
+  assert.equal(MASTERY, 0.9);
+  assert.equal(moduleGrade(m, false, null).level, "none");
+  assert.equal(moduleGrade(m, false, { score: 1, total: 4, attempts: 1 }).level, "practicing");
+  assert.equal(moduleGrade(m, true, { score: 3, total: 4, attempts: 1 }).level, "passed");
+  assert.equal(moduleGrade(m, true, { score: 9, total: 10, attempts: 1 }).level, "mastered");
+  assert.equal(moduleGrade({ pass: null, simulation: true }, true, null).level, "passed");
+});
+
+test("catalogue filter: every life moment names real courses, at least two, none twice", () => {
+  assert.ok(MOMENTS.length >= 3);
+  for (const m of MOMENTS) {
+    assert.ok(m.courses.length >= 2, m.name);
+    assert.equal(new Set(m.courses).size, m.courses.length, m.name);
+    for (const slug of m.courses) assert.ok(COURSES.some((c) => c.slug === slug), `${m.name}: ${slug}`);
+    assert.doesNotMatch(m.name, /——|—/);
+  }
 });
 
 test("program view: signed out, every course is new and in teaching order", () => {

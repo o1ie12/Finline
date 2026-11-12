@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Catalogue } from "@/components/course/Catalogue";
+import { catalogueArt } from "@/lib/coursePreview";
 import { PROGRAM } from "@/content/curriculum";
 import { getLatestSimulationRunsByLine, getLineCompletions, getProgress } from "@/lib/db";
 import { LINES, START_LINE, getLine } from "@/lib/lines";
@@ -35,5 +36,5 @@ export default async function LinesPage() {
     /* not configured: the catalogue without progress */
   }
   const start = getLine(START_LINE)!;
-  return <Catalogue courses={programView(mine)} signedIn={Boolean(mine)} start={mine ? { href: "/today", label: "回到我的學習" } : { href: `/line/${START_LINE}`, label: `從第一門課開始：${start.name}` }} />;
+  return <Catalogue art={catalogueArt()} courses={programView(mine)} signedIn={Boolean(mine)} start={mine ? { href: "/today", label: "回到我的學習" } : { href: `/line/${START_LINE}`, label: `從第一門課開始：${start.name}` }} />;
 }

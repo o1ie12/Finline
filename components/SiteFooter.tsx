@@ -12,7 +12,7 @@ const LINKS = [
 
 export default function SiteFooter() {
   return (
-    <footer className="border-t-2 border-ink">
+    <footer className="border-t border-hairline">
       <div className="mx-auto flex max-w-[1200px] flex-col gap-4 px-4 pb-10 pt-7 text-[13px] text-ink-soft sm:flex-row sm:flex-wrap sm:items-start sm:justify-between sm:px-6">
         <div className="max-w-md">
           <p>

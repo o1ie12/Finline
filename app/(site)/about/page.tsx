@@ -73,7 +73,7 @@ export default function AboutPage() {
         {CONTACT_EMAIL ? (
           <a
             href={`mailto:${CONTACT_EMAIL}`}
-            className="mt-4 inline-flex items-center justify-center rounded-[14px] border-2 border-ink bg-[var(--signal)] px-6 py-3 text-base font-extrabold text-ink shadow-[0_4px_0_var(--ink)] active:translate-y-1 active:shadow-none hover:-translate-y-0.5"
+            className="mt-4 inline-flex items-center justify-center rounded-xl bg-ink px-6 py-3 text-base font-semibold text-white hover:-translate-y-0.5"
           >
             {CONTACT_EMAIL}
           </a>

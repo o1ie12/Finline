@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { Catalogue } from "@/components/course/Catalogue";
+import { catalogueArt } from "@/lib/coursePreview";
 import { pageStyles as ps } from "@/components/page/Page";
 import { getLatestSimulationRunsByLine, getLineCompletions, getProgress } from "@/lib/db";
 import { LIFE_SIM } from "@/lib/flags";
@@ -26,7 +27,7 @@ export default async function MapPage() {
   const next = courses.find((c) => c.state === "started" && c.nextHref) ?? courses.find((c) => c.state === "new");
   return (
     <div className={ps.frame}>
-      <Catalogue courses={courses} signedIn framed start={next ? { href: next.nextHref ?? `/line/${next.slug}`, label: next.state === "started" ? `繼續：${next.name}` : `開始：${next.name}` } : { href: "/today", label: "回到我的學習" }} />
+      <Catalogue art={catalogueArt()} courses={courses} signedIn framed start={next ? { href: next.nextHref ?? `/line/${next.slug}`, label: next.state === "started" ? `繼續：${next.name}` : `開始：${next.name}` } : { href: "/today", label: "回到我的學習" }} />
     </div>
   );
 }

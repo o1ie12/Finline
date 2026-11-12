@@ -1,10 +1,12 @@
 import Link from "next/link";
 import { Icon } from "@/components/ui/icons";
 import { AREAS, COURSE_FAQ, ITEM_TYPES, STEP_RUBRIC, TRACKS } from "@/content/curriculum";
+import type { SampleQuestion as Sample } from "@/lib/coursePreview";
 import { durationText, type CourseOutline, type OutlineModule } from "@/lib/curriculum";
-import { goVars } from "@/lib/design/lineVars";
-import { moduleGrade, percent, type Best } from "@/lib/grades";
+import { LEVEL_NAME, moduleGrade, percent, type Best } from "@/lib/grades";
 import type { LessonCard } from "@/lib/tasks/types";
+import { DocArt } from "./DocArt";
+import { SampleQuestion } from "./SampleQuestion";
 import k from "./kit.module.css";
 import s from "./course.module.css";
 
@@ -33,17 +35,11 @@ export interface CourseView {
   tests: { title: string; body: string; href: string; link: string }[];
   /** What finishing the course opens in the life simulation; null when it is off. */
   unlocks: { text: string; on: boolean } | null;
+  /** One real question to try on this page (lib/coursePreview.ts). */
+  sample: Sample | null;
 }
 
 const DISCLAIMER = "這是學習練習的紀錄，不是真實的工作經驗。";
-const SECTIONS = [
-  { id: "about", label: "課程介紹" },
-  { id: "syllabus", label: "課程大綱" },
-  { id: "grading", label: "評分方式" },
-  { id: "outcomes", label: "完成之後" },
-  { id: "faq", label: "常見問題" },
-];
-
 const pct = percent;
 
 /** What a module contains, in one line: 2 個重點概念 · 1 個實作任務（4 題） */
@@ -57,10 +53,15 @@ function includes(m: OutlineModule): string {
 }
 
 /**
- * A course's page (2026-11-12): what you will learn, what is in every
- * module, how it is graded and what you leave with, before you start. The
- * same page is the course home once you have: progress, grades and where to
- * continue. Reads lib/curriculum.ts; no figure on it is typed by hand.
+ * A course's page (2026-11-12): what you will learn, one real question to
+ * try, what is in every module, how it is graded and what you leave with,
+ * before you start. The same page is the course home once you have:
+ * progress, grades and where to continue. Reads lib/curriculum.ts; no figure
+ * on it is typed by hand.
+ *
+ * One white sheet, not a stack of boxes: sections are divided by a rule.
+ * The course's color is spent on the code plate, the route and the desk the
+ * task's real document lies on.
  */
 export function CoursePage({ v }: { v: CourseView }) {
   const o = v.outline;
@@ -77,6 +78,15 @@ export function CoursePage({ v }: { v: CourseView }) {
       : v.signedIn && v.complete
         ? { label: "已完成", module: o.modules[o.modules.length - 1] }
         : { label: "第一個單元", module: o.modules[0] };
+  const startHref = v.signedIn ? (v.next?.href ?? v.modules[0]?.href ?? `/line/${line.slug}`) : "/signup";
+  const sections = [
+    { id: "about", label: "課程介紹" },
+    ...(v.sample ? [{ id: "try", label: "試做一題" }] : []),
+    { id: "syllabus", label: "課程大綱" },
+    { id: "grading", label: "評分方式" },
+    { id: "outcomes", label: "完成之後" },
+    { id: "faq", label: "常見問題" },
+  ];
 
   const cta = v.signedIn ? (
     v.next ? (
@@ -89,7 +99,7 @@ export function CoursePage({ v }: { v: CourseView }) {
       </Link>
     )
   ) : (
-    <Link href={"/signup"} className={k.go}>
+    <Link href="/signup" className={k.go}>
       免費開始上課
     </Link>
   );
@@ -104,7 +114,7 @@ export function CoursePage({ v }: { v: CourseView }) {
           <nav className={s.barNav} aria-label="網站">
             <Link href="/lines">課程目錄</Link>
             <Link href="/signup#login">登入</Link>
-            <Link href={"/signup"} className={s.barCta}>
+            <Link href="/signup" className={s.barCta}>
               免費註冊
             </Link>
           </nav>
@@ -120,7 +130,7 @@ export function CoursePage({ v }: { v: CourseView }) {
           <span aria-current="page">{line.name}</span>
         </nav>
 
-        <header className={s.hero} style={goVars(line)}>
+        <header className={`${k.card} ${s.hero}`}>
           <div className={s.heroTop}>
             <div className={s.heroText}>
               <p className={s.kicker}>
@@ -129,16 +139,29 @@ export function CoursePage({ v }: { v: CourseView }) {
               </p>
               <h1 className={s.h1}>{line.name}</h1>
               <p className={s.promise}>{page.promise}</p>
+              <p className={s.meta}>
+                <span>{page.difficulty}</span>
+                <span>{totals.modules} 個單元</span>
+                <span>{durationText(totals.minutes)}</span>
+                <span>免費</span>
+              </p>
               <div className={s.heroActions}>
                 {cta}
-                <a href="#m1" className={k.ghost}>
-                  試看第一單元
+                <a href={v.sample ? "#try" : "#syllabus"} className={k.ghost}>
+                  {v.sample ? "先試做一題" : "看課程大綱"}
                 </a>
               </div>
-              <p className={s.heroNote}>免費 · 照自己的進度 · 不用下載</p>
             </div>
+            {/* The desk: the document this course puts in front of you, and the sign for where you start. */}
             <div className={s.heroArt}>
-              <div className={k.sign}>
+              {v.sample?.material ? (
+                <DocArt material={v.sample.material} className={s.heroDoc} />
+              ) : o.modules[0].cards[0] ? (
+                <div className={s.heroNote} aria-hidden="true">
+                  <CardPreview card={o.modules[0].cards[0]} />
+                </div>
+              ) : null}
+              <div className={`${k.sign} ${s.heroSign}`}>
                 <span className={k.signStripe} aria-hidden="true" />
                 <div className={k.signBody}>
                   <div className={k.signKicker}>
@@ -148,20 +171,11 @@ export function CoursePage({ v }: { v: CourseView }) {
                   <div className={k.signSub}>{at.module.title}</div>
                 </div>
               </div>
-              <dl className={s.board}>
-                <div>
-                  <dt>單元</dt>
-                  <dd>{totals.modules}</dd>
-                </div>
-                <div>
-                  <dt>分鐘</dt>
-                  <dd>{totals.minutes}</dd>
-                </div>
-                <div>
-                  <dt>程度</dt>
-                  <dd>{page.difficulty}</dd>
-                </div>
-              </dl>
+              {v.complete ? (
+                <span className={s.stamp} aria-hidden="true">
+                  已完成
+                </span>
+              ) : null}
             </div>
           </div>
           {/* The course as its line: one stop per module, the last one square. */}
@@ -171,8 +185,10 @@ export function CoursePage({ v }: { v: CourseView }) {
               return (
                 <li key={m.code} data-state={state} data-final={m.final || undefined}>
                   <a href={`#m${m.index}`}>
-                    <span className={s.stopDot}>{state === "done" ? <Icon name="check" size={14} strokeWidth={3} /> : m.index}</span>
-                    <span className={s.stopName}>{m.station}</span>
+                    <span className={s.stopDot}>{state === "done" ? <Icon name="check" size={12} strokeWidth={3} /> : null}</span>
+                    <span className={s.stopName}>
+                      {m.index}　{m.station}
+                    </span>
                     <span className={s.stopMin}>{m.minutes} 分鐘</span>
                   </a>
                 </li>
@@ -182,7 +198,7 @@ export function CoursePage({ v }: { v: CourseView }) {
         </header>
 
         <nav className={s.tabs} aria-label="本頁內容">
-          {SECTIONS.map((x) => (
+          {sections.map((x) => (
             <a key={x.id} href={`#${x.id}`}>
               {x.label}
             </a>
@@ -190,95 +206,99 @@ export function CoursePage({ v }: { v: CourseView }) {
         </nav>
 
         <div className={s.cols}>
-          <div className={s.main}>
+          <div className={`${k.card} ${s.main}`}>
             {/* ---- 課程介紹 ---- */}
             <section id="about" className={s.section} aria-labelledby="about-h">
               <h2 id="about-h" className={s.h2}>
-                <span className={k.ring} aria-hidden="true" />
                 學完這門課，你能夠
               </h2>
               <ul className={s.objectives}>
                 {info.objectives.map((x) => (
                   <li key={x}>
-                    <span className={s.tick} aria-hidden="true">
-                      <Icon name="check" size={14} strokeWidth={3} />
-                    </span>
+                    <Icon name="check" size={18} strokeWidth={2.6} />
                     <span>{x}</span>
                   </li>
                 ))}
               </ul>
-
-              <h3 className={s.h3}>你會練到的能力</h3>
-              <ul className={s.skills}>
-                {page.skills.map((k) => (
-                  <li key={k}>{k}</li>
-                ))}
-              </ul>
-
-              <h3 className={s.h3}>課程資訊</h3>
-              <dl className={s.details}>
+              <div className={s.split}>
                 <div>
-                  <dt>程度</dt>
-                  <dd>{page.difficulty}</dd>
+                  <h3 className={s.h3}>你會練到的能力</h3>
+                  <p className={s.skills}>{page.skills.join("　·　")}</p>
+                  {o.documents.length ? (
+                    <>
+                      <h3 className={s.h3}>會讀到的文件</h3>
+                      <p className={s.skills}>{o.documents.join("　·　")}</p>
+                    </>
+                  ) : null}
                 </div>
-                <div>
-                  <dt>時間</dt>
-                  <dd>
-                    {durationText(totals.minutes)}，{totals.modules} 個單元
-                  </dd>
-                </div>
-                <div>
-                  <dt>評量</dt>
-                  <dd>
-                    {totals.tasks} 個計分任務，共 {totals.scored} 題{totals.simulation ? "，加 1 個期末模擬" : ""}
-                  </dd>
-                </div>
-                <div>
-                  <dt>建議先修</dt>
-                  <dd>
-                    {v.prerequisites.length ? (
-                      <>
-                        {v.prerequisites.map((p, i) => (
-                          <span key={p.slug}>
-                            {i ? "、" : ""}
-                            <Link href={`/line/${p.slug}`}>
-                              {p.name}
-                              {p.done ? "（已完成）" : ""}
-                            </Link>
-                          </span>
-                        ))}
-                        {info.prerequisiteNote ? <small>{info.prerequisiteNote}</small> : null}
-                      </>
-                    ) : (
-                      "沒有，可以直接開始"
-                    )}
-                  </dd>
-                </div>
-                {o.documents.length ? (
+                <dl className={s.details}>
                   <div>
-                    <dt>會讀到的文件</dt>
-                    <dd>{o.documents.join("、")}</dd>
+                    <dt>程度</dt>
+                    <dd>{page.difficulty}</dd>
                   </div>
-                ) : null}
-                <div>
-                  <dt>語言</dt>
-                  <dd>繁體中文</dd>
-                </div>
-              </dl>
+                  <div>
+                    <dt>時間</dt>
+                    <dd>
+                      {durationText(totals.minutes)}，{totals.modules} 個單元
+                    </dd>
+                  </div>
+                  <div>
+                    <dt>評量</dt>
+                    <dd>
+                      {totals.tasks} 個計分任務，共 {totals.scored} 題{totals.simulation ? "，加 1 個期末模擬" : ""}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt>建議先修</dt>
+                    <dd>
+                      {v.prerequisites.length ? (
+                        <>
+                          {v.prerequisites.map((p, i) => (
+                            <span key={p.slug}>
+                              {i ? "、" : ""}
+                              <Link href={`/line/${p.slug}`}>
+                                {p.name}
+                                {p.done ? "（已完成）" : ""}
+                              </Link>
+                            </span>
+                          ))}
+                          {info.prerequisiteNote ? <small>{info.prerequisiteNote}</small> : null}
+                        </>
+                      ) : (
+                        "沒有，可以直接開始"
+                      )}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt>語言</dt>
+                    <dd>繁體中文</dd>
+                  </div>
+                </dl>
+              </div>
             </section>
+
+            {/* ---- 試做一題 ---- */}
+            {v.sample ? (
+              <section id="try" className={s.section} aria-labelledby="try-h">
+                <h2 id="try-h" className={s.h2}>
+                  試做一題
+                </h2>
+                <p className={s.lead}>這是課程裡真的會出現的一題{v.sample.material ? "，旁邊是你要讀的文件" : ""}。選完按「對答案」，就會看到建議答案和原因。</p>
+                <SampleQuestion q={v.sample} signedIn={v.signedIn} startHref={startHref} />
+              </section>
+            ) : null}
 
             {/* ---- 課程大綱 ---- */}
             <section id="syllabus" className={s.section} aria-labelledby="syllabus-h">
               <h2 id="syllabus-h" className={s.h2}>
-                <span className={k.ring} aria-hidden="true" />
                 課程大綱
               </h2>
               <p className={s.lead}>
-                這門課有 {totals.modules} 個單元，建議照順序上。每個單元先問你一個情境問題，再做一份實作任務，作答後看解析和專家的想法。
+                {totals.modules} 個單元，建議照順序上。每個單元先問你一個情境問題，再做一份實作任務，作答後看解析和專家的想法。
               </p>
               <ol className={s.modules}>
                 {o.modules.map((m, i) => (
-                  <ModuleRow key={m.code} m={m} st={v.modules[i]} signedIn={v.signedIn} open={i === 0} />
+                  <ModuleRow key={m.code} m={m} st={v.modules[i]} signedIn={v.signedIn} open={v.signedIn ? v.modules[i].status === "current" : i === 0} first={i === 0} />
                 ))}
               </ol>
 
@@ -321,23 +341,26 @@ export function CoursePage({ v }: { v: CourseView }) {
             {/* ---- 評分方式 ---- */}
             <section id="grading" className={s.section} aria-labelledby="grading-h">
               <h2 id="grading-h" className={s.h2}>
-                <span className={k.ring} aria-hidden="true" />
                 評分方式
               </h2>
-              <ul className={s.policy}>
-                <li>
-                  <b>自動計分</b>每個實作任務交出後馬上計分，並排顯示你的答案和建議答案。
-                </li>
-                <li>
-                  <b>及格標準寫在每個任務上</b>達到標準就是通過。
-                </li>
-                <li>
-                  <b>可以重做</b>成績表顯示最高分。第二次作答後，就算沒達標，單元也會記為完成，並標示「未達標」。
-                </li>
-                <li>
-                  <b>完成課程</b>完成每個必修單元{totals.simulation ? "和期末模擬" : "和最後一個單元"}，就會得到完成紀錄。
-                </li>
-              </ul>
+              <dl className={s.policy}>
+                <div>
+                  <dt>自動計分</dt>
+                  <dd>每個實作任務交出後馬上計分，並排顯示你的答案和建議答案。</dd>
+                </div>
+                <div>
+                  <dt>及格標準</dt>
+                  <dd>寫在每個任務上。達到標準就是通過；{pct(0.9)} 以上是精熟。</dd>
+                </div>
+                <div>
+                  <dt>可以重做</dt>
+                  <dd>成績表顯示最高分。第二次作答後，就算沒達標，單元也會記為完成，並標示「未達標」。</dd>
+                </div>
+                <div>
+                  <dt>完成課程</dt>
+                  <dd>完成每個必修單元{totals.simulation ? "和期末模擬" : "和最後一個單元"}，就會得到完成紀錄。</dd>
+                </div>
+              </dl>
 
               <div className={s.tableWrap}>
                 <table className={s.table}>
@@ -379,8 +402,8 @@ export function CoursePage({ v }: { v: CourseView }) {
               </div>
 
               {o.stepTypes.length ? (
-                <>
-                  <h3 className={s.h3}>每種題型怎麼計分</h3>
+                <details className={s.fold}>
+                  <summary>每種題型怎麼計分</summary>
                   <dl className={s.rubric}>
                     {o.stepTypes.map((t) => (
                       <div key={t}>
@@ -389,18 +412,12 @@ export function CoursePage({ v }: { v: CourseView }) {
                       </div>
                     ))}
                   </dl>
-                </>
-              ) : null}
-
-              {o.modules.some((m) => m.selfCheck.length) ? (
-                <>
-                  <h3 className={s.h3}>簡答題的檢核項目</h3>
                   {o.modules
                     .filter((m) => m.selfCheck.length)
                     .map((m) => (
                       <div key={m.code} className={s.check}>
                         <p>
-                          單元 {m.index}：{m.title}
+                          單元 {m.index}「{m.title}」簡答題的檢核項目
                         </p>
                         <ul>
                           {m.selfCheck.map((c) => (
@@ -409,7 +426,7 @@ export function CoursePage({ v }: { v: CourseView }) {
                         </ul>
                       </div>
                     ))}
-                </>
+                </details>
               ) : null}
 
               {v.tests.map((t) => (
@@ -424,39 +441,43 @@ export function CoursePage({ v }: { v: CourseView }) {
             {/* ---- 完成之後 ---- */}
             <section id="outcomes" className={s.section} aria-labelledby="outcomes-h">
               <h2 id="outcomes-h" className={s.h2}>
-                <span className={k.ring} aria-hidden="true" />
                 完成之後
               </h2>
-              <div className={s.outcomes}>
-                <div className={s.outcome}>
-                  <h3>
-                    <Icon name="award" size={20} />
-                    完成紀錄
-                  </h3>
+              <div className={s.after}>
+                <div className={s.afterText}>
+                  <h3 className={s.h3}>完成紀錄</h3>
                   <p>{v.certificate.earned ? `你已經完成${line.name}。紀錄上有你走過的每個單元和期末的結果。` : "完成每個必修單元後，會有一份列出每個單元和期末結果的完成紀錄。"}</p>
                   {v.certificate.earned ? (
                     <Link href={v.certificate.href} className={s.textLink}>
                       查看完成紀錄
                     </Link>
                   ) : null}
-                  <p className={s.fine}>{DISCLAIMER}</p>
-                </div>
-                <div className={s.outcome}>
-                  <h3>
-                    <Icon name="doc" size={20} />
-                    學習紀錄用語
-                  </h3>
+                  <h3 className={s.h3}>學習紀錄用語</h3>
                   {v.snippet ? <blockquote>{v.snippet}</blockquote> : <p>完成任務後，這裡會用你做過的內容寫出一段可以改寫的文字，方便整理自己的學習紀錄。</p>}
                   {/* TODO-VERIFY (D3): not confirmed that an online self-study record
                       counts as a 學習歷程 多元表現 item (VERIFIED.md item 9). */}
-                  <p className={s.fine}>能不能放進學習歷程檔案，請先問學校的老師。</p>
+                  <p className={s.fine}>能不能放進學習歷程檔案，請先問學校的老師。{DISCLAIMER}</p>
+                </div>
+                {/* What the record lists, drawn from this course's own modules. */}
+                <div className={s.record} aria-hidden="true">
+                  <p className={s.recordHead}>
+                    <span className={k.plate}>{info.code}</span>
+                    完成紀錄
+                  </p>
+                  <p className={s.recordName}>{line.name}</p>
+                  <ul>
+                    {o.modules.map((m, i) => (
+                      <li key={m.code} data-done={v.signedIn && v.modules[i].status === "done" ? "" : undefined}>
+                        <span>{m.title}</span>
+                        <i />
+                      </li>
+                    ))}
+                  </ul>
+                  <p className={s.recordFoot}>錢途 Finline · 學習練習的紀錄</p>
                 </div>
               </div>
               <details className={s.fold}>
-                <summary>
-                  <Icon name="chat" size={20} />
-                  面試小提示：3 個問題和回答方向
-                </summary>
+                <summary>面試小提示：3 個問題和回答方向</summary>
                 <ol className={s.qa}>
                   {page.interview.map((q) => (
                     <li key={q.q}>
@@ -480,7 +501,6 @@ export function CoursePage({ v }: { v: CourseView }) {
             {/* ---- 給老師與合作單位 ---- */}
             <section className={s.section} aria-labelledby="teach-h">
               <h2 id="teach-h" className={s.h2}>
-                <span className={k.ring} aria-hidden="true" />
                 給老師與合作單位
               </h2>
               <dl className={s.details}>
@@ -492,9 +512,7 @@ export function CoursePage({ v }: { v: CourseView }) {
                 </div>
                 <div>
                   <dt>課堂時間</dt>
-                  <dd>
-                    約 {periods} 節課（每節 45 分鐘，依任務時間估算）
-                  </dd>
+                  <dd>約 {periods} 節課（每節 45 分鐘，依任務時間估算）</dd>
                 </div>
                 <div>
                   <dt>評量</dt>
@@ -517,7 +535,6 @@ export function CoursePage({ v }: { v: CourseView }) {
             {/* ---- 常見問題 ---- */}
             <section id="faq" className={s.section} aria-labelledby="faq-h">
               <h2 id="faq-h" className={s.h2}>
-                <span className={k.ring} aria-hidden="true" />
                 常見問題
               </h2>
               <div className={s.faq}>
@@ -537,7 +554,7 @@ export function CoursePage({ v }: { v: CourseView }) {
             </section>
           </div>
 
-          <aside className={s.aside} aria-label={v.signedIn ? "你的進度" : "課程摘要"}>
+          <aside className={`${k.glass} ${s.aside}`} aria-label={v.signedIn ? "你的進度" : "課程摘要"}>
             {v.signedIn ? (
               <>
                 <div className={s.progressHead}>
@@ -546,12 +563,16 @@ export function CoursePage({ v }: { v: CourseView }) {
                     {done} / {totals.modules} 個單元
                   </b>
                 </div>
-                <div className={`${k.dots} ${s.asideDots}`} role="img" aria-label={`完成 ${done} / ${totals.modules} 個單元`}>
-                  {o.modules.map((m, i) => (
-                    <span key={m.code} data-done={v.modules[i].status === "done" || undefined} />
-                  ))}
+                <div className={s.meter} role="img" aria-label={`完成 ${done} / ${totals.modules} 個單元`}>
+                  <span style={{ width: pct(totals.modules ? done / totals.modules : 0) }} />
                 </div>
-                {v.next ? <p className={s.nextLine}>下一個：單元 {v.next.index}　{v.next.title}</p> : v.complete ? <p className={s.nextLine}>你已經完成這門課。</p> : null}
+                {v.next ? (
+                  <p className={s.nextLine}>
+                    下一個：單元 {v.next.index}　{v.next.title}
+                  </p>
+                ) : v.complete ? (
+                  <p className={s.nextLine}>你已經完成這門課。</p>
+                ) : null}
               </>
             ) : (
               <p className={s.asideTitle}>這門課包含</p>
@@ -590,15 +611,16 @@ export function CoursePage({ v }: { v: CourseView }) {
   );
 }
 
-function ModuleRow({ m, st, signedIn, open }: { m: OutlineModule; st: ModuleState; signedIn: boolean; open: boolean }) {
+function ModuleRow({ m, st, signedIn, open, first }: { m: OutlineModule; st: ModuleState; signedIn: boolean; open: boolean; first: boolean }) {
   const inc = includes(m);
   const label = m.simulation ? "期末模擬" : m.final ? "期末任務" : st.optional ? "選修" : null;
+  const grade = signedIn ? moduleGrade(m, st.status === "done", st.best) : null;
   return (
     <li className={s.module} id={`m${m.index}`} data-state={signedIn ? st.status : "next"} data-final={m.final || undefined}>
       <span className={s.modNo} aria-hidden="true">
-        {signedIn && st.status === "done" ? <Icon name="check" size={16} strokeWidth={3} /> : m.index}
+        {signedIn && st.status === "done" ? <Icon name="check" size={12} strokeWidth={3} /> : null}
       </span>
-      <details className={s.modCard} open={open || st.status === "current"}>
+      <details open={open}>
         <summary>
           <span className={s.modHead}>
             <span className={s.modKicker}>
@@ -608,6 +630,11 @@ function ModuleRow({ m, st, signedIn, open }: { m: OutlineModule; st: ModuleStat
             </span>
             <span className={s.modTitle}>{m.title}</span>
           </span>
+          {grade && grade.level !== "none" ? (
+            <span className={k.level} data-level={grade.level}>
+              {LEVEL_NAME[grade.level]}
+            </span>
+          ) : null}
           <span className={s.modMins}>{m.minutes} 分鐘</span>
           <Icon name="down" size={18} />
         </summary>
@@ -618,7 +645,9 @@ function ModuleRow({ m, st, signedIn, open }: { m: OutlineModule; st: ModuleStat
           <ul className={s.items}>
             {m.items.map((it, i) => (
               <li key={i}>
-                <span className={s.itemType} data-type={it.type}>{ITEM_TYPES[it.type].name}</span>
+                <span className={s.itemType} data-type={it.type}>
+                  {ITEM_TYPES[it.type].name}
+                </span>
                 <span className={s.itemTitle}>
                   {it.title}
                   {it.type === "task" && m.questions ? (
@@ -632,7 +661,7 @@ function ModuleRow({ m, st, signedIn, open }: { m: OutlineModule; st: ModuleStat
               </li>
             ))}
           </ul>
-          {open && m.cards.length ? (
+          {first && m.cards.length ? (
             <div className={s.preview}>
               <p className={s.previewLabel}>試看：這個單元的重點概念</p>
               <div className={s.cards}>
@@ -642,13 +671,9 @@ function ModuleRow({ m, st, signedIn, open }: { m: OutlineModule; st: ModuleStat
               </div>
             </div>
           ) : null}
-          {st.href ? (
-            <Link href={signedIn ? st.href : "/signup"} className={k.ghost}>
+          {st.href || !signedIn ? (
+            <Link href={signedIn ? st.href! : "/signup"} className={k.ghost}>
               {!signedIn ? "註冊後開始這個單元" : st.status === "done" ? "再做一次" : "開始這個單元"}
-            </Link>
-          ) : !signedIn ? (
-            <Link href={"/signup"} className={k.ghost}>
-              註冊後開始這個單元
             </Link>
           ) : null}
         </div>

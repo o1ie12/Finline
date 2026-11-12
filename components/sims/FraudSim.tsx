@@ -151,11 +151,11 @@ export default function FraudSim({
           <button
             type="button"
             onClick={playAgain}
-            className="inline-flex items-center justify-center rounded-[14px] border-2 border-ink bg-surface px-5 py-3 text-base font-bold text-ink shadow-[0_4px_0_var(--ink)] active:translate-y-1 active:shadow-none"
+            className="inline-flex items-center justify-center rounded-xl border border-hairline bg-surface px-5 py-3 text-base font-medium hover:border-ink"
           >
             再玩一次
           </button>
-          <HomeLink className="inline-flex items-center justify-center rounded-[14px] border-2 border-ink bg-[var(--signal)] px-5 py-3 text-base font-extrabold text-ink shadow-[0_4px_0_var(--ink)] active:translate-y-1 active:shadow-none hover:-translate-y-0.5">
+          <HomeLink className="inline-flex items-center justify-center rounded-xl bg-ink px-5 py-3 text-base font-semibold text-white hover:-translate-y-0.5">
             回到我的路線圖
           </HomeLink>
         </div>
@@ -175,7 +175,7 @@ export default function FraudSim({
         <button
           type="button"
           onClick={() => setPhase("playing")}
-          className="inline-flex w-full items-center justify-center rounded-[14px] border-2 border-ink bg-[var(--signal)] px-6 py-4 text-base font-extrabold text-ink shadow-[0_4px_0_var(--ink)] active:translate-y-1 active:shadow-none transition-transform hover:-translate-y-0.5"
+          className="inline-flex w-full items-center justify-center rounded-xl bg-ink px-6 py-4 text-base font-semibold text-white transition-transform hover:-translate-y-0.5"
         >
           開始判讀
         </button>
@@ -222,7 +222,7 @@ export default function FraudSim({
                 type="button"
                 onClick={next}
                 disabled={index >= FRAUD_CARDS.length - 1}
-                className="inline-flex w-full items-center justify-center rounded-[14px] border-2 border-ink bg-[var(--signal)] px-6 py-3 text-base font-extrabold text-ink shadow-[0_4px_0_var(--ink)] active:translate-y-1 active:shadow-none transition-transform hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50"
+                className="inline-flex w-full items-center justify-center rounded-xl bg-ink px-6 py-3 text-base font-semibold text-white transition-transform hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {index >= FRAUD_CARDS.length - 1 ? "等待結算…" : "下一則 →"}
               </button>

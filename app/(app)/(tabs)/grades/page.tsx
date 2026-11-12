@@ -5,7 +5,7 @@ import { buildLineStations } from "@/lib/buildStations";
 import { programOutline } from "@/lib/curriculum";
 import { getLatestSimulationRunsByLine, getLineCompletions, getProgress, getTaskResults } from "@/lib/db";
 import { lineVars } from "@/lib/design/lineVars";
-import { bestAttempts, moduleGrade, percent } from "@/lib/grades";
+import { LEVEL_NAME, bestAttempts, moduleGrade, percent } from "@/lib/grades";
 import { effectiveMode } from "@/lib/modeModel";
 import { allLineStatuses } from "@/lib/progressModel";
 import { getCurrentStudent } from "@/lib/session";
@@ -100,6 +100,7 @@ export default async function GradesPage() {
                         <th scope="col">評量</th>
                         <th scope="col">及格標準</th>
                         <th scope="col">最高分</th>
+                        <th scope="col">程度</th>
                         <th scope="col">
                           <span className="sr-only">動作</span>
                         </th>
@@ -127,6 +128,11 @@ export default async function GradesPage() {
                             </span>
                             {r.best && r.best.attempts > 1 ? <small>作答 {r.best.attempts} 次</small> : null}
                           </td>
+                          <td>
+                            <span className={k.level} data-level={r.grade.level}>
+                              {LEVEL_NAME[r.grade.level]}
+                            </span>
+                          </td>
                           <td>{r.href ? <Link href={r.href}>{r.done || r.best ? "重做" : "開始"}</Link> : null}</td>
                         </tr>
                       ))}
@@ -135,7 +141,7 @@ export default async function GradesPage() {
                 </div>
               </section>
             ))}
-            <p className={s.fine}>第二次作答後沒達到及格標準，單元會記為完成並標示「未達標」，讓你可以繼續往下上。</p>
+            <p className={s.fine}>程度看最高分：達到及格標準是「達標」，90% 以上是「精熟」，還沒到是「練習中」。第二次作答後沒達標，單元會記為完成並標示「未達標」，讓你可以繼續往下上。</p>
           </>
         ) : (
           <section className={s.emptyCard}>

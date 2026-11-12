@@ -51,7 +51,7 @@ export default function GoogleSignInButton({
     <div>
       <a
         href={`/api/auth/google/start?intent=${intent}`}
-        className={`inline-flex w-full items-center justify-center gap-2.5 rounded-[14px] border-2 border-ink bg-surface px-6 py-3.5 text-base font-extrabold text-ink shadow-[0_4px_0_var(--ink)] transition-transform hover:-translate-y-0.5 active:translate-y-1 active:shadow-none ${className}`}
+        className={`inline-flex w-full items-center justify-center gap-2.5 rounded-xl border border-hairline bg-surface px-6 py-3.5 text-base font-semibold text-ink transition-colors hover:border-ink ${className}`}
       >
         <GoogleMark />
         {label}

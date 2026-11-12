@@ -1,0 +1,183 @@
+/*
+  試做一題 (2026-11-12): the document on a tinted desk, the question beside
+  it. The one raised card on the course page. --line-soft from the wrapper.
+*/
+.wrap {
+  /* side by side only where the card itself is wide enough */
+  container-type: inline-size;
+}
+.sample {
+  display: grid;
+  border-radius: 18px;
+  background: var(--surface);
+  box-shadow: 0 0 0 1px var(--hairline), 0 18px 44px rgba(20, 23, 26, 0.08);
+  overflow: hidden;
+}
+@container (min-width: 760px) {
+  .sample[data-has-doc] {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+  .sample[data-has-doc] .desk {
+    max-height: 620px;
+  }
+}
+/* the desk the document lies on */
+.desk {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 24px 20px;
+  max-height: 380px;
+  overflow: auto;
+  background: var(--line-soft);
+}
+.paper {
+  width: 100%;
+  max-width: 440px;
+  border-radius: 10px;
+  box-shadow: 0 1px 2px rgba(20, 23, 26, 0.08), 0 16px 36px rgba(20, 23, 26, 0.14);
+}
+.ask {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 26px 24px 26px;
+  min-width: 0;
+}
+@media (min-width: 860px) {
+  .ask {
+    padding: 32px 32px 30px;
+  }
+}
+.from {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px;
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--ink-2);
+}
+.from b {
+  font-weight: 700;
+  color: var(--ink);
+}
+.from small {
+  font-size: 0.75rem;
+  color: var(--ink-3);
+}
+.message {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.65;
+  color: var(--ink-2);
+}
+.group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+.prompt {
+  padding: 0;
+  margin-bottom: 6px;
+  font: 700 1.1875rem/1.5 var(--font-voice);
+}
+.sub {
+  padding: 0;
+  margin-bottom: 2px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--ink-2);
+}
+.opt {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  min-height: 48px;
+  padding: 12px 14px;
+  box-sizing: border-box;
+  border-radius: 12px;
+  box-shadow: inset 0 0 0 1px var(--hairline-strong);
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  cursor: pointer;
+  transition: background-color 120ms var(--ease-out), box-shadow 120ms var(--ease-out);
+}
+.opt input {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  margin: 2px 0 0;
+  accent-color: var(--ink);
+}
+.opt:has(input:checked) {
+  box-shadow: inset 0 0 0 2px var(--ink);
+  background: var(--surface-2);
+}
+.opt:has(input:focus-visible) {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+@media (hover: hover) {
+  .group:not(:disabled) .opt:hover {
+    background: var(--surface-2);
+  }
+}
+.group:disabled .opt {
+  cursor: default;
+}
+.opt[data-mark="right"] {
+  box-shadow: inset 0 0 0 2px var(--good);
+  background: var(--good-soft);
+}
+.opt[data-mark="wrong"] {
+  box-shadow: inset 0 0 0 2px var(--warn);
+  background: var(--warn-soft);
+}
+.next {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 16px;
+  margin-top: 4px;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: var(--ink-3);
+}
+.next [data-off] {
+  background: var(--track);
+  color: var(--ink-3);
+  cursor: default;
+}
+.result {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px 18px 18px;
+  border-radius: 14px;
+  background: var(--warn-soft);
+}
+.result[data-full] {
+  background: var(--good-soft);
+}
+.verdict {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font: 700 1.0625rem/1.4 var(--font-voice);
+  color: var(--warn);
+}
+.result[data-full] .verdict {
+  color: var(--good);
+}
+.why {
+  margin: 0;
+  font-size: 0.9375rem;
+  line-height: 1.65;
+  color: var(--ink);
+}

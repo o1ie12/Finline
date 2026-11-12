@@ -108,7 +108,7 @@ export default function SignupForm({ googleLogin = null }: { googleLogin?: React
   if (code) {
     return (
       <div
-        className="rounded-[22px] border-2 border-ink bg-white p-6 sm:p-8"
+        className="rounded-[32px] border border-white/80 bg-white/70 p-6 shadow-[inset_0_1px_0_rgba(255,255,255,.95),0_18px_48px_rgba(20,23,26,.09)] [backdrop-filter:var(--glass-blur)] sm:p-8"
         aria-live="polite"
       >
         <p className="font-display text-sm font-semibold text-line-3">
@@ -126,7 +126,7 @@ export default function SignupForm({ googleLogin = null }: { googleLogin?: React
           <button
             type="button"
             onClick={copyCode}
-            className="shrink-0 rounded-[14px] border-2 border-ink bg-surface px-3 py-2 text-sm font-bold text-ink shadow-[0_4px_0_var(--ink)] active:translate-y-1 active:shadow-none"
+            className="shrink-0 rounded-lg border border-hairline bg-surface px-3 py-2 text-sm font-medium hover:border-ink"
           >
             {copied ? "已複製" : "複製"}
           </button>
@@ -136,7 +136,7 @@ export default function SignupForm({ googleLogin = null }: { googleLogin?: React
             then rides on to 今天. */}
         <Link
           href="/today"
-          className="mt-6 inline-flex h-14 w-full items-center justify-center rounded-[14px] border-2 border-ink bg-[var(--signal)] px-6 text-[17px] font-extrabold text-ink shadow-[0_4px_0_var(--ink)] transition-transform hover:-translate-y-0.5 active:translate-y-1 active:shadow-none"
+          className="mt-6 inline-flex w-full items-center justify-center rounded-xl bg-ink px-6 py-3.5 text-base font-semibold text-white transition-transform hover:-translate-y-0.5"
         >
           開始上課
         </Link>
@@ -149,7 +149,7 @@ export default function SignupForm({ googleLogin = null }: { googleLogin?: React
     <div className="space-y-6">
       <form
         onSubmit={handleCreate}
-        className="rounded-[22px] border-2 border-ink bg-white p-6 sm:p-8"
+        className="rounded-[32px] border border-white/80 bg-white/70 p-6 shadow-[inset_0_1px_0_rgba(255,255,255,.95),0_18px_48px_rgba(20,23,26,.09)] [backdrop-filter:var(--glass-blur)] sm:p-8"
         noValidate
       >
         <h2 className="text-[22px] font-extrabold">你的學習卡</h2>
@@ -171,7 +171,7 @@ export default function SignupForm({ googleLogin = null }: { googleLogin?: React
               autoComplete="off"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="mt-2 h-[52px] w-full rounded-[12px] border-2 border-ink bg-white px-4 text-base outline-none focus:border-[#0070bd]"
+              className="mt-2 h-[52px] w-full rounded-[14px] border border-black/[.14] bg-white px-4 text-base outline-none focus:border-[#0070bd]"
               placeholder="例如：小明"
             />
           </div>
@@ -188,7 +188,7 @@ export default function SignupForm({ googleLogin = null }: { googleLogin?: React
               autoComplete="off"
               value={school}
               onChange={(e) => setSchool(e.target.value)}
-              className="mt-2 h-[52px] w-full rounded-[12px] border-2 border-ink bg-white px-4 text-base outline-none focus:border-[#0070bd]"
+              className="mt-2 h-[52px] w-full rounded-[14px] border border-black/[.14] bg-white px-4 text-base outline-none focus:border-[#0070bd]"
               placeholder="例如：市立第一高中"
             />
           </div>
@@ -202,7 +202,7 @@ export default function SignupForm({ googleLogin = null }: { googleLogin?: React
               name="grade"
               value={grade}
               onChange={(e) => setGrade(e.target.value)}
-              className="mt-2 h-[52px] w-full rounded-[12px] border-2 border-ink bg-white px-4 text-base outline-none focus:border-[#0070bd]"
+              className="mt-2 h-[52px] w-full rounded-[14px] border border-black/[.14] bg-white px-4 text-base outline-none focus:border-[#0070bd]"
             >
               {GRADES.map((g) => (
                 <option key={g} value={g}>
@@ -225,7 +225,7 @@ export default function SignupForm({ googleLogin = null }: { googleLogin?: React
         <button
           type="submit"
           disabled={submitting}
-          className="mt-6 inline-flex h-14 w-full items-center justify-center rounded-[14px] border-2 border-ink bg-[var(--signal)] px-6 text-[17px] font-extrabold text-ink shadow-[0_4px_0_var(--ink)] transition-transform hover:-translate-y-0.5 active:translate-y-1 active:shadow-none disabled:cursor-not-allowed disabled:opacity-60"
+          className="mt-6 inline-flex h-14 w-full items-center justify-center rounded-full bg-ink px-6 text-[17px] font-bold text-white transition-transform hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60"
         >
           {submitting ? "建立中…" : "建立並開始上課"}
         </button>
@@ -234,7 +234,7 @@ export default function SignupForm({ googleLogin = null }: { googleLogin?: React
       <form
         id="login"
         onSubmit={handleResume}
-        className="rounded-[22px] border-2 border-ink bg-white p-6 sm:p-8"
+        className="rounded-[32px] border border-white/80 bg-white/70 p-6 shadow-[inset_0_1px_0_rgba(255,255,255,.95),0_18px_48px_rgba(20,23,26,.09)] [backdrop-filter:var(--glass-blur)] sm:p-8"
         noValidate
       >
         <h2 className="text-lg font-bold">已經有代碼了？</h2>
@@ -253,13 +253,13 @@ export default function SignupForm({ googleLogin = null }: { googleLogin?: React
             maxLength={6}
             value={resumeCode}
             onChange={(e) => setResumeCode(e.target.value.toUpperCase())}
-            className="money h-[52px] w-full flex-1 rounded-[12px] border-2 border-ink bg-white px-4 text-lg tracking-[0.2em] outline-none focus:border-[#0070bd]"
+            className="money h-[52px] w-full flex-1 rounded-[14px] border border-black/[.14] bg-white px-4 text-lg tracking-[0.2em] outline-none focus:border-[#0070bd]"
             placeholder="輸入 6 碼"
           />
           <button
             type="submit"
             disabled={resuming}
-            className="h-[52px] shrink-0 rounded-[14px] border-2 border-ink bg-surface px-6 text-base font-extrabold shadow-[0_4px_0_var(--ink)] hover:-translate-y-0.5 active:translate-y-1 active:shadow-none disabled:opacity-60"
+            className="h-[52px] shrink-0 rounded-full border border-ink bg-surface px-6 text-base font-semibold hover:bg-ink hover:text-white disabled:opacity-60"
           >
             {resuming ? "查詢中…" : "找回進度"}
           </button>

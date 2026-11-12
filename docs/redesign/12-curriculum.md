@@ -149,3 +149,56 @@ layouts are as before.
 The owner's first reaction was "more glass, less neobrutalism", then "not
 that bad, try this for now". Treat the ink edges and hard shadows as on
 trial, not settled.
+
+## Third pass, same day: quiet, like a finance dashboard
+
+The signage look shipped for a few hours and read as loud ("kindergarten").
+The owner asked for a professional site a high schooler would still use:
+calm, glass on chrome, real documents on the page, a playable preview, fewer
+boxes, and all seven changes from the comparison against other platforms
+(Coursera, Khan, Brilliant, Codecademy, Duolingo, Forage, 均一, NGPF, Zogo;
+then Stripe, Mercury, Wealthsimple, Linear for the dashboard feel).
+
+What the look is now:
+
+- **Surfaces.** White with a hairline and the faintest lift. Glass only on
+  chrome that floats over content: the sidebar, the sticky section links,
+  the summary card, the public bar. No ink outlines, no hard shadows.
+- **One button:** ink. The yellow is an accent (a 練習中 dot, an item
+  marker), not a button.
+- **Color is the line's own, spent in few places:** the code plate, the
+  route (dots and lines), a soft tint behind a document, a tile's top.
+- **The artwork is the product.** `DocArt` draws a task's real document
+  (the same component a station uses) on the course hero and the catalogue
+  header. No stock imagery.
+- **Kept from before:** the dark platform sign, the route strip.
+
+What was added:
+
+- **試做一題** (`lib/coursePreview.ts`, `POST /api/preview`,
+  `components/course/SampleQuestion.tsx`): one real scored question per
+  course, answerable on the course page without signing up. The browser gets
+  the question without its answer, as a station does; the answer comes back
+  after an attempt, for that one question only. Nothing is stored.
+- **Mastery levels** (`lib/grades.ts`): 練習中 / 達標 / 精熟 (90%) from the
+  best score, on the syllabus and the grades page.
+- **A finish mark:** a 已完成 stamp on a finished course's hero.
+- **Catalogue filter by life moment** (`MOMENTS` in `content/curriculum.ts`):
+  第一份打工, 準備上大學, 搬出去住, 開始存錢和投資, 不想被騙.
+- **Fewer boxes.** The course page is one white sheet with ruled sections;
+  the core courses are a path (they are a sequence), electives are tiles.
+- **Train loader** (`components/loading/TrainLoader.tsx`, the route groups'
+  `loading.tsx` for `(app)` and `(game)`).
+- **People and proof placeholders** on the landing (FL05): frames for team
+  photos and partner marks, with no names. Partner organisations are not
+  named anywhere: `check:names` still enforces that until each has agreed in
+  writing.
+
+The shared styles changed in the second pass (buttons, tab bar, page header,
+lesson screen, game shell, landing, sign-up, the older pages' buttons) are
+back to their calm versions, keeping the course-platform wording and the
+cut-off fix.
+
+Verified: 201 tests, the checks, lint, `next build`; headless screenshots of
+the course page (signed out and in), catalogue, 學習, 成績, the landing and a
+phone-width course page; the sample question answered end to end.

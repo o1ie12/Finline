@@ -164,7 +164,7 @@ export default function Quiz({
           <button
             type="submit"
             disabled={!allAnswered}
-            className="inline-flex items-center justify-center rounded-[14px] border-2 border-ink bg-[var(--signal)] px-6 py-3 text-base font-extrabold text-ink shadow-[0_4px_0_var(--ink)] active:translate-y-1 active:shadow-none transition-transform hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50"
+            className="inline-flex items-center justify-center rounded-xl bg-ink px-6 py-3 text-base font-semibold text-white transition-transform hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50"
           >
             送出答案
           </button>

@@ -5,6 +5,7 @@ import { CoursePage, type CourseView, type ModuleState } from "@/components/cour
 import { TabFrame } from "@/components/ui/TabFrame";
 import { LINE_PAGES } from "@/content/linePages";
 import { buildLineStations } from "@/lib/buildStations";
+import { sampleQuestion } from "@/lib/coursePreview";
 import { courseOutline } from "@/lib/curriculum";
 import { getLatestSimulationRunForLine, getLineCompletions, getLineTests, getProgress, getTaskResults } from "@/lib/db";
 import { lineVars } from "@/lib/design/lineVars";
@@ -136,6 +137,7 @@ export default async function LinePage({ params }: { params: Promise<{ slug: str
     branches: branchesForLine(slug).map((b) => ({ title: b.title, href: `/line/${slug}/branch/${b.id}` })),
     tests: testCards,
     unlocks: LIFE_SIM && content ? { text: content.unlocks, on: status.complete } : null,
+    sample: sampleQuestion(slug),
   };
 
   const body = (

@@ -245,7 +245,37 @@ export function Landing() {
         </dl>
       </section>
 
-      {/* FL05 the fare gate */}
+      {/* FL05 who is behind it. Placeholders: photos, names and partner
+          organisations go here once each is supplied and has agreed in
+          writing (11 ABOUT-1); nothing is claimed until then. */}
+      <section className={s.section} aria-labelledby="who-h">
+        <SectionTag code="FL05" color="var(--metro-yellow)">
+          <h2 id="who-h" className={s.h2}>
+            誰在做錢途
+          </h2>
+        </SectionTag>
+        <p className={s.sub}>團隊和合作單位的介紹整理中，照片和名字確認後會放在這裡。</p>
+        <ul className={s.people}>
+          {["團隊成員", "團隊成員", "顧問"].map((role, i) => (
+            <li key={i}>
+              <span className={s.photo} aria-hidden="true" />
+              <b>{role}</b>
+              <small>照片與介紹待補</small>
+            </li>
+          ))}
+          <li className={s.partners}>
+            <b>合作單位</b>
+            <span aria-hidden="true">
+              <i />
+              <i />
+              <i />
+            </span>
+            <small>標誌待補，取得同意後放上</small>
+          </li>
+        </ul>
+      </section>
+
+      {/* FL06 the fare gate */}
       <section className={`${s.section} ${s.last}`} aria-labelledby="go-h">
         <FareGate />
       </section>

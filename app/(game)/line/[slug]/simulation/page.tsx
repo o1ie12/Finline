@@ -193,13 +193,13 @@ export default async function LineSimulationPage({
             <div className="mt-5 flex flex-col gap-3 sm:flex-row">
               <Link
                 href="/signup"
-                className="inline-flex items-center justify-center rounded-[14px] border-2 border-ink bg-[var(--signal)] px-6 py-3 text-base font-extrabold text-ink shadow-[0_4px_0_var(--ink)] active:translate-y-1 active:shadow-none hover:-translate-y-0.5"
+                className="inline-flex items-center justify-center rounded-xl bg-ink px-6 py-3 text-base font-semibold text-white hover:-translate-y-0.5"
               >
                 建立帳號
               </Link>
               <Link
                 href={`/line/${line.slug}`}
-                className="inline-flex items-center justify-center rounded-[14px] border-2 border-ink bg-surface px-6 py-3 text-base font-bold text-ink shadow-[0_4px_0_var(--ink)] active:translate-y-1 active:shadow-none"
+                className="inline-flex items-center justify-center rounded-xl border border-hairline bg-surface px-6 py-3 text-base font-medium hover:border-ink"
               >
                 先看看這條線
               </Link>

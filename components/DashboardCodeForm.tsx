@@ -67,7 +67,7 @@ export default function DashboardCodeForm() {
         <button
           type="submit"
           disabled={loading}
-          className="shrink-0 rounded-[14px] border-2 border-ink bg-[var(--signal)] px-5 py-2.5 text-base font-extrabold text-ink shadow-[0_4px_0_var(--ink)] active:translate-y-1 active:shadow-none hover:-translate-y-0.5 disabled:opacity-60"
+          className="shrink-0 rounded-lg bg-ink px-5 py-2.5 text-base font-semibold text-white hover:-translate-y-0.5 disabled:opacity-60"
         >
           {loading ? "查詢中…" : "查看進度"}
         </button>

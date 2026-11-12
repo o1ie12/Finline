@@ -220,6 +220,18 @@ export const COURSES: CourseInfo[] = [
   },
 ];
 
+/**
+ * Moments in a student's life and the courses that help with each: the
+ * catalogue's filter. 全部 is the program in its own order.
+ */
+export const MOMENTS: { id: string; name: string; courses: LineSlug[] }[] = [
+  { id: "job", name: "第一份打工", courses: ["zhiya", "baoshui", "baoxian", "zhapian"] },
+  { id: "college", name: "準備上大學", courses: ["xuedai", "qixin", "cunqian", "zuwu"] },
+  { id: "moveout", name: "搬出去住", courses: ["zuwu", "qixin", "baoxian"] },
+  { id: "grow", name: "開始存錢和投資", courses: ["cunqian", "xinyong", "touzi"] },
+  { id: "safe", name: "不想被騙", courses: ["zhapian", "xinyong", "baoxian"] },
+];
+
 export function courseInfo(slug: string): CourseInfo | undefined {
   return COURSES.find((c) => c.slug === slug);
 }

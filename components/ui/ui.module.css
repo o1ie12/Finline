@@ -129,7 +129,6 @@
 
 /* ---------- E7.3 buttons ---------- */
 .btn {
-  /* 2026-11-12: a real button: an ink edge it is pressed down onto. */
   position: relative;
   display: inline-flex;
   align-items: center;
@@ -139,46 +138,43 @@
   width: 100%;
   height: 52px;
   padding: 0 var(--s-5);
-  border: 2px solid var(--ink);
-  border-radius: 14px;
-  box-shadow: 0 4px 0 var(--ink);
-  font: 800 1.0625rem/1 var(--font-voice);
+  border: 0;
+  border-radius: var(--r-md);
+  font: 700 1.0625rem/1 var(--font-ui);
   text-decoration: none;
   cursor: pointer;
-  transition: transform 90ms var(--ease-out), box-shadow 90ms var(--ease-out);
+  transition: transform var(--dur-press) var(--spring-snappy), background-color var(--dur-press) var(--ease-out);
 }
 .btn:active {
-  transform: translateY(4px);
-  box-shadow: 0 0 0 var(--ink);
+  transform: scale(0.97);
 }
 .primary {
-  /* the platform-edge yellow: the one action color */
-  background: var(--go-bg, var(--signal));
-  color: var(--ink);
+  background: var(--ink);
+  color: var(--ink-inv);
 }
 .primary:active {
-  background: var(--go-bg, var(--signal));
+  background: color-mix(in oklab, var(--ink), #fff 14%);
 }
 @media (hover: hover) {
   .primary:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 5px 0 var(--ink);
+    background: color-mix(in oklab, var(--ink), #fff 8%);
   }
 }
 .secondary {
-  background: var(--surface);
+  background: var(--surface-2);
+  box-shadow: inset 0 0 0 1px var(--hairline-strong);
   color: var(--ink);
 }
 .secondary:active {
-  background: var(--surface-2);
+  background: var(--track);
 }
 .destructive {
-  background: var(--surface);
+  background: var(--surface-2);
+  box-shadow: inset 0 0 0 1px var(--hairline-strong);
   color: var(--bad);
 }
 .btn[aria-disabled="true"] {
   background: var(--track);
-  border-color: var(--ink-3);
   box-shadow: none;
   color: var(--ink-3);
   cursor: default;
@@ -617,9 +613,11 @@
   height: 66px;
   padding: 6px;
   box-sizing: border-box;
-  border-radius: 22px;
-  background: var(--surface);
-  border: 2px solid var(--ink);
+  border-radius: 33px;
+  background: var(--glass);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-edge);
   box-shadow: var(--glass-shadow);
 }
 .tab {
@@ -635,10 +633,10 @@
   text-decoration: none;
 }
 .tab[aria-current="page"] {
-  background: var(--signal);
+  background: var(--glass-strong);
   color: var(--ink);
-  font-weight: 800;
-  box-shadow: inset 0 0 0 2px var(--ink);
+  font-weight: 700;
+  box-shadow: 0 1px 2px rgba(20, 23, 26, 0.06);
 }
 .tabBrand,
 .tabSettings {
@@ -655,31 +653,31 @@
     gap: 4px;
     width: 220px;
     height: auto;
-    /* 2026-11-03: a plain column with a hairline, not a floating glass card. */
+    /* 2026-11-12: a column of glass with a hairline (chrome is glass; cards are not). */
     margin: 0;
     padding: 24px 12px;
     border: 0;
-    border-right: 2px solid var(--ink);
+    border-right: 1px solid var(--hairline);
     border-radius: 0;
-    background: var(--surface);
-    -webkit-backdrop-filter: none;
-    backdrop-filter: none;
+    background: var(--glass-strong);
+    -webkit-backdrop-filter: var(--glass-blur);
+    backdrop-filter: var(--glass-blur);
     box-shadow: none;
   }
   .tab {
     flex-direction: row;
     justify-content: flex-start;
     gap: 12px;
-    height: 46px;
+    height: 44px;
     padding: 0 12px;
-    border-radius: 12px;
-    font: 700 1rem/1 var(--font-voice);
+    border-radius: 14px;
+    font: 500 0.9375rem/1 var(--font-ui);
   }
   .tab[aria-current="page"] {
-    background: var(--signal);
-    font-weight: 800;
-    box-shadow: inset 0 0 0 2px var(--ink);
-    border-radius: 12px;
+    background: var(--paper);
+    font-weight: 700;
+    box-shadow: inset 3px 0 0 var(--ink);
+    border-radius: 4px 10px 10px 4px;
   }
   .tabBrand {
     display: flex;
