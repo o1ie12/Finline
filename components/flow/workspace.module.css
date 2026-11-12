@@ -6,6 +6,7 @@
   the results, with 專家怎麼想 in the left column.
 */
 .page {
+  position: relative;
   flex: 1;
   min-height: 0;
   overflow-y: auto;

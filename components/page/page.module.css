@@ -118,6 +118,8 @@
 
 /* PageFrame: as 今天 (components/today) and the game shell's column. */
 .frame {
+  /* the containing block for sr-only labels inside: they scroll with the page */
+  position: relative;
   flex: 1;
   min-height: 0;
   overflow-y: auto;

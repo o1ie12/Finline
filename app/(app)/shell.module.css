@@ -6,6 +6,10 @@
   flex-direction: column;
   height: 100dvh;
   overflow: hidden;
+  /* 2026-11-12: clip, so the shell is never a scroll container. With
+     `hidden` an in-page link (#grading) could still scroll it, sliding the
+     whole app up and leaving a blank band at the bottom. */
+  overflow: clip;
   background: var(--paper);
   color: var(--ink);
   font-family: var(--font-ui);

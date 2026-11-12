@@ -6,6 +6,9 @@
   --line, --line-on and --line-soft come from the page wrapper (lineVars).
 */
 .page {
+  /* the containing block for anything absolutely positioned inside (the
+     sr-only labels), so it scrolls with the page and never overflows the shell */
+  position: relative;
   flex: 1;
   min-height: 0;
   overflow-y: auto;

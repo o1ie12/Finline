@@ -4,6 +4,7 @@
   life-sim widget and pills. Line colors come from --line on each element.
 */
 .page {
+  position: relative;
   flex: 1;
   min-height: 0;
   overflow-y: auto;
