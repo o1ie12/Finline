@@ -140,7 +140,7 @@ export default async function LineSimulationPage({
     <div className="g-legacy mx-auto w-full max-w-4xl py-2">
       {/* 2026-11-03: the shared page header, not the dark platform panel. */}
       <PageHeader
-        kicker={`${line.name} · 最後一站 · ${endStation(line).name}`}
+        kicker={`${line.name} · 期末模擬 · ${endStation(line).name}`}
         title={line.sim.title}
         intro={line.sim.subtitle}
         actions={

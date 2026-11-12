@@ -815,8 +815,16 @@
   border: 1px solid var(--card-border);
   border-radius: var(--radius-card);
   box-shadow: var(--shadow-card);
-  padding-block: 8px 24px;
+  /* 2026-11-12: padding on every side. The card had none left and right
+     since the pages moved into this shell, so the header and every
+     simulation inside touched its edge. */
+  padding: 22px 18px 26px;
   color: var(--ink);
+}
+@media (min-width: 840px) {
+  .game-shell .g-legacy {
+    padding: 34px 36px 38px;
+  }
 }
 
 /* ---------- Station pages ---------- */
