@@ -459,4 +459,12 @@ export interface TaskResult {
   attempt: number;
   /** The order options, reasons and items were shown in (05 A7). */
   shown?: Record<string, { options?: string[]; reasons?: string[]; items?: string[] }>;
+  /**
+   * 2026-11-13: how sure the student said they were, per step, when they
+   * checked it in the module player. A confident miss is reviewed first
+   * (lib/review.ts). Absent on results from before the player.
+   */
+  confidence?: Record<string, Confidence>;
 }
+
+export type Confidence = "sure" | "guess";

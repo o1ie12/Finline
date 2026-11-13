@@ -6,7 +6,7 @@ import { submitTask } from "@/lib/tasks/submit";
 
 export const runtime = "nodejs";
 
-/** Submit a station or library task. Body: { taskSetId, answers, hookAnswer, carried? } (carried: 06 G1 redo). */
+/** Submit a station or library task. Body: { taskSetId, answers, hookAnswer, carried?, confidence? } (carried: 06 G1 redo). */
 export async function POST(req: Request) {
   let body: Record<string, unknown>;
   try {
@@ -26,6 +26,7 @@ export async function POST(req: Request) {
       answers: body.answers,
       hookAnswer: body.hookAnswer,
       carried: body.carried,
+      confidence: body.confidence,
     }, (work) => after(work), t);
     if ("error" in out) return NextResponse.json({ error: out.error }, { status: 400 });
     const res = NextResponse.json({

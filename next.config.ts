@@ -21,8 +21,14 @@ const googleSignin = process.env.NEXT_PUBLIC_GOOGLE_SIGNIN ?? "1";
  */
 const lifeSim = process.env.NEXT_PUBLIC_LIFE_SIM ?? "0";
 
+/**
+ * The module player (2026-11-13): one question per screen, checked at once.
+ * NEXT_PUBLIC_PLAYER=0 and a redeploy goes back to the one-page workspace.
+ */
+const player = process.env.NEXT_PUBLIC_PLAYER ?? "1";
+
 const nextConfig: NextConfig = {
-  env: { NEXT_PUBLIC_FLOW_V2: flowV2, NEXT_PUBLIC_GOOGLE_SIGNIN: googleSignin, NEXT_PUBLIC_LIFE_SIM: lifeSim },
+  env: { NEXT_PUBLIC_FLOW_V2: flowV2, NEXT_PUBLIC_GOOGLE_SIGNIN: googleSignin, NEXT_PUBLIC_LIFE_SIM: lifeSim, NEXT_PUBLIC_PLAYER: player },
   async redirects() {
     return [
       // 11 DOM-1: one production address. The old production hostname and

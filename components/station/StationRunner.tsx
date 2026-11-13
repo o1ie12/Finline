@@ -5,6 +5,8 @@ import { useState } from "react";
 import { StationFlow, type FlowLine, type SubmitPayload, type SubmitResult } from "@/components/tasks/StationFlow";
 import { StationFlowE } from "@/components/flow/StationFlow";
 import { StationWorkspace } from "@/components/flow/StationWorkspace";
+import { ModulePlayer } from "@/components/player/ModulePlayer";
+import { PLAYER_V3 } from "@/lib/flags";
 import type { StationLesson } from "@/lib/tasks/types";
 import type { StepScore } from "@/lib/tasks/scoring";
 import type { AnswerKey } from "@/lib/tasks/publicLesson";
@@ -118,8 +120,11 @@ export function StationRunner({
   // 2026-11-02: a station is one page (the workspace); a Short keeps its
   // one-question flow.
   if (design && !design.short) {
+    // 2026-11-13: the module player (one question per screen); the one-page
+    // workspace stays behind NEXT_PUBLIC_PLAYER=0.
+    const Screen = PLAYER_V3 ? ModulePlayer : StationWorkspace;
     return (
-      <StationWorkspace
+      <Screen
         key={`${lesson.task.id}:${attempt}`}
         lesson={lesson}
         stationName={design.stationName}

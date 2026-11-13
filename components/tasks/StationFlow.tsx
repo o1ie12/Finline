@@ -53,6 +53,8 @@ export interface SubmitPayload {
   hookAnswer: string | null;
   /** 06 G1 redo: step ids whose answers were carried from the previous attempt. */
   carried?: string[];
+  /** 2026-11-13: 我有把握 / 我是猜的 per step (the module player). */
+  confidence?: Record<string, "sure" | "guess">;
 }
 
 /** What the server returns for a submitted task (lib/tasks/submit.ts). */

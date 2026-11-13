@@ -14,3 +14,10 @@ export const FLOW_V2 = process.env.NEXT_PUBLIC_FLOW_V2 === "1";
  * (next.config.ts, off by default; =1 and a redeploy brings it back).
  */
 export const LIFE_SIM = process.env.NEXT_PUBLIC_LIFE_SIM === "1";
+
+/**
+ * The module player (2026-11-13): one question per screen, checked at once
+ * (components/player). On by default; NEXT_PUBLIC_PLAYER=0 and a redeploy
+ * goes back to the one-page workspace (components/flow/StationWorkspace).
+ */
+export const PLAYER_V3 = process.env.NEXT_PUBLIC_PLAYER !== "0";

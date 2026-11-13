@@ -189,6 +189,31 @@ function StepResult({
   );
 }
 
+/**
+ * One question's comparison on its own (the module player, 2026-11-13): the
+ * same drawing as the results list, from that step's key and score. The
+ * explanation always shows here: it is the feedback.
+ */
+export function StepFeedback({
+  step,
+  index,
+  detail,
+  answer,
+  lesson,
+  goal,
+}: {
+  step: TaskStep;
+  index: number;
+  detail: SubmitResult["details"][number];
+  answer: unknown;
+  lesson: StationLesson;
+  goal: Goal | null;
+}) {
+  const details: SubmitResult["details"] = [];
+  details[index] = detail;
+  return <StepResult step={step} index={index} result={{ details } as SubmitResult} answers={{ [step.id]: answer }} lesson={lesson} goal={goal} cards={[]} />;
+}
+
 /** 10 CMP-2: only on a judgment step the student answered differently. */
 function OneWay({ step, detail }: { step: TaskStep; detail?: SubmitResult["details"][number] }) {
   if (!isJudgmentStep(step) || step.type === "write" || !detail?.scored || detail.credit >= 1 - 1e-9) return null;

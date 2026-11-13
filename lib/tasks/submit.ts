@@ -32,7 +32,7 @@ import { revealWithReadiness } from "@/lib/lifeGame/readinessReveal";
 import { pickRevealWithSource } from "./reveal";
 import { scoreTask, type TaskScore } from "./scoring";
 import { separateWrites } from "./writes";
-import type { TaskResult } from "./types";
+import type { Confidence, TaskResult } from "./types";
 
 export interface SubmitOutcome {
   /** The resolved answers for the model-answer screens (05 A2): sent only now. */
@@ -49,7 +49,7 @@ export type SubmitError = "unknown_task" | "terminal_task";
 
 export async function submitTask(
   student: Student,
-  body: { taskSetId: string; answers: unknown; hookAnswer: unknown; carried?: unknown },
+  body: { taskSetId: string; answers: unknown; hookAnswer: unknown; carried?: unknown; confidence?: unknown },
   // 10 PERF-1: the route passes Next's after() and its timer.
   defer: Defer = runNow,
   t: Timer = startTimer(),
@@ -77,6 +77,9 @@ export async function submitTask(
   const stepIds = new Set(task.steps.map((s) => s.id));
   const carried = new Set(Array.isArray(body.carried) ? body.carried.filter((x): x is string => typeof x === "string" && stepIds.has(x)) : []);
   const score = scoreTask(task, answers, { goal, studentId: student.id, attempt, carried });
+  // 2026-11-13: 我有把握 / 我是猜的, kept only for this task's own steps.
+  const said = body.confidence && typeof body.confidence === "object" ? (body.confidence as Record<string, unknown>) : {};
+  const confidence = Object.fromEntries([...stepIds].flatMap((id) => (said[id] === "sure" || said[id] === "guess" ? [[id, said[id]]] : []))) as Record<string, Confidence>;
   // 06 G9 item 11: a bias is named only when the student's answers point to
   // it. The default reveal on a pass becomes a neutral takeaway ("").
   const reveal = picked.source === "default" && score.passed ? "" : (revealText ?? "");
@@ -94,6 +97,7 @@ export async function submitTask(
     provenance: { goal: goal !== null },
     attempt,
     shown: publicTask(task, { taskSetId: task.id, studentId: student.id, attempt }).shown,
+    ...(Object.keys(confidence).length ? { confidence } : {}),
   };
   // 10 PERF-1: only the attempt row is awaited (the redo counts attempts);
   // progress, completion, points, streak and profile go after the response.
