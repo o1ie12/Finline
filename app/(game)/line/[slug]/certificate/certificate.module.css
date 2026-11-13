@@ -48,3 +48,10 @@
   font: 700 0.8125rem/1 var(--font-ui);
   text-decoration: none;
 }
+
+.fine {
+  margin: 14px 0 0;
+  font-size: 0.8125rem;
+  line-height: 1.7;
+  color: var(--ink-3);
+}

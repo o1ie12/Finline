@@ -1,0 +1,158 @@
+/*
+  The course-complete card (2026-11-13). What is on screen is what the saved
+  image shows (ShareCard.tsx draws the same card on a canvas, 4:5).
+*/
+.wrap {
+  display: grid;
+  gap: 20px;
+  align-items: start;
+}
+@media (min-width: 760px) {
+  .wrap {
+    grid-template-columns: minmax(0, 420px) minmax(0, 1fr);
+    gap: 32px;
+  }
+}
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  aspect-ratio: 4 / 5;
+  box-sizing: border-box;
+  padding: 36px 30px 26px;
+  border-radius: 18px;
+  background: #fff;
+  color: var(--ink);
+  box-shadow: 0 0 0 1px var(--hairline), 0 18px 44px rgba(20, 23, 26, 0.1);
+  overflow: hidden;
+  font-family: var(--font-voice);
+}
+.card::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 9px;
+  background: var(--card-line);
+}
+.top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.brand {
+  font-weight: 900;
+  font-size: 1.0625rem;
+}
+.brand small {
+  margin-left: 8px;
+  font-weight: 400;
+  font-size: 0.75rem;
+  color: var(--ink-3);
+}
+.code {
+  padding: 5px 9px;
+  border-radius: 6px;
+  background: var(--card-line);
+  color: #fff;
+  font: 700 0.75rem/1 var(--font-ui);
+  letter-spacing: 0.04em;
+}
+.who {
+  margin: 34px 0 0;
+  font-size: 0.9375rem;
+  color: var(--ink-2);
+}
+.course {
+  margin: 6px 0 0;
+  font-weight: 900;
+  font-size: clamp(2.25rem, 11vw, 3rem);
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+}
+.rule {
+  width: 52px;
+  height: 4px;
+  margin-top: 14px;
+  background: var(--card-line);
+}
+.canHead {
+  margin: 28px 0 6px;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--ink-2);
+}
+.can {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+.can li {
+  position: relative;
+  padding-left: 18px;
+}
+.can li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.55em;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--card-line);
+}
+.foot {
+  margin: auto 0 0;
+  padding-top: 14px;
+  border-top: 1px solid var(--hairline);
+  font-size: 0.75rem;
+  line-height: 1.7;
+  color: var(--ink-3);
+}
+.side {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+}
+.save {
+  min-height: 48px;
+  padding: 0 22px;
+  border: 0;
+  border-radius: 12px;
+  background: var(--ink);
+  color: var(--ink-inv);
+  font: 700 1rem/1 var(--font-ui);
+  cursor: pointer;
+}
+.save:disabled {
+  opacity: 0.6;
+}
+.save:focus-visible,
+.toggle input:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
+}
+.toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  font-size: 0.9375rem;
+  cursor: pointer;
+}
+.toggle input {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--ink);
+}
+.fine {
+  margin: 0;
+  max-width: 34em;
+  font-size: 0.8125rem;
+  line-height: 1.7;
+  color: var(--ink-3);
+}

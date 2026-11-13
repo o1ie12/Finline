@@ -24,11 +24,9 @@ import {
 } from "@/lib/db";
 import { formatNT } from "@/components/Money";
 import { readStoredResult, UNREADABLE_RESULT_TEXT } from "@/lib/sims/types";
-import { lineButtonBackground } from "@/lib/color";
-import { FloatCard } from "@/components/game/FloatCard";
-import { PrimaryButton } from "@/components/game/PrimaryButton";
 import { Icon } from "@/components/game/icons";
-import { SecondaryButton } from "@/components/linePage/parts";
+import { ShareCard } from "@/components/course/ShareCard";
+import { courseOutline } from "@/lib/curriculum";
 import type { Student, ModuleProgress, SimulationRun } from "@/lib/types";
 
 export async function generateMetadata({
@@ -237,26 +235,26 @@ export default async function CertificatePage({
       <div style={lineStyle(line) as CSSProperties}>
         <PageHeader
           kicker={`${line.name} · 完成紀錄`}
-          title={`還差 ${rows.length - doneCount} 站就有完成紀錄`}
-          intro={`走完${line.name}的每一站（含最後一站），就會有一份完成紀錄，上面有你走過的站和最後一站的結果。這是學習練習，不是真實的工作經驗。`}
+          title={`還差 ${rows.length - doneCount} 個單元就有完成紀錄`}
+          intro={`完成${line.name}的每個單元（含期末），就會有一份完成紀錄，可以存成圖片。這是學習練習，不是真實的工作經驗。`}
           actions={
             <Link href={`/line/${line.slug}`} className={ps.primary}>
               回到{line.name}
             </Link>
           }
         />
-        <Panel label={`進度 ${doneCount} / ${rows.length} 站`}>
+        <Panel label={`進度 ${doneCount} / ${rows.length} 個單元`}>
           <ol className={cs.rows}>
             {rows.map((r) => (
               <li key={r.key} data-done={r.status === "done" ? "" : undefined}>
                 <span className={cs.mark} aria-hidden="true">
                   {r.status === "done" ? <Icon name="check" size={14} /> : null}
                 </span>
-                <span className={cs.name}>{r.terminal ? `最後一站 · ${r.label}` : r.label}</span>
-                <span className={cs.state}>{r.status === "done" ? "已完成" : r.status === "current" ? "下一站" : "還沒去"}</span>
+                <span className={cs.name}>{r.terminal ? `期末 · ${r.label}` : r.label}</span>
+                <span className={cs.state}>{r.status === "done" ? "已完成" : r.status === "current" ? "下一個" : "還沒開始"}</span>
                 {r.href && r.status !== "done" ? (
                   <Link href={r.href.replace(/^\/line\/([^/]+)\/course\//, "/line/$1/station/")} className={cs.go}>
-                    去這一站
+                    開始
                   </Link>
                 ) : null}
               </li>
@@ -277,7 +275,7 @@ export default async function CertificatePage({
 
   // Transfer suggestion: the first other line the student hasn't finished yet.
   let nextLineName: string | null = null;
-  let nextLineHref = "/lines";
+  let nextLineHref = "/map";
   try {
     const [allProgress, runsByLine] = await Promise.all([
       getProgress(student.id),
@@ -293,105 +291,57 @@ export default async function CertificatePage({
     /* not configured — the plain /lines link above still works */
   }
 
-  const lineVars = {
-    "--line-color": line.color,
-    "--line-ink": line.colorInk,
-    "--band-bg": lineButtonBackground(line),
-  } as CSSProperties;
-
+  // 2026-11-13: the finished course as one card the student can save, then
+  // the record behind it. The card says what they can now do, in the
+  // course's own objectives; no score against anyone else.
+  const outline = courseOutline(line.slug);
   return (
-    <div className="lp-page lp-page--narrow" style={lineVars}>
-      <h1 className="sr-only">{line.name} 完成紀錄</h1>
-      {/* Transfer moment: you've finished a line; this is the natural point
-          to surface the passport and suggest where to go next. */}
-      <FloatCard as="section" strong title={`轉乘 · 完成 ${line.name}`} index={0}>
-        <h2 className="lp-h1">走完這條線了！</h2>
-        <p className="lp-lead">
-          {nextLineName
-            ? `錢途護照已經蓋上這條線的紀念戳章。要不要轉乘到「${nextLineName}」？`
-            : "錢途護照已經蓋上這條線的紀念戳章。你已經走完所有路線了！"}
-        </p>
-        <div className="lp-actions">
-          <PrimaryButton href="/passport">
-            查看錢途護照
-            <Icon name="arrow" size={18} />
-          </PrimaryButton>
-          <SecondaryButton href={nextLineHref}>
-            {nextLineName ? `轉乘：${nextLineName}` : "回顧所有路線"}
-            <Icon name="arrow" size={18} />
-          </SecondaryButton>
-        </div>
-      </FloatCard>
-
-      {/* The certificate, styled for a screenshot */}
-      <FloatCard as="article" strong className="lp-cert" index={1}>
-        <div className="lp-cert-band">錢途 · 完成紀錄</div>
-        <div className="lp-cert-body">
-          <p className="lp-muted">這份紀錄屬於</p>
-          <p className="lp-cert-name">{student.name}</p>
-          <p className="lp-muted" style={{ marginTop: "var(--space-5)" }}>
-            完成了
-          </p>
-          <p className="lp-cert-line">{line.name}</p>
-          <span className="lp-cert-en" lang="en">
-            {line.enName}
-          </span>
-
-          <ul className="lp-cert-list">
-            {mods.map((m) => {
-              const p = moduleScore(progress, m.number);
-              return (
-                <li key={m.number} className="lp-cert-row">
-                  <span className="lp-cert-station">
-                    {/* The tick is earned, not decorative. */}
-                    <span
-                      className="lp-tick"
-                      style={{
-                        background: p ? "var(--line-color)" : "transparent",
-                        border: p ? undefined : "2px solid var(--ink-muted)",
-                      }}
-                      aria-hidden="true"
-                    >
-                      {p && (
-                        <svg viewBox="0 0 24 24" width="12" height="12" fill="none">
-                          <path d="M5 12.5l4.5 4.5L19 7.5" stroke="#fff" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" />
-                        </svg>
-                      )}
-                    </span>
-                    {m.station}
-                    <span className="sr-only">{p ? "（已完成）" : "（未作答）"}</span>
-                  </span>
-                  {p && (
-                    <span className="lp-cert-score">
-                      {p.quiz_score} / {p.quiz_total}
-                    </span>
-                  )}
-                </li>
-              );
-            })}
-            <li className="lp-cert-row lp-cert-row--result">
-              <span>{result.label}</span>
-              <span className="lp-cert-value">{result.value}</span>
-            </li>
-          </ul>
-
-          <p className="lp-caption g-num" style={{ marginTop: "var(--space-9)" }}>
-            完成日期 {dateStr}
-          </p>
-          {/* 06 F3.5: the certificate never reads as work experience. */}
-          <p className="lp-caption">這是學習練習，不是真實的工作經驗。</p>
-        </div>
-      </FloatCard>
-
-      <FloatCard as="div" index={2}>
-        <p className="lp-muted" style={{ textAlign: "center" }}>
-          截圖這份紀錄，分享給同學吧！
-        </p>
-        <div className="lp-actions" style={{ justifyContent: "center" }}>
-          <SecondaryButton href={homeFor(student?.mode ?? null)}>回到路線圖</SecondaryButton>
-          <PrimaryButton href="/lines">挑下一條線</PrimaryButton>
-        </div>
-      </FloatCard>
+    <div style={lineStyle(line) as CSSProperties}>
+      <PageHeader
+        kicker={`${outline.info.code} ${line.name} · 完成紀錄`}
+        title="你完成了這門課"
+        intro="這張卡可以存成圖片。下面是每個單元的紀錄。"
+        actions={
+          <>
+            <Link href={nextLineHref} className={ps.primary}>
+              {nextLineName ? `下一門課：${nextLineName}` : "看課程目錄"}
+            </Link>
+            <Link href={homeFor(student?.mode ?? null)} className={ps.secondary}>
+              回到我的學習
+            </Link>
+          </>
+        }
+      />
+      <Panel>
+        <ShareCard data={{ name: student.name, courseName: line.name, code: outline.info.code, color: line.color, date: dateStr, can: outline.info.objectives.slice(0, 3), modules: outline.totals.modules }} />
+      </Panel>
+      <Panel label="每個單元的紀錄">
+        <ol className={cs.rows}>
+          {mods.map((m, i) => {
+            const p = moduleScore(progress, m.number);
+            return (
+              <li key={m.number} data-done={p ? "" : undefined}>
+                <span className={cs.mark} aria-hidden="true">
+                  {p ? <Icon name="check" size={14} /> : null}
+                </span>
+                <span className={cs.name}>
+                  單元 {i + 1}　{outline.modules.find((x) => x.station === m.station)?.title ?? m.station}
+                </span>
+                <span className={cs.state}>{p ? (p.quiz_total === 100 ? `${p.quiz_score}%` : `${p.quiz_score} / ${p.quiz_total}`) : "未作答"}</span>
+              </li>
+            );
+          })}
+          <li data-done="">
+            <span className={cs.mark} aria-hidden="true">
+              <Icon name="check" size={14} />
+            </span>
+            <span className={cs.name}>期末　{result.label}</span>
+            <span className={cs.state}>{result.value}</span>
+          </li>
+        </ol>
+        {/* 06 F3.5: the record never reads as work experience. */}
+        <p className={cs.fine}>完成日期 {dateStr}。這是學習練習，不是真實的工作經驗。</p>
+      </Panel>
     </div>
   );
 }
