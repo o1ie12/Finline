@@ -18,7 +18,10 @@ import { effectiveMode } from "@/lib/modeModel";
 import { needsOnboarding } from "@/lib/onboarding";
 import { allLineStatuses } from "@/lib/progressModel";
 import { programView } from "@/lib/programView";
+import { weekGoal, weekModules } from "@/lib/review";
+import { reviewGroups, reviewSummary } from "@/lib/reviewView";
 import { routeBoard } from "@/lib/routeBoard";
+import { readProfile } from "@/lib/studentProfile";
 import { getCurrentStudent } from "@/lib/session";
 import s from "@/components/today/today.module.css";
 
@@ -39,8 +42,21 @@ export default async function TodayPage() {
   const mode = effectiveMode(student.mode);
   if (!LIFE_SIM) {
     // 2026-11-12: a course platform's home: the courses, no game state.
-    const [progress, runsByLine, completed] = await Promise.all([getProgress(student.id), getLatestSimulationRunsByLine(student.id), getLineCompletions(student.id)]);
-    return <LearnHome name={student.name} courses={programView({ statuses: allLineStatuses(progress, runsByLine, mode, completed), progress, runsByLine, mode })} />;
+    const [progress, runsByLine, completed, taskResults] = await Promise.all([
+      getProgress(student.id),
+      getLatestSimulationRunsByLine(student.id),
+      getLineCompletions(student.id),
+      getTaskResults(student.id).catch(() => []),
+    ]);
+    const now = new Date();
+    return (
+      <LearnHome
+        name={student.name}
+        courses={programView({ statuses: allLineStatuses(progress, runsByLine, mode, completed), progress, runsByLine, mode })}
+        week={{ done: weekModules(taskResults, now), goal: weekGoal(readProfile(student.profile).weeklyGoal) }}
+        review={reviewSummary(reviewGroups(taskResults, now))}
+      />
+    );
   }
   const [data, results, progress, runsByLine, sticky] = await Promise.all([
     loadGameHome(student),

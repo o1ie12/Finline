@@ -34,6 +34,7 @@ export function StationRunner({
   fullLessonLabel,
   initialHook = null,
   guest = false,
+  initialRedo = null,
   design,
 }: {
   lesson: StationLesson;
@@ -52,6 +53,8 @@ export function StationRunner({
   initialHook?: string | null;
   /** Played without an account (a course's first module): scored, kept in the browser until sign-up. */
   guest?: boolean;
+  /** 錯題夾 (2026-11-13): open on these steps only, the rest carried from the latest attempt. */
+  initialRedo?: { steps: string[]; carry: Record<string, unknown> } | null;
   /** Run the Part E flow (06 E8) instead of the older one. */
   design?: { stationName: string; kicker?: string; exitHref: string; short?: boolean; readingHref?: string | null; foldExpert?: boolean; howTo?: boolean };
 }) {
@@ -63,7 +66,7 @@ export function StationRunner({
   const [hook, setHook] = useState<string | null>(initialHook);
   // 06 G1 redo: the missed steps and the carried answers, kept across the
   // refresh that draws the next attempt.
-  const [redo, setRedo] = useState<{ steps: string[]; carry: Record<string, unknown>; from: number } | null>(null);
+  const [redo, setRedo] = useState<{ steps: string[]; carry: Record<string, unknown>; from: number } | null>(initialRedo ? { ...initialRedo, from: attempt - 1 } : null);
 
   async function submit(p: SubmitPayload): Promise<SubmitResult> {
     setHook(p.hookAnswer);

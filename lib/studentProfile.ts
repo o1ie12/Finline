@@ -121,6 +121,8 @@ export const StudentProfileSchema = z.object({
   savedTools: z.array(z.string().max(40)).max(60).optional(),
   /** Full train rides watched; after 3, rides become a short crossfade (01 §7.3). */
   seenFullRides: z.number().int().nonnegative().optional(),
+  /** 2026-11-13: modules the student aims to do each week (lib/review.ts); the default when absent. */
+  weeklyGoal: z.number().int().min(1).max(7).optional(),
   /** Onboarding: character done or skipped (existing students see it once). */
   onboardedVersion: z.number().int().nonnegative().optional(),
   /**

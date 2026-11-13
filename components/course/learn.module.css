@@ -419,3 +419,159 @@
   outline-offset: 2px;
   border-radius: 6px;
 }
+
+/* ---- this week and 錯題夾 (2026-11-13) ---- */
+.back {
+  display: grid;
+  gap: 16px;
+}
+@media (min-width: 760px) {
+  .back {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+.backCard {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 22px 24px;
+  border-radius: 20px;
+}
+.backText {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.7;
+  color: var(--ink-2);
+}
+.backText b {
+  color: var(--ink);
+  font-weight: 700;
+}
+.backActions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 18px;
+  margin-top: auto;
+}
+.backActions .cardLink {
+  margin-top: 0;
+}
+.week {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+.weekRing {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 84px;
+  height: 84px;
+  border-radius: 50%;
+  background:
+    radial-gradient(closest-side, var(--surface) 78%, transparent 79%),
+    conic-gradient(var(--ink) calc(var(--ring) * 360deg), var(--track) 0);
+}
+.weekRing[data-met] {
+  background:
+    radial-gradient(closest-side, var(--surface) 78%, transparent 79%),
+    conic-gradient(var(--good) 360deg, var(--track) 0);
+}
+.weekRing b {
+  font: 700 1.5rem/1 var(--font-ui);
+  font-variant-numeric: tabular-nums;
+}
+.weekRing small {
+  font: 500 0.8125rem/1 var(--font-ui);
+  color: var(--ink-3);
+}
+.weekText {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+}
+.weekText p {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--ink);
+  font-weight: 600;
+}
+.weekEdit {
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--ink-2);
+  font: 500 0.875rem/1.4 var(--font-ui);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+.weekPick {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 6px;
+}
+.weekPick button {
+  min-width: 56px;
+  min-height: 44px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 10px;
+  background: var(--surface);
+  box-shadow: inset 0 0 0 1px var(--hairline-strong);
+  color: var(--ink);
+  font: 600 0.9375rem/1 var(--font-ui);
+  cursor: pointer;
+}
+.weekPick button[aria-pressed="true"] {
+  background: var(--ink);
+  color: var(--ink-inv);
+  box-shadow: none;
+}
+.page :is(button):focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+/* ---- the 錯題夾 page ---- */
+.reviewTitle {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  font: 700 1.125rem/1.35 var(--font-voice);
+}
+.reviewTitle small {
+  font: 500 0.8125rem/1.4 var(--font-ui);
+  color: var(--ink-3);
+}
+.reviewList {
+  margin: 0;
+  padding: 6px 20px;
+  list-style: none;
+}
+.reviewList li {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 12px 0;
+  font-size: 1rem;
+  line-height: 1.6;
+}
+.reviewList li + li {
+  border-top: 1px solid var(--hairline);
+}
+.reviewList small {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--warn);
+}
+.reviewGo {
+  padding: 4px 20px 20px;
+}

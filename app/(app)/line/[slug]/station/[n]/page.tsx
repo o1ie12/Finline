@@ -12,6 +12,7 @@ import { getCurrentStudent } from "@/lib/session";
 import { GUEST, isOpenLesson } from "@/lib/tasks/check";
 import { lessonForPage } from "@/lib/tasks/prepare";
 import { lessonForStation } from "@/lib/tasks/registry";
+import { reviewRedo } from "@/lib/reviewView";
 import { sanitizeHook } from "@/lib/tasks/sanitize";
 import { lineVars } from "@/lib/design/lineVars";
 
@@ -30,10 +31,10 @@ export default async function StationPage({
   searchParams,
 }: {
   params: Promise<{ slug: string; n: string }>;
-  searchParams: Promise<{ hook?: string }>;
+  searchParams: Promise<{ hook?: string; review?: string }>;
 }) {
   const { slug, n } = await params;
-  const { hook } = await searchParams;
+  const { hook, review } = await searchParams;
   const num = Number(n);
   const line = getLine(slug);
   const mod = getModule(num);
@@ -72,6 +73,9 @@ export default async function StationPage({
   const otherStations = new Set(results.filter((r) => r.station_id !== null && r.task_set_id !== lesson.task.id).map((r) => r.task_set_id));
   const howTo = otherStations.size < 3;
   const index = line.stationModules.indexOf(num) + 1;
+  // 2026-11-13 錯題夾: ?review=1 asks only what the latest attempt missed.
+  const latest = results.filter((r) => r.task_set_id === lesson.task.id).sort((a, b) => b.attempt - a.attempt)[0];
+  const redo = review === "1" && latest ? reviewRedo(lesson, latest, profile.writes) : null;
   // The line's last module runs at /end when it is a task set (06 G0).
   const last = /\/simulation$/.test(stop.href);
   const nextHref = last && FLOW_V2 && line.sim.taskEnd ? `/line/${line.slug}/end` : stop.href.replace(/^\/line\/([^/]+)\/course\//, "/line/$1/station/");
@@ -88,10 +92,11 @@ export default async function StationPage({
       // 2026-11-12: a module leads to the next module (the last one to the
       // course's final). With the life simulation on, a month comes between
       // (10 FLOW-4).
-      continueHref={LIFE_SIM && lesson.lifeGameTurn ? "/turn" : nextHref}
-      continueLabel={LIFE_SIM ? undefined : last ? "前往期末" : "下一個單元"}
+      continueHref={redo ? "/review" : LIFE_SIM && lesson.lifeGameTurn ? "/turn" : nextHref}
+      continueLabel={redo ? "回錯題夾" : LIFE_SIM ? undefined : last ? "前往期末" : "下一個單元"}
+      initialRedo={redo}
       initialHook={sanitizeHook(lesson.hook.options, hook)}
-      design={{ stationName: mod.station, kicker: `${line.name} · 單元 ${index} / ${line.stationModules.length + 1}`, exitHref: `/line/${line.slug}`, readingHref: `/line/${line.slug}/course/${num}?read=1`, foldExpert: line.stationModules.indexOf(num) > 0, howTo }}
+      design={{ stationName: mod.station, kicker: `${line.name} · 單元 ${index} / ${line.stationModules.length + 1}${redo ? " · 複習" : ""}`, exitHref: redo ? "/review" : `/line/${line.slug}`, readingHref: `/line/${line.slug}/course/${num}?read=1`, foldExpert: line.stationModules.indexOf(num) > 0, howTo }}
     />
     </div>
   );

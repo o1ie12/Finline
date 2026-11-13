@@ -6,6 +6,7 @@ import type { ProgramCourse } from "@/lib/programView";
 import c from "./catalogue.module.css";
 import { GuestSync } from "@/components/player/GuestSync";
 import { CourseTile } from "./CourseTile";
+import { WeekGoal } from "./WeekGoal";
 import k from "./kit.module.css";
 import s from "./learn.module.css";
 
@@ -17,7 +18,19 @@ const TRACK_ORDER: TrackId[] = ["core", "elective", "capstone"];
  * courses as marks that fill in; then what is in progress, what to take next
  * and what is done.
  */
-export function LearnHome({ name, courses }: { name: string; courses: ProgramCourse[] }) {
+export function LearnHome({
+  name,
+  courses,
+  week,
+  review,
+}: {
+  name: string;
+  courses: ProgramCourse[];
+  /** Modules worked on since Monday, and the student's own goal (lib/review.ts). */
+  week: { done: number; goal: number };
+  /** 錯題夾 in numbers: questions due now, questions coming later, and where the first due one opens. */
+  review: { due: number; later: number; href: string | null };
+}) {
   const started = courses.filter((x) => x.state === "started");
   const finished = courses.filter((x) => x.state === "done");
   const fresh = courses.filter((x) => x.state === "new");
@@ -110,6 +123,47 @@ export function LearnHome({ name, courses }: { name: string; courses: ProgramCou
               看成績
               <Icon name="chevron" size={16} />
             </Link>
+          </section>
+        </div>
+
+        {/* This week and 錯題夾 (2026-11-13): the two reasons to come back. */}
+        <div className={s.back}>
+          <section className={`${k.card} ${s.backCard}`} aria-labelledby="week-h">
+            <h2 id="week-h" className={s.cardTitle}>
+              本週
+            </h2>
+            <WeekGoal done={week.done} goal={week.goal} />
+          </section>
+          <section className={`${k.card} ${s.backCard}`} aria-labelledby="rev-h">
+            <h2 id="rev-h" className={s.cardTitle}>
+              錯題夾
+            </h2>
+            {review.due ? (
+              <>
+                <p className={s.backText}>
+                  <b>{review.due} 題</b>可以複習了。只問你上次錯的，幾分鐘就好。
+                </p>
+                <div className={s.backActions}>
+                  <Link href={review.href ?? "/review"} className={k.go}>
+                    開始複習
+                  </Link>
+                  <Link href="/review" className={s.cardLink}>
+                    看全部
+                    <Icon name="chevron" size={16} />
+                  </Link>
+                </div>
+              </>
+            ) : (
+              <>
+                <p className={s.backText}>{review.later ? `有 ${review.later} 題過幾天會回來考你。現在不用做什麼。` : "目前是空的。做錯的題目會自動放進來，過兩天再考你一次。"}</p>
+                {review.later ? (
+                  <Link href="/review" className={s.cardLink}>
+                    看錯題夾
+                    <Icon name="chevron" size={16} />
+                  </Link>
+                ) : null}
+              </>
+            )}
           </section>
         </div>
 
