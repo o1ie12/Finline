@@ -26,6 +26,7 @@ import type { Student } from "@/lib/types";
 import { findTaskSet } from "./registry";
 import { profilePatchForTask } from "./profileWrites";
 import { sanitizeAnswers, sanitizeHook } from "./sanitize";
+import { GUEST, isOpenLesson } from "./check";
 import { answerKey, publicTask, type AnswerKey } from "./publicLesson";
 import { prepareLesson } from "./prepare";
 import { revealWithReadiness } from "@/lib/lifeGame/readinessReveal";
@@ -49,7 +50,7 @@ export type SubmitError = "unknown_task" | "terminal_task";
 
 export async function submitTask(
   student: Student,
-  body: { taskSetId: string; answers: unknown; hookAnswer: unknown; carried?: unknown; confidence?: unknown },
+  body: { taskSetId: string; answers: unknown; hookAnswer: unknown; carried?: unknown; confidence?: unknown; guest?: unknown },
   // 10 PERF-1: the route passes Next's after() and its timer.
   defer: Defer = runNow,
   t: Timer = startTimer(),
@@ -76,7 +77,11 @@ export async function submitTask(
   // 06 G1 redo: step ids carried from the previous attempt (known steps only).
   const stepIds = new Set(task.steps.map((s) => s.id));
   const carried = new Set(Array.isArray(body.carried) ? body.carried.filter((x): x is string => typeof x === "string" && stepIds.has(x)) : []);
-  const score = scoreTask(task, answers, { goal, studentId: student.id, attempt, carried });
+  // 2026-11-13: a module played before sign-up was shuffled and drawn for the
+  // visitor key (lib/tasks/check.ts), so it is scored against that same draw.
+  const asGuest = body.guest === true && isOpenLesson(line.slug, lesson);
+  const draw = asGuest ? { studentId: GUEST, attempt: 1 } : { studentId: student.id, attempt };
+  const score = asGuest ? scoreTask(task, answers, { goal, ...draw }) : scoreTask(task, answers, { goal, ...draw, carried });
   // 2026-11-13: 我有把握 / 我是猜的, kept only for this task's own steps.
   const said = body.confidence && typeof body.confidence === "object" ? (body.confidence as Record<string, unknown>) : {};
   const confidence = Object.fromEntries([...stepIds].flatMap((id) => (said[id] === "sure" || said[id] === "guess" ? [[id, said[id]]] : []))) as Record<string, Confidence>;
@@ -96,7 +101,7 @@ export async function submitTask(
     revealShown: reveal,
     provenance: { goal: goal !== null },
     attempt,
-    shown: publicTask(task, { taskSetId: task.id, studentId: student.id, attempt }).shown,
+    shown: publicTask(task, { taskSetId: task.id, ...draw }).shown,
     ...(Object.keys(confidence).length ? { confidence } : {}),
   };
   // 10 PERF-1: only the attempt row is awaited (the redo counts attempts);

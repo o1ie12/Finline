@@ -4,6 +4,7 @@ import { TRACKS, type TrackId } from "@/content/curriculum";
 import { durationText } from "@/lib/curriculum";
 import type { ProgramCourse } from "@/lib/programView";
 import c from "./catalogue.module.css";
+import { GuestSync } from "@/components/player/GuestSync";
 import { CourseTile } from "./CourseTile";
 import k from "./kit.module.css";
 import s from "./learn.module.css";
@@ -28,6 +29,7 @@ export function LearnHome({ name, courses }: { name: string; courses: ProgramCou
 
   return (
     <div className={s.page}>
+      <GuestSync />
       <div className={s.inner}>
         <header className={s.hello}>
           <h1>你好，{name}</h1>

@@ -2,11 +2,12 @@ import { NextResponse, after } from "next/server";
 import { isNotConfigured } from "@/lib/db";
 import { startTimer } from "@/lib/serverTiming";
 import { getCurrentStudent } from "@/lib/session";
+import { scoreGuest } from "@/lib/tasks/check";
 import { submitTask } from "@/lib/tasks/submit";
 
 export const runtime = "nodejs";
 
-/** Submit a station or library task. Body: { taskSetId, answers, hookAnswer, carried?, confidence? } (carried: 06 G1 redo). */
+/** Submit a station or library task. Body: { taskSetId, answers, hookAnswer, carried?, confidence?, guest? } (carried: 06 G1 redo; guest: played before sign-up). */
 export async function POST(req: Request) {
   let body: Record<string, unknown>;
   try {
@@ -19,14 +20,20 @@ export async function POST(req: Request) {
   }
   const t = startTimer();
   try {
-    const student = await t.time("session", getCurrentStudent());
-    if (!student) return NextResponse.json({ error: "no_session" }, { status: 401 });
+    const student = await t.time("session", getCurrentStudent().catch(() => null));
+    if (!student) {
+      // 2026-11-13: a course's first module plays without an account; scored, not stored.
+      const guest = scoreGuest({ taskSetId: body.taskSetId, answers: body.answers, hookAnswer: body.hookAnswer });
+      if ("error" in guest) return NextResponse.json({ error: guest.error === "no_session" ? "no_session" : guest.error }, { status: guest.error === "no_session" ? 401 : 400 });
+      return NextResponse.json(guest);
+    }
     const out = await submitTask(student, {
       taskSetId: body.taskSetId,
       answers: body.answers,
       hookAnswer: body.hookAnswer,
       carried: body.carried,
       confidence: body.confidence,
+      guest: body.guest,
     }, (work) => after(work), t);
     if ("error" in out) return NextResponse.json({ error: out.error }, { status: 400 });
     const res = NextResponse.json({

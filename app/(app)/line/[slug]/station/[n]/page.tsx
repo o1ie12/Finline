@@ -9,6 +9,7 @@ import { getModule } from "@/lib/modules";
 import { nextStopAfter } from "@/lib/stationNav";
 import { readProfile } from "@/lib/studentProfile";
 import { getCurrentStudent } from "@/lib/session";
+import { GUEST, isOpenLesson } from "@/lib/tasks/check";
 import { lessonForPage } from "@/lib/tasks/prepare";
 import { lessonForStation } from "@/lib/tasks/registry";
 import { sanitizeHook } from "@/lib/tasks/sanitize";
@@ -40,7 +41,28 @@ export default async function StationPage({
 
   const lesson = lessonForStation(line.slug, num);
   const student = await getCurrentStudent().catch(() => null);
-  if (!lesson || !student) redirect(`/line/${line.slug}/course/${num}`);
+  // 2026-11-13: a course's first module plays without an account.
+  if (!lesson || (!student && !isOpenLesson(line.slug, lesson))) redirect(`/line/${line.slug}/course/${num}`);
+  if (!student) {
+    return (
+      <div style={{ ...lineVars(line), display: "flex", flexDirection: "column", flex: 1, minHeight: 0 }}>
+        <StationRunner
+          lesson={lessonForPage(lesson, GUEST, 1)}
+          line={{ slug: line.slug, name: line.name, color: line.color, colorInk: line.colorInk, enName: line.enName }}
+          station={{ name: mod.station, code: line.enName.toUpperCase() }}
+          studentId={GUEST}
+          attempt={1}
+          goal={null}
+          mode="station"
+          guest
+          continueHref="/signup"
+          continueLabel="免費註冊，存下這次的成績"
+          initialHook={sanitizeHook(lesson.hook.options, hook)}
+          design={{ stationName: mod.station, kicker: `${line.name} · 單元 1 / ${line.stationModules.length + 1}`, exitHref: `/line/${line.slug}`, howTo: true }}
+        />
+      </div>
+    );
+  }
 
   const stop = nextStopAfter(line, num, effectiveMode(student.mode));
   const profile = readProfile(student.profile);

@@ -123,6 +123,7 @@ export function EndCard({
                 {title}
               </h1>
               {result.attempt > 1 ? <p className={p.small}>這是第 {result.attempt} 次作答。成績表記最高的一次。</p> : null}
+              {guest ? <p className={p.small}>你還沒有帳號，這次的成績先留在這台裝置。註冊後會自動存進去。</p> : null}
             </div>
           </div>
 

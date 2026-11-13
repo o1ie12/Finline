@@ -1,14 +1,14 @@
 import { SOURCES, type SourceId } from "@/content/sources";
-import { FLOW_EXTRAS, FLOW_STEPS } from "@/content/flow";
 import { lineFacts } from "@/lib/stationFacts";
 import Link from "next/link";
 import { stationLetterCode } from "@/lib/design/lineCode";
 import { lineVars } from "@/lib/design/lineVars";
-import { LIFE_SIM } from "@/lib/flags";
 import { LINES, START_LINE, endStation, getLine, type LineMeta, type LineSlug } from "@/lib/lines";
 import { lineStats } from "@/lib/lineStats";
 import { getModule } from "@/lib/modules";
+import { sampleQuestion } from "@/lib/coursePreview";
 import { lessonForStation } from "@/lib/tasks/registry";
+import { SampleQuestion } from "@/components/course/SampleQuestion";
 import { Arrow, SectionTag } from "./bits";
 import { FareGate } from "./FareGate";
 import s from "./landing.module.css";
@@ -17,9 +17,7 @@ import s from "./landing.module.css";
 const FEATURED: LineSlug[] = [START_LINE, ...(["xinyong", "cunqian", "zhapian"] as LineSlug[]).filter((s) => s !== START_LINE)].slice(0, 4) as LineSlug[];
 const BOARD: LineSlug[] = [START_LINE, ...(["xinyong", "cunqian", "qixin", "zhapian", "touzi"] as LineSlug[]).filter((s) => s !== START_LINE)].slice(0, 5) as LineSlug[];
 
-// 11 COPY-1, COPY-2: the stops and the minutes come from data, never typed.
-// 2026-11-12: without the life simulation the month is not a step (lib/flags.ts).
-const STOPS = FLOW_STEPS.filter((st) => LIFE_SIM || st.id !== "life").map((st) => ({ title: st.label, body: st.meaning }));
+// 11 COPY-1, COPY-2: the minutes come from data, never typed.
 const ALL_MINUTES = LINES.flatMap((l) => lineFacts(l).stations.map((st) => st.minutes));
 const MIN_MINUTES = Math.min(...ALL_MINUTES);
 const MAX_MINUTES = Math.max(...ALL_MINUTES);
@@ -39,10 +37,11 @@ const lineCode = (line: LineMeta) => stationLetterCode(line, 1).replace(/\d+$/, 
 const stationName = (n: number) => getModule(n)?.station ?? "";
 
 /**
- * The public landing (2026-10-24 redesign): the departure board hero, the
- * first lines, a station's five stops, Taiwan's rules, and the fare gate
- * that leads to sign-up. Every line, station and minute comes from the
- * lines themselves.
+ * The public landing (2026-10-24 redesign; 2026-11-13: it opens on doing):
+ * the departure board hero whose button starts the first module without an
+ * account, one real question to try, the first courses, Taiwan's rules, and
+ * the fare gate that leads to sign-up. Every line, station and minute comes
+ * from the lines themselves.
  */
 export function Landing() {
   const stations = LINES.reduce((a, l) => a + lineStats(l).stations, 0);
@@ -50,6 +49,9 @@ export function Landing() {
   const credit = getLine(START_LINE)!;
   const creditFirst = credit.stationModules[0];
   const creditLesson = lessonForStation(START_LINE, creditFirst);
+  // 2026-11-13: the first module plays without an account (lib/tasks/check.ts).
+  const firstModule = `/line/${START_LINE}/station/${creditFirst}`;
+  const sample = sampleQuestion(START_LINE);
 
   return (
     <div className={s.page}>
@@ -67,20 +69,20 @@ export function Landing() {
             一站一站學。
           </h1>
           <p className={s.lede}>
-            給台灣高中生的免費理財課程。{LINES.length} 門課、{stations} 個單元，照順序排成一個學程：每個單元讀一份真的帳單、契約或薪資單，做一份計分的實作任務。
+            給台灣高中生的免費理財課程。每個單元讀一份真的帳單、契約或薪資單，一題一題做，做完馬上對答案。{LINES.length} 門課、{stations} 個單元，一個單元約 {MIN_MINUTES} 到 {MAX_MINUTES} 分鐘。
           </p>
           <div className={s.heroCta}>
-            <Link href={`/line/${START_LINE}`} className={s.primary}>
-              從第一門課開始
+            <Link href={firstModule} className={s.primary}>
+              直接做第一個單元
               <Arrow />
             </Link>
             <Link href="/lines" className={s.more}>
               看課程目錄
             </Link>
             <span className={s.heroNote}>
-              免費 · 不用 email
+              免費 · 不用註冊就能做
               <br />
-              一組代碼記住進度
+              做完再決定要不要存
             </span>
           </div>
         </div>
@@ -142,10 +144,23 @@ export function Landing() {
         </div>
       </section>
 
-      {/* FL02 the first lines */}
+      {/* FL02 one real question (2026-11-13): what a module asks, before anything else is explained */}
+      {sample ? (
+        <section className={s.section} aria-labelledby="try-h" style={lineVars(credit)}>
+          <SectionTag code="FL02" color="var(--metro-red)">
+            <h2 id="try-h" className={s.h2}>
+              先做一題看看
+            </h2>
+          </SectionTag>
+          <p className={s.sub}>這是課程裡真的會出現的一題{sample.material ? "，旁邊是你要讀的文件" : ""}。選完按「對答案」，馬上知道建議答案和原因。</p>
+          <SampleQuestion q={sample} signedIn={false} startHref={firstModule} />
+        </section>
+      ) : null}
+
+      {/* FL03 the first lines */}
       <section className={s.section} aria-labelledby="lines-h">
         <div className={s.sectionHead}>
-          <SectionTag code="FL02" color="var(--metro-blue)">
+          <SectionTag code="FL03" color="var(--metro-blue)">
             <h2 id="lines-h" className={s.h2}>
               從核心課程開始
             </h2>
@@ -182,28 +197,6 @@ export function Landing() {
               </Link>
             );
           })}
-        </div>
-      </section>
-
-      {/* FL03 a station's stops (content/flow.ts) */}
-      <section className={s.section} aria-labelledby="how-h">
-        <SectionTag code="FL03" color="var(--metro-red)">
-          <h2 id="how-h" className={s.h2}>
-            一個單元約 {MIN_MINUTES} 到 {MAX_MINUTES} 分鐘，{STOPS.length} 個步驟
-          </h2>
-        </SectionTag>
-        <div className={`${s.glass} ${s.stopsCard}`}>
-          <ol className={s.stops}>
-            {STOPS.map((stop, i) => (
-              <li key={stop.title}>
-                <span className={s.stopDot} aria-hidden="true" />
-                <span className={s.stopNo}>{String(i + 1).padStart(2, "0")}</span>
-                <span className={s.stopTitle}>{stop.title}</span>
-                <span className={s.stopBody}>{stop.body}</span>
-              </li>
-            ))}
-          </ol>
-          <p className={s.stopsNote}>{FLOW_EXTRAS}</p>
         </div>
       </section>
 

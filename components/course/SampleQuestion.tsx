@@ -92,7 +92,7 @@ export function SampleQuestion({ q, signedIn, startHref }: { q: Sample; signedIn
             <p className={s.why}>{result.explanation}</p>
             <div className={s.next}>
               <Link href={startHref} className={k.go}>
-                {signedIn ? "做完整的單元" : "免費註冊，做完整的單元"}
+                {signedIn ? "做完整的單元" : "開始第一個單元，不用註冊"}
               </Link>
               <span>
                 這是單元 {q.moduleIndex}「{q.moduleTitle}」裡的一題。

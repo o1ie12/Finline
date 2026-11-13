@@ -6,6 +6,7 @@ import { StationFlow, type FlowLine, type SubmitPayload, type SubmitResult } fro
 import { StationFlowE } from "@/components/flow/StationFlow";
 import { StationWorkspace } from "@/components/flow/StationWorkspace";
 import { ModulePlayer } from "@/components/player/ModulePlayer";
+import { GUEST_PENDING } from "@/components/player/GuestSync";
 import { PLAYER_V3 } from "@/lib/flags";
 import type { StationLesson } from "@/lib/tasks/types";
 import type { StepScore } from "@/lib/tasks/scoring";
@@ -32,6 +33,7 @@ export function StationRunner({
   fullLessonHref,
   fullLessonLabel,
   initialHook = null,
+  guest = false,
   design,
 }: {
   lesson: StationLesson;
@@ -48,6 +50,8 @@ export function StationRunner({
   fullLessonLabel?: string;
   /** A hook answered before hydration, from ?hook= (05 A8.6). */
   initialHook?: string | null;
+  /** Played without an account (a course's first module): scored, kept in the browser until sign-up. */
+  guest?: boolean;
   /** Run the Part E flow (06 E8) instead of the older one. */
   design?: { stationName: string; kicker?: string; exitHref: string; short?: boolean; readingHref?: string | null; foldExpert?: boolean; howTo?: boolean };
 }) {
@@ -98,6 +102,13 @@ export function StationRunner({
       body: JSON.stringify(p),
     });
     if (!res.ok) throw new Error(`task ${res.status}`);
+    if (guest) {
+      try {
+        window.localStorage.setItem(GUEST_PENDING, JSON.stringify({ ...p, carried: undefined, guest: true }));
+      } catch {
+        /* no storage: the module still ends; it just is not saved at sign-up */
+      }
+    }
     return (await res.json()) as SubmitResult;
   }
 
@@ -122,38 +133,35 @@ export function StationRunner({
   if (design && !design.short) {
     // 2026-11-13: the module player (one question per screen); the one-page
     // workspace stays behind NEXT_PUBLIC_PLAYER=0.
-    const Screen = PLAYER_V3 ? ModulePlayer : StationWorkspace;
-    return (
-      <Screen
-        key={`${lesson.task.id}:${attempt}`}
-        lesson={lesson}
-        stationName={design.stationName}
-        kicker={design.kicker}
-        goal={goal}
-        mode={mode}
-        exitHref={design.exitHref}
-        onSubmit={submit}
-        onSaveTool={saveTool}
-        onContinue={() => router.push(continueHref)}
-        continueLabel={continueLabel}
-        initialHookAnswer={hook}
-        redo={redo && redo.from + 1 === attempt ? { steps: redo.steps, carry: redo.carry } : null}
-        onRedo={
-          mode === "terminal"
-            ? undefined
-            : (steps, carry) => {
-                setRedo({ steps, carry, from: attempt });
-                setRetried(true);
-                router.refresh();
-              }
-        }
-        studentId={studentId}
-        attempt={attempt}
-        readingHref={design.readingHref}
-        foldExpert={design.foldExpert}
-        howTo={design.howTo}
-      />
-    );
+    const shared = {
+      lesson,
+      stationName: design.stationName,
+      kicker: design.kicker,
+      goal,
+      mode,
+      exitHref: design.exitHref,
+      onSubmit: submit,
+      onSaveTool: saveTool,
+      onContinue: () => router.push(continueHref),
+      continueLabel,
+      initialHookAnswer: hook,
+      redo: redo && redo.from + 1 === attempt ? { steps: redo.steps, carry: redo.carry } : null,
+      onRedo:
+        mode === "terminal" || guest
+          ? undefined
+          : (steps: string[], carry: Record<string, unknown>) => {
+              setRedo({ steps, carry, from: attempt });
+              setRetried(true);
+              router.refresh();
+            },
+      studentId,
+      attempt,
+      readingHref: design.readingHref,
+      foldExpert: design.foldExpert,
+      howTo: design.howTo,
+    };
+    const key = `${lesson.task.id}:${attempt}`;
+    return PLAYER_V3 ? <ModulePlayer key={key} {...shared} guest={guest} /> : <StationWorkspace key={key} {...shared} />;
   }
   if (design) {
     return (

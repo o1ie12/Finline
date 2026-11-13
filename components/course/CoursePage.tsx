@@ -5,6 +5,7 @@ import type { SampleQuestion as Sample } from "@/lib/coursePreview";
 import { durationText, type CourseOutline, type OutlineModule } from "@/lib/curriculum";
 import { LEVEL_NAME, moduleGrade, percent, type Best } from "@/lib/grades";
 import type { LessonCard } from "@/lib/tasks/types";
+import { GuestSync } from "@/components/player/GuestSync";
 import { DocArt } from "./DocArt";
 import { SampleQuestion } from "./SampleQuestion";
 import k from "./kit.module.css";
@@ -78,7 +79,7 @@ export function CoursePage({ v }: { v: CourseView }) {
       : v.signedIn && v.complete
         ? { label: "已完成", module: o.modules[o.modules.length - 1] }
         : { label: "第一個單元", module: o.modules[0] };
-  const startHref = v.signedIn ? (v.next?.href ?? v.modules[0]?.href ?? `/line/${line.slug}`) : "/signup";
+  const startHref = v.signedIn ? (v.next?.href ?? v.modules[0]?.href ?? `/line/${line.slug}`) : (v.modules[0]?.href ?? "/signup");
   const sections = [
     { id: "about", label: "課程介紹" },
     ...(v.sample ? [{ id: "try", label: "試做一題" }] : []),
@@ -99,13 +100,15 @@ export function CoursePage({ v }: { v: CourseView }) {
       </Link>
     )
   ) : (
-    <Link href="/signup" className={k.go}>
-      免費開始上課
+    // 2026-11-13: the first module plays without an account.
+    <Link href={v.modules[0]?.href ?? "/signup"} className={k.go}>
+      直接開始，不用註冊
     </Link>
   );
 
   return (
     <div className={s.page} id="top">
+      {v.signedIn ? <GuestSync /> : null}
       {!v.signedIn ? (
         <header className={s.bar}>
           <Link href="/" className={s.brand}>
@@ -603,7 +606,7 @@ export function CoursePage({ v }: { v: CourseView }) {
                 完成紀錄
               </li>
             </ul>
-            {!v.signedIn ? <p className={s.fine}>免費，不用下載任何東西。</p> : null}
+            {!v.signedIn ? <p className={s.fine}>第一個單元不用註冊。之後註冊只要一個暱稱，做過的會存進去。</p> : null}
           </aside>
         </div>
       </div>
@@ -672,8 +675,8 @@ function ModuleRow({ m, st, signedIn, open, first }: { m: OutlineModule; st: Mod
             </div>
           ) : null}
           {st.href || !signedIn ? (
-            <Link href={signedIn ? st.href! : "/signup"} className={k.ghost}>
-              {!signedIn ? "註冊後開始這個單元" : st.status === "done" ? "再做一次" : "開始這個單元"}
+            <Link href={signedIn || (first && st.href) ? st.href! : "/signup"} className={k.ghost}>
+              {!signedIn ? (first && st.href ? "直接開始這個單元，不用註冊" : "註冊後開始這個單元") : st.status === "done" ? "再做一次" : "開始這個單元"}
             </Link>
           ) : null}
         </div>

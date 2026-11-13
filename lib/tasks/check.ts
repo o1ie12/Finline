@@ -13,10 +13,12 @@ import { getLine } from "@/lib/lines";
 import { readProfile } from "@/lib/studentProfile";
 import type { Student } from "@/lib/types";
 import { prepareLesson } from "./prepare";
+import { answerKey, type AnswerKey } from "./publicLesson";
 import { findTaskSet } from "./registry";
 import { resolveTask } from "./resolve";
-import { sanitizeAnswers } from "./sanitize";
-import { scoreStep, type StepScore } from "./scoring";
+import { pickRevealWithSource } from "./reveal";
+import { sanitizeAnswers, sanitizeHook } from "./sanitize";
+import { scoreStep, scoreTask, type StepScore } from "./scoring";
 import type { StationLesson, TaskStep } from "./types";
 
 /** The visitor key for play without an account: the same shuffle for everyone. */
@@ -55,4 +57,33 @@ export async function checkStep(
   const s = scoreStep(step, answer, { goal, studentId: student?.id ?? GUEST, attempt, taskSetId: task.id });
   const credit = s.scored ? Math.max(0, Math.min(1, s.credit)) : 1;
   return { detail: { ...s, credit }, key: step };
+}
+
+/**
+ * A whole task scored for a visitor without an account (a course's first
+ * module only): the same result a signed-in submission gets, with nothing
+ * stored. The browser keeps the answers and sends them again after sign-up
+ * (components/player/GuestSync.tsx), which is when they are recorded.
+ */
+export function scoreGuest(body: { taskSetId: string; answers: unknown; hookAnswer: unknown }):
+  | { score: number; total: number; passed: boolean; details: StepScore[]; stationDone: boolean; reveal: string; attempt: number; answerKey: AnswerKey }
+  | { error: "unknown_task" | "no_session" } {
+  const found = findTaskSet(body.taskSetId);
+  if (!found) return { error: "unknown_task" };
+  if (!isOpenLesson(found.line.slug, found.lesson)) return { error: "no_session" };
+  const { lesson, task } = found;
+  const answers = sanitizeAnswers(task, body.answers);
+  const hookAnswer = sanitizeHook(lesson.hook.options, body.hookAnswer);
+  const score = scoreTask(task, answers, { goal: null, studentId: GUEST, attempt: 1 });
+  const picked = pickRevealWithSource(lesson.reveal, hookAnswer, answers);
+  return {
+    score: score.score,
+    total: score.total,
+    passed: score.passed,
+    details: score.details,
+    stationDone: false,
+    reveal: picked.source === "default" && score.passed ? "" : picked.text,
+    attempt: 1,
+    answerKey: answerKey(prepareLesson(lesson).task, null),
+  };
 }

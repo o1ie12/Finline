@@ -1027,3 +1027,27 @@
   border-radius: 10px;
   background: repeating-linear-gradient(135deg, var(--surface-2) 0 10px, var(--track) 10px 11px);
 }
+
+/* 2026-11-13: on a phone the hero is the headline, the button and a short
+   board; the task slip and the last two rows wait for a wider screen, so
+   the real question is one scroll away. */
+@media (max-width: 639px) {
+  .ticket {
+    display: none;
+  }
+  .board > .boardRow:nth-child(n + 6) {
+    display: none;
+  }
+  .stage {
+    padding-bottom: 20px;
+  }
+  .hero {
+    gap: 28px;
+    padding-bottom: 28px;
+  }
+  /* a course is a name, a promise and its length; the route drawing needs width */
+  .track,
+  .trackEnds {
+    display: none;
+  }
+}
