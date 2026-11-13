@@ -44,7 +44,7 @@ export default async function BranchPage({
       <PageHeader
         kicker={`${line.name} · 支線`}
         title={branch.title}
-        intro="支線是選讀的延伸，不影響這條線的進度。"
+        intro="支線是選讀的延伸，不影響這門課的進度。"
         actions={
           <Link href={`/line/${line.slug}`} className={ps.secondary}>
             回到{line.name}

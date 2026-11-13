@@ -156,7 +156,7 @@ export default function FraudSim({
             再玩一次
           </button>
           <HomeLink className="inline-flex items-center justify-center rounded-xl bg-ink px-5 py-3 text-base font-semibold text-white hover:-translate-y-0.5">
-            回到我的路線圖
+            回到我的學習
           </HomeLink>
         </div>
       </div>

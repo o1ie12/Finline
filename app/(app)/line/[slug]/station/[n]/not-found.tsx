@@ -15,14 +15,14 @@ export default function StationNotFound() {
     <main className={s.page}>
       <div className={s.card}>
         <p className={s.code}>404</p>
-        <h1 className={s.title}>這條線沒有這一站</h1>
-        <p className={s.text}>站的網址用的是全站的站號。回到路線頁，從那裡選一站。</p>
+        <h1 className={s.title}>這門課沒有這個單元</h1>
+        <p className={s.text}>單元的網址用的是全站的編號。回到課程頁，從那裡選一個單元。</p>
         <div className={s.actions}>
           <Link href={`/line/${slug}`} className={s.primary}>
-            回到路線
+            回到課程
           </Link>
           <Link href="/lines" className={s.secondary}>
-            看所有路線
+            看課程目錄
           </Link>
         </div>
       </div>

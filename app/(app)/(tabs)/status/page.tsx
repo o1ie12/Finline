@@ -71,7 +71,7 @@ export default async function StatusPage() {
         <nav className={ps.links} aria-label="更多">
           <Link href="/tools" className={ps.linkRow}>
             <span>
-              工具箱<small>每一站帶走的工具</small>
+              工具箱<small>每個單元帶走的工具</small>
             </span>
             <Icon name="chevron" size={20} />
           </Link>

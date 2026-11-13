@@ -141,13 +141,13 @@ export function scoreStatus(
   mode: "station" | "terminal" | "library",
   r: { total: number; passed: boolean; stationDone: boolean },
 ): string {
-  if (r.total === 0) return "這一站沒有計分，你的想法已經存下來。";
-  if (r.passed) return mode === "station" ? "過關了，這一站完成。" : "過關了。";
+  if (r.total === 0) return "這個單元沒有計分，你的想法已經存下來。";
+  if (r.passed) return mode === "station" ? "過關了，這個單元完成。" : "過關了。";
   if (mode === "terminal") return "完成了。看看每一題的示範答案。";
   if (mode === "library") return "還差一點，可以再試一次。";
   // 06 G9 item 4: never "done" and "not passed" together. A second attempt
   // completes the station (A6) without calling it a pass.
-  if (r.stationDone) return "這一站完成了。先看建議答案，想再練可以再做一次。";
+  if (r.stationDone) return "這個單元完成了。先看建議答案，想再練可以再做一次。";
   // 10 PROG-3: say plainly that it is not done, and that leaving is fine.
-  return LIFE_SIM ? "這一站還沒完成。再做一次，或先去這個月，之後再回來。" : "這一站還沒完成。再做一次，或先往下上，之後再回來。";
+  return LIFE_SIM ? "這個單元還沒完成。再做一次，或先去這個月，之後再回來。" : "這個單元還沒完成。再做一次，或先往下上，之後再回來。";
 }

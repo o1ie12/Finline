@@ -397,7 +397,7 @@ export function StationWorkspace({
         {result ? (
           <>
             <p className={w.footText} aria-live="polite">
-              {units.length ? `答對 ${units.filter((u) => u.right).length} / ${units.length}` : "這一站沒有計分"}
+              {units.length ? `答對 ${units.filter((u) => u.right).length} / ${units.length}` : "這個單元沒有計分"}
             </p>
             <div className={w.footActions}>
               {canRedo ? (

@@ -97,7 +97,7 @@ export default function PrePostTest({
         intro={
           isPost
             ? `同樣的 ${total} 題，這次答對幾題不是重點，看見自己的進步幅度才是。`
-            : "答錯完全沒關係，這只是幫你看見「現在的自己」，完成這條線後會再測一次。"
+            : "答錯完全沒關係，這只是幫你看見「現在的自己」，完成這門課後會再測一次。"
         }
       />
 
@@ -191,8 +191,8 @@ export default function PrePostTest({
               {(() => {
                 const preScore = delta !== null ? score - delta : priorPreScore;
                 const gain = delta !== null ? delta : preScore !== null ? score - preScore : null;
-                if (gain === null) return "這條線還沒有前測紀錄可以比較。";
-                if (gain > 0) return `比前測進步了 ${gain} 題。這條線的內容真的留下來了。`;
+                if (gain === null) return "這門課還沒有前測紀錄可以比較。";
+                if (gain > 0) return `比前測進步了 ${gain} 題。這門課的內容真的留下來了。`;
                 if (gain === 0) return "跟前測分數一樣，代表這些內容你本來就掌握得不錯。";
                 return "這次分數比前測低，可能是題目剛好比較刁鑽，可以回頭看看不熟的站再試一次。";
               })()}

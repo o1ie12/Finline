@@ -97,7 +97,7 @@ export default function InvestLinkoutSim({
             className="font-display text-xs font-bold uppercase tracking-wider"
             style={{ color: colorInk }}
           >
-            這一站要做的事
+            這個單元要做的事
           </p>
           <ol className="mt-2 list-decimal space-y-1.5 pl-5 text-sm leading-relaxed text-ink/90">
             <li>打開證交所的模擬工具，用剛剛那個金額試著配置看看。</li>
@@ -114,7 +114,7 @@ export default function InvestLinkoutSim({
             開啟證交所模擬工具 <span aria-hidden="true">↗</span>
           </a>
           <p className="mt-3 text-xs leading-relaxed text-ink-faint">
-            這個連結會開新分頁，你在那邊做的事不會傳回這裡——回來之後填的內容，才是這一站記錄的東西。
+            這個連結會開新分頁，你在那邊做的事不會傳回這裡——回來之後填的內容，才是這個單元記錄的東西。
           </p>
         </section>
 
@@ -315,12 +315,12 @@ function ReflectionOutcomeView({
           你注意到的事
         </p>
         <p className="mt-1.5 text-sm leading-relaxed text-ink/90">
-          「{surpriseLabel}」——真正在工具裡看過一次，比讀十篇介紹更容易記住。這一站不要求你現在就開始投資，只要求你知道自己在看什麼。
+          「{surpriseLabel}」——真正在工具裡看過一次，比讀十篇介紹更容易記住。這個單元不要求你現在就開始投資，只要求你知道自己在看什麼。
         </p>
       </section>
 
       <p className="rounded-lg bg-line-1/10 px-4 py-3 text-xs leading-relaxed text-ink-soft">
-        這一站使用的是證交所提供的公開工具，本平台不經手任何資金，也不會取得你在該工具上的任何資料。所有情境與數字皆為教學用途，非個人化投資或財務建議。
+        這個單元使用的是證交所提供的公開工具，本平台不經手任何資金，也不會取得你在該工具上的任何資料。所有情境與數字皆為教學用途，非個人化投資或財務建議。
       </p>
 
       <CoachPanel runId={runId} />

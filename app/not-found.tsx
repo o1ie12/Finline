@@ -11,12 +11,12 @@ export default function NotFound() {
     <main className={s.page}>
       <span className={s.stripe} aria-hidden="true" />
       <div className={s.card}>
-        <p className={s.code}>404 · 這一站不存在</p>
+        <p className={s.code}>404 · 找不到這一頁</p>
         <h1 className={s.title}>找不到這一頁</h1>
-        <p className={s.text}>網址可能打錯了，或這一頁已經搬家。從下面回到你的路線。</p>
+        <p className={s.text}>網址可能打錯了，或這一頁已經搬家。從下面回到你的課程。</p>
         <div className={s.actions}>
-          <Link href="/today" className={s.primary}>回到今天</Link>
-          <Link href="/lines" className={s.secondary}>看所有路線</Link>
+          <Link href="/today" className={s.primary}>回到我的學習</Link>
+          <Link href="/lines" className={s.secondary}>看課程目錄</Link>
         </div>
       </div>
     </main>

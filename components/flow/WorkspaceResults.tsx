@@ -63,7 +63,7 @@ export const ResultsHead = forwardRef<HTMLHeadingElement, { result: SubmitResult
     <section className={w.banner} aria-labelledby="result-title" data-passed={result.passed ? "" : undefined}>
       <p className={w.label}>對答案</p>
       <h2 id="result-title" ref={ref} tabIndex={-1} className={w.bannerTitle}>
-        {unscored ? "這一站沒有計分，你的想法已經存下來。" : `答對 ${good.length} / ${units.length}`}
+        {unscored ? "這個單元沒有計分，你的想法已經存下來。" : `答對 ${good.length} / ${units.length}`}
       </h2>
       {unscored ? null : <p className={w.bannerText}>{scoreStatus(mode, result)}</p>}
       {unscored ? null : (
@@ -353,7 +353,7 @@ export function ExpertSections({
       {common ? (
         <div className={w.panelBox}>
           {/* 10 HOOK-1: about this station, not a claim about the student's own choice. */}
-          <p className={w.label}>這一站最常見的想法 · {lesson.reveal.bias}</p>
+          <p className={w.label}>這個單元最常見的想法 · {lesson.reveal.bias}</p>
           <p>{common}</p>
         </div>
       ) : null}
@@ -364,7 +364,7 @@ export function ExpertSections({
         </div>
       ) : null}
       <div className={`${w.panelBox} ${w.takeaway}`}>
-        <p className={w.label}>這一站帶走 · {t.name}</p>
+        <p className={w.label}>帶走這個 · {t.name}</p>
         <ul>
           {t.lines.map((l) => (
             <li key={l}>{l}</li>
@@ -378,7 +378,7 @@ export function ExpertSections({
       </div>
       {readingHref ? (
         <Link href={readingHref} className={w.reading}>
-          延伸閱讀：這一站的完整文章（選讀）
+          延伸閱讀：這個單元的完整文章（選讀）
           <Icon name="chevron" size={16} />
         </Link>
       ) : null}

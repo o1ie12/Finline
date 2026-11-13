@@ -104,7 +104,7 @@ export default async function LineSimulationPage({
             // On the first lesson card, so nothing sits under the full-height flow (05 Part C).
             fullLessonHref={`/line/${line.slug}/simulation?classic=1`}
             fullLessonLabel={`玩原本的${line.sim.title}（選讀）`}
-            continueHref={playThenRide({ href: home, lineName: "Finline", lineColor: line.color, stationName: "回到首頁", blurb: "看看你的角色和下一站。", lineEnName: "FINLINE", stationCode: "HOME" })}
+            continueHref={playThenRide({ href: home, lineName: "Finline", lineColor: line.color, stationName: "回到首頁", blurb: "回到我的學習。", lineEnName: "FINLINE", stationCode: "HOME" })}
           />
         </div>
       );
@@ -161,7 +161,7 @@ export default async function LineSimulationPage({
                 id="tips-heading"
                 className="font-display text-xs font-bold uppercase tracking-[0.14em] text-ink-faint"
               >
-                開始之前，這條線的重點
+                開始之前，這門課的重點
               </h2>
               {tips.map((t) => (
                 <TipCard key={t.moduleNumber} color={line.color} station={t.station}>
@@ -201,7 +201,7 @@ export default async function LineSimulationPage({
                 href={`/line/${line.slug}`}
                 className="inline-flex items-center justify-center rounded-xl border border-hairline bg-surface px-6 py-3 text-base font-medium hover:border-ink"
               >
-                先看看這條線
+                先看看這門課
               </Link>
             </div>
           )}
@@ -217,7 +217,7 @@ export default async function LineSimulationPage({
         attempt={afterAttempt}
         goal={null}
         mode="library"
-        continueHref={playThenRide({ href: homeFor(student.mode), lineName: "Finline", lineColor: line.color, stationName: "回到首頁", blurb: "看看你的角色和下一站。", lineEnName: "FINLINE", stationCode: "HOME" })}
+        continueHref={playThenRide({ href: homeFor(student.mode), lineName: "Finline", lineColor: line.color, stationName: "回到首頁", blurb: "回到我的學習。", lineEnName: "FINLINE", stationCode: "HOME" })}
       />
     ) : wrap && student ? (
       <div className="g-whyfirst">

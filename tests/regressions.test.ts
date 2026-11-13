@@ -416,7 +416,9 @@ test("certificate: lists only the stations the mode requires, and ticks are cond
   assert.ok(core.length < all.length, "sim_first requires fewer stations");
   const src = readFileSync("app/(game)/line/[slug]/certificate/page.tsx", "utf8");
   assert.match(src, /requiredStations\(line, mode\)/);
-  assert.match(src, /\{p && \(\s*<svg/);
+  // 2026-11-13: the record's rows were redrawn; the tick is still drawn only for a station with a progress row.
+  assert.match(src, /data-done=\{p \? "" : undefined\}/);
+  assert.match(src, /\{p \? <Icon name="check" size=\{14\} \/> : null\}/);
 });
 
 test("route map: optional stations are flagged and never 'current'", () => {

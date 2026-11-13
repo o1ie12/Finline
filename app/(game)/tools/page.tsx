@@ -32,10 +32,10 @@ export default async function ToolsPage() {
       <PageHeader
         kicker="工具箱"
         title={`你的理財工具 · ${have} / ${tools.length}`}
-        intro="每一站最後都有一張「這一站帶走的」工具卡，按「存到工具箱」就會收在這裡。還沒拿到的工具，下面寫了在哪一站。"
+        intro="每個單元最後都有一張「帶走這個」工具卡，按「存到工具箱」就會收在這裡。還沒拿到的工具，下面寫了在哪個單元。"
         actions={
           <Link href="/today" className={s.primary}>
-            回到今天
+            回到我的學習
           </Link>
         }
       />

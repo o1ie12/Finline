@@ -17,8 +17,14 @@ export interface ShareCardData {
 
 const W = 1080;
 const H = 1350;
-const INK = "#14171a";
-const SOFT = "#5b6470";
+/** The card's colours, read from the page's own tokens when it is drawn. */
+interface Inks {
+  ink: string;
+  soft: string;
+  paper: string;
+  rule: string;
+  onLine: string;
+}
 const NO_START = "，。、；：？！）」』";
 
 /** Chinese wraps anywhere, except that a line never starts with closing punctuation. */
@@ -50,7 +56,7 @@ function wrap(ctx: CanvasRenderingContext2D, text: string, max: number): string[
   return lines;
 }
 
-async function draw(canvas: HTMLCanvasElement, d: ShareCardData, showName: boolean, family: string) {
+async function draw(canvas: HTMLCanvasElement, d: ShareCardData, showName: boolean, family: string, { ink: INK, soft: SOFT, paper, rule, onLine }: Inks) {
   canvas.width = W;
   canvas.height = H;
   const ctx = canvas.getContext("2d");
@@ -60,7 +66,7 @@ async function draw(canvas: HTMLCanvasElement, d: ShareCardData, showName: boole
   // The Chinese face loads in slices; ask for the ones this card uses.
   await Promise.all([400, 700, 900].map((w) => document.fonts.load(font(w, 40), all).catch(() => [])));
 
-  ctx.fillStyle = "#ffffff";
+  ctx.fillStyle = paper;
   ctx.fillRect(0, 0, W, H);
   ctx.fillStyle = d.color;
   ctx.fillRect(0, 0, W, 28);
@@ -80,7 +86,7 @@ async function draw(canvas: HTMLCanvasElement, d: ShareCardData, showName: boole
   ctx.beginPath();
   ctx.roundRect(W - x - cw, y - 40, cw, 54, 12);
   ctx.fill();
-  ctx.fillStyle = "#ffffff";
+  ctx.fillStyle = onLine;
   ctx.fillText(d.code, W - x - cw + 20, y - 2);
 
   y += 150;
@@ -114,7 +120,7 @@ async function draw(canvas: HTMLCanvasElement, d: ShareCardData, showName: boole
     y += (rows.length - 1) * 60 + 12;
   }
 
-  ctx.fillStyle = "#e3e6ea";
+  ctx.fillStyle = rule;
   ctx.fillRect(x, H - 190, W - x * 2, 2);
   ctx.fillStyle = SOFT;
   ctx.font = font(400, 30);
@@ -138,8 +144,10 @@ export function ShareCard({ data }: { data: ShareCardData }) {
 
   async function image(): Promise<Blob | null> {
     const canvas = document.createElement("canvas");
-    const family = card.current ? getComputedStyle(card.current).fontFamily : "sans-serif";
-    await draw(canvas, data, showName, family);
+    if (!card.current) return null;
+    const css = getComputedStyle(card.current);
+    const token = (name: string) => css.getPropertyValue(name).trim();
+    await draw(canvas, data, showName, css.fontFamily, { ink: token("--ink"), soft: token("--ink-2"), paper: token("--surface"), rule: token("--track"), onLine: token("--line-on") || token("--ink-inv") });
     return toBlob(canvas);
   }
 

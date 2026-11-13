@@ -53,7 +53,7 @@ export default async function LineReviewPage({
       <PageHeader
         kicker={`${line.name} · 複習`}
         title="複習還沒開放"
-        intro={`走完${line.name}一週後，這裡會出現各站的重點和兩題快速回想。`}
+        intro={`完成${line.name}一週後，這裡會出現各單元的重點和兩題快速回想。`}
         actions={
           <Link href={`/line/${line.slug}`} className={ps.secondary}>
             回到{line.name}
@@ -73,7 +73,7 @@ export default async function LineReviewPage({
     >
       <PageHeader
         kicker={`${line.name} · 複習`}
-        title={`${line.name}，一週前你完成了這條線`}
+        title={`${line.name}，一週前你完成了這門課`}
         intro="花一分鐘回顧一下重點，再看看還記得多少。"
         actions={
           <Link href={`/line/${line.slug}`} className={ps.secondary}>
