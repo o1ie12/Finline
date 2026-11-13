@@ -19,3 +19,14 @@
 - **試做一題:** one scored question per course on the course page, no session: `lib/coursePreview.ts` picks it, `POST /api/preview` scores it; the page never holds the answer.
 - **Loading:** `components/loading/TrainLoader.tsx` via `app/(app)/loading.tsx` and `app/(game)/loading.tsx`.
 - **Copy rules still apply** to the new pages (`scripts/check-content.ts`): no 證書/認證/證照/資格, no reviews or outcome numbers without real data. Report: `docs/redesign/12-curriculum.md`.
+
+## Module player and the return loop (2026-11-13)
+
+- **Player.** A module runs in `components/player/ModulePlayer.tsx` (one question per screen; `NEXT_PUBLIC_PLAYER=0` returns to `StationWorkspace`). Each answer is checked at once by `POST /api/task/check` (`lib/tasks/check.ts`: same resolved task, student and attempt as the final submission; stores nothing). The attempt is still recorded once, by `submitTask`, when the module ends. 我有把握 / 我是猜的 is stored as `TaskResult.confidence`. Sorting is `TapSort.tsx` (no dragging). The end is `EndCard.tsx`.
+- **Play before sign-up.** A course's first module (`isOpenLesson`) renders for a signed-out visitor with the visitor key `GUEST`; `POST /api/task` without a session scores it and stores nothing. The answers wait in `localStorage` (`finline:guest:pending`) and `components/player/GuestSync.tsx` sends them once on a signed-in page with `guest: true`, scored against the visitor's draw.
+- **錯題夾.** `lib/review.ts` (pure, tested) decides what is in the folder from the latest attempt per module; `lib/reviewView.ts` adds names and links; `/review` lists it; `/line/[slug]/station/[n]?review=1` asks only the missed steps with the rest carried (`reviewRedo`). A step with `drawCount` is always asked again.
+- **Weekly goal.** `weekModules` / `weekGoal` in `lib/review.ts`, `profile.weeklyGoal`, `POST /api/week-goal`, `components/course/WeekGoal.tsx`. No streak on the course home.
+- **Completion card.** `components/course/ShareCard.tsx` on `/line/[slug]/certificate`: drawn on a canvas in the browser, colours read from the tokens (no raw hex in `components/course`).
+- **Landing.** The main button starts the first module; a `SampleQuestion` replaces the list of steps (`tests/flow-copy.test.ts`).
+- No migrations. Notes and what was verified: `docs/redesign/13-player.md`.
+
