@@ -30,3 +30,11 @@
 - **Landing.** The main button starts the first module; a `SampleQuestion` replaces the list of steps (`tests/flow-copy.test.ts`).
 - No migrations. Notes and what was verified: `docs/redesign/13-player.md`.
 
+## Teachers and class mode (2026-11-14, branch `feat/teachers`)
+
+- **Pages.** `/teachers` (給老師) and `/teachers/[slug]` (a lesson plan per course, with print CSS and a worksheet) in `app/(site)/teachers/`. Everything on a plan comes from course data through `lib/lessonPlan.ts`; fixed labels are the spec's. `coursePeriods()` there is the one source for 節數 (also on the course page).
+- **Class mode rules** are pure in `lib/classRooms.ts` (code alphabet, 12-hour close, 3 open rooms, join limit, results by question); `lib/classGuard.ts` applies them in the `/api/class/*` routes. Hosting needs a session; joining a quiz room does not.
+- **migration-27** (`class_rooms.host_student_id`, `last_active_at`, `class_participants.answers`, `class_join_attempts`) is applied by hand. `lacksMigration27()` in `lib/db.ts` makes every use fall back on a database without it.
+- `/signup?next=` is honoured for a plain path on this site (`lib/safeNext.ts`).
+- Report and open questions: `docs/redesign/12-teachers-report.md`. Tests: `tests/teachers.test.ts`, `tests/e2e/teachers-e.mjs`.
+
