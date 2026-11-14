@@ -96,7 +96,7 @@ export default function SiteHeader() {
   const pill = "flex h-11 items-center whitespace-nowrap rounded-full px-3.5 text-[15px] transition-colors";
   return (
     <>
-      <div className="flex h-1.5" aria-hidden="true" style={{ background: "var(--stripe)" }} />
+      <div className="flex h-1.5" aria-hidden="true" data-no-print="" style={{ background: "var(--stripe)" }} />
       <header
         className="sticky top-3 z-40 mx-auto mt-3 flex h-16 w-[calc(100%-32px)] max-w-[1200px] items-center gap-2 rounded-full pl-5 pr-2.5 sm:top-4 sm:mt-4 sm:w-[calc(100%-48px)] sm:gap-5"
         style={{

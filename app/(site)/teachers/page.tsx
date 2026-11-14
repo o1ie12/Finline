@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { COURSES, TRACKS, type TrackId } from "@/content/curriculum";
+import { FLOW_STEPS } from "@/content/flow";
 import { courseOutline } from "@/lib/curriculum";
 import { lineVars } from "@/lib/design/lineVars";
 import { coursePeriods } from "@/lib/lessonPlan";
@@ -16,6 +17,8 @@ export const metadata: Metadata = pageMeta({
 });
 
 const TRACK_ORDER: TrackId[] = ["core", "elective", "capstone"];
+// The name of a unit's opening question is typed in one place (content/flow.ts, tests/flow-copy.test.ts).
+const HOOK = FLOW_STEPS[0].label;
 // The letter a teacher sends: what we need to know to help, nothing collected on the site.
 const MAIL_QUERY = "?subject=錢途課堂使用&body=學校：%0A年級和班級人數：%0A想用的課程：%0A預計日期：";
 
@@ -42,7 +45,9 @@ export default function TeachersPage() {
           一節課怎麼上
         </h2>
         <ol className={s.steps}>
-          <li>暖身 5 分鐘：用這門課第一個單元的「想一想」問全班，先不講答案。</li>
+          <li>
+            暖身 5 分鐘：用這門課第一個單元的「{HOOK}」問全班，先不講答案。
+          </li>
           <li>做任務：學生一人或兩人一組，在自己的裝置上做單元。</li>
           <li>討論和收尾 10 分鐘：用教案裡的討論題，請學生說說一開始怎麼想、後來為什麼改，最後每個人寫下一件帶走的事。</li>
         </ol>

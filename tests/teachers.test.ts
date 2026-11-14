@@ -9,6 +9,7 @@ import { readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { test } from "node:test";
 import { COURSES } from "@/content/curriculum";
+import { FLOW_STEPS } from "@/content/flow";
 import sitemap from "@/app/sitemap";
 import {
   CLASS_COPY,
@@ -131,7 +132,8 @@ test("teachers-e: /teachers has the spec's sections in order, its copy, and is i
   assert.equal((src.match(/<h1/g) ?? []).length, 1);
   for (const copy of [
     "錢途免費，學生只要一個暱稱就能開始，不用 email。每門課約 1 到 2 節課，用手機或電腦都能上。老師不需要金融背景，任務和解析會帶內容。",
-    "暖身 5 分鐘：用這門課第一個單元的「想一想」問全班，先不講答案。",
+    "暖身 5 分鐘：用這門課第一個單元的「{HOOK}」問全班，先不講答案。",
+    "const HOOK = FLOW_STEPS[0].label;",
     "做任務：學生一人或兩人一組，在自己的裝置上做單元。",
     "討論和收尾 10 分鐘：用教案裡的討論題，請學生說說一開始怎麼想、後來為什麼改，最後每個人寫下一件帶走的事。",
     "想讓全班一起作答？開一個房間，學生輸入代碼就能加入。題目來自每門課的前後測題庫。",
@@ -143,6 +145,8 @@ test("teachers-e: /teachers has the spec's sections in order, its copy, and is i
   ]) {
     assert.ok(src.includes(copy), `copy changed: ${copy.slice(0, 20)}`);
   }
+  // The step's name comes from content/flow.ts, so the sentence reads as the spec has it.
+  assert.equal(FLOW_STEPS[0].label, "想一想");
   assert.ok(!/<form/.test(src), "no form: teacher data is not collected on the site");
   for (const href of ['href="/class/host"', 'href="/class/play"', 'href="/class/life/host"', 'href="/privacy"']) assert.ok(src.includes(href), href);
 

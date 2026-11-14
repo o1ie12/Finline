@@ -160,8 +160,9 @@ export default async function LessonPlanPage({ params }: { params: Promise<{ slu
           {p.name} 學習單
         </h2>
         <p className={s.sheetName}>姓名：＿＿＿＿　班級：＿＿＿＿</p>
+        {/* Each question once: a final that returns to an earlier unit's 想一想 is not asked again on paper. */}
         {p.units
-          .filter((u) => u.hook)
+          .filter((u, i) => u.hook && p.units.findIndex((x) => x.hook === u.hook) === i)
           .map((u) => (
             <div key={u.index} className={s.sheetUnit}>
               <h3 className={s.h3}>

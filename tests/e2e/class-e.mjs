@@ -31,9 +31,13 @@ const open = async (cookie) => {
   return { ctx, page };
 };
 
+// spec 12 TCH-5: opening a room needs an account.
+const account = async (name) =>
+  (await (await fetch(BASE + "/api/signup", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ name, school: "本機測試", grade: "高二" }) })).json()).access_code;
+
 // ---- 1. 即時測驗 ------------------------------------------------------------
 {
-  const teacher = await open();
+  const teacher = await open(await account("測驗老師"));
   await teacher.page.goto(BASE + "/class/host", { waitUntil: "networkidle" });
   // the radio is visually hidden; a person clicks its label
   await teacher.page.locator("label", { hasText: "信用線" }).first().click();
@@ -78,7 +82,7 @@ const open = async (cookie) => {
     headers: { "content-type": "application/json" },
     body: JSON.stringify({ name: "隊伍走查", school: "本機測試", grade: "高二" }),
   })).json();
-  const teacher = await open();
+  const teacher = await open(await account("賽局老師"));
   await teacher.page.goto(BASE + "/class/life/host", { waitUntil: "networkidle" });
   await teacher.page.getByRole("button", { name: "建立房間" }).click();
   const codeEl = teacher.page.locator("[aria-label^='房間代碼 ']");
