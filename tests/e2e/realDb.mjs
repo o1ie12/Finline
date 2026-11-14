@@ -91,8 +91,24 @@ export function createTracker({ base, out }) {
         return;
       }
       if (!UUID.test(roomId) || !roomIds.has(roomId)) throw new Error("refusing to age a room this run did not create");
-      const { error } = await (await client()).from("class_rooms").update({ last_active_at: at }).eq("id", roomId).eq("host_student_id", account.id);
+      // Both times: a room counts as used at the latest of when it was made, started and last active.
+      const { error } = await (await client()).from("class_rooms").update({ last_active_at: at, created_at: at }).eq("id", roomId).eq("host_student_id", account.id);
       if (error) throw new Error(`ageRoom: ${error.message}`);
+    },
+    /** If the script stops on an error, still take away what it created before exiting. */
+    onCrash() {
+      const bail = async (e) => {
+        console.error(e);
+        try {
+          const r = await this.cleanup();
+          if (r) console.log("cleanup after an error:", JSON.stringify({ rooms: r.deleted.rooms.length, participants: r.deleted.participants.length, attempts: r.deleted.attempts, refused: r.refused.length, left: r.left }));
+        } catch (x) {
+          console.error("cleanup failed:", x);
+        }
+        process.exit(1);
+      };
+      process.on("uncaughtException", bail);
+      process.on("unhandledRejection", bail);
     },
     /** Delete what this run created (real database only) and say exactly what went and what stays. */
     async cleanup() {
@@ -108,7 +124,8 @@ export function createTracker({ base, out }) {
       for (const ids of chunks([...roomIds], 20)) take((await c.from("class_rooms").select(cols).in("id", ids)).data);
       for (const codes of chunks([...roomCodes], 20)) take((await c.from("class_rooms").select(cols).in("code", codes)).data);
       take((await c.from("class_rooms").select(cols).eq("host_student_id", account.id).gte("created_at", startedAt.toISOString())).data);
-      const mine = [...found.values()].filter((r) => r.host_student_id === account.id && new Date(r.created_at) >= startedAt && UUID.test(r.id));
+      // Opened by the test account, and either returned to this run when it was created or made since it started.
+      const mine = [...found.values()].filter((r) => r.host_student_id === account.id && UUID.test(r.id) && (roomIds.has(r.id) || new Date(r.created_at) >= startedAt));
       report.refused = [...found.values()].filter((r) => !mine.includes(r)).map((r) => ({ id: r.id, code: r.code, why: "not opened by the test account during this run" }));
       const ids = mine.map((r) => r.id);
 

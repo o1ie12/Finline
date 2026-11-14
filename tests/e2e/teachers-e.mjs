@@ -24,6 +24,7 @@ if (!/^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(BASE)) throw new Error("l
 const OUT = process.env.OUT ?? path.join(process.cwd(), ".e2e-out");
 mkdirSync(OUT, { recursive: true });
 const track = createTracker({ base: BASE, out: OUT });
+track.onCrash();
 
 const SLUGS = ["zhiya", "qixin", "cunqian", "zhapian", "xinyong", "touzi", "xuedai", "zuwu", "baoxian", "baoshui", "chuangye", "caiwujuece"];
 const ALPHABET = /^[ABCDEFGHJKLMNPQRSTUVWXYZ23456789]{6}$/;
@@ -167,6 +168,7 @@ const periodsOnIndex = {};
   const room = await afterAge.json();
   track.room(room);
   check(afterAge.status === 200, "classroom-e: an aged-out room no longer counts toward the 3");
+  if (afterAge.status !== 200) throw new Error(`the room was not aged (${aged.status}, ${afterAge.status}): stopping before the steps that need it`);
 
   // Wrong codes, per device: 10 in 10 minutes from one device cookie, then wait. Fresh addresses each run:
   // the last run's wrong codes still count for ten minutes.

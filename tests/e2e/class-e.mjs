@@ -35,6 +35,7 @@ const open = async (cookie) => {
 // spec 12 TCH-5: opening a room needs an account. On a real database (E2E_REAL_DB=1) this is always the one
 // test account, and everything the run creates is deleted at the end (tests/e2e/realDb.mjs).
 const track = createTracker({ base: BASE, out: process.env.OUT ?? process.cwd() });
+track.onCrash();
 const account = (name) => track.account(name);
 
 // ---- 1. 即時測驗 ------------------------------------------------------------
