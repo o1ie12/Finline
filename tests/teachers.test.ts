@@ -13,7 +13,8 @@ import { FLOW_STEPS } from "@/content/flow";
 import sitemap from "@/app/sitemap";
 import {
   CLASS_COPY,
-  JOIN_MAX_WRONG,
+  JOIN_MAX_WRONG_DEVICE,
+  JOIN_MAX_WRONG_IP,
   JOIN_WINDOW_MS,
   MAX_OPEN_ROOMS,
   ROOM_CODE_ALPHABET,
@@ -24,7 +25,8 @@ import {
   roomResults,
 } from "@/lib/classRooms";
 import { courseOutline } from "@/lib/curriculum";
-import { UNIT_BUDGET, coursePeriods, lessonPlan, splitPeriods } from "@/lib/lessonPlan";
+import { UNIT_BUDGET, coursePeriods, lessonPlan, splitPeriods, wrapMinutes } from "@/lib/lessonPlan";
+import { LEGAL_CHANGES, LEGAL_UPDATED_AT } from "@/lib/legal";
 import { fillFigures } from "@/lib/tasks/figures";
 import { allLineContent } from "@/lib/tasks/registry";
 import { getLine } from "@/lib/lines";
@@ -35,19 +37,30 @@ const walk = (dir: string): string[] => readdirSync(dir, { withFileTypes: true }
 
 // ---------------------------------------------------------------- periods-e
 test("periods-e: units fill a 45-minute period in order; a long unit gets its own", () => {
-  assert.equal(UNIT_BUDGET, 30);
+  // Follow-up item 4: units may take 35 minutes; 31 to 35 leaves 5 minutes to close instead of 10.
+  assert.equal(UNIT_BUDGET, 35);
   assert.deepEqual(splitPeriods([7, 6, 8, 8]), [[0, 1, 2, 3]]);
   assert.deepEqual(splitPeriods([6, 14, 10]), [[0, 1, 2]]);
-  assert.deepEqual(splitPeriods([11, 10, 10]), [[0, 1], [2]]);
-  assert.deepEqual(splitPeriods([24, 11, 4]), [[0], [1, 2]]);
+  assert.deepEqual(splitPeriods([11, 10, 10]), [[0, 1, 2]]);
+  assert.deepEqual(splitPeriods([24, 11, 4]), [[0, 1], [2]]);
+  assert.deepEqual(splitPeriods([9, 8, 9, 9, 8, 10]), [[0, 1, 2, 3], [4, 5]]);
   assert.deepEqual(splitPeriods([40, 5]), [[0], [1]]);
   assert.deepEqual(splitPeriods([]), []);
+  assert.deepEqual([0, 30, 31, 35].map(wrapMinutes), [10, 10, 5, 5]);
+  for (const c of COURSES) {
+    for (const period of lessonPlan(c.slug).periods) {
+      const units = period.units.reduce((a, u) => a + u.minutes, 0);
+      assert.equal(period.wrap, units >= 31 ? 5 : 10, `${c.slug} period ${period.number}`);
+      assert.ok(period.long || 5 + units + period.wrap <= 45, `${c.slug} period ${period.number} fits 45 minutes`);
+    }
+  }
 });
 
 test("periods-e: the spec's reference courses, and one source for the number on all three pages", () => {
   const periods = Object.fromEntries(COURSES.map((c) => [c.slug, coursePeriods(courseOutline(c.slug))]));
   assert.equal(periods.touzi, 1);
   assert.equal(periods.zhiya, 1);
+  assert.equal(periods.cunqian, 1, "31 minutes of units is one period with a 5-minute close");
   assert.ok(periods.zhapian >= 2);
   // The plan page shows the plan's own periods, which are the same split.
   for (const c of COURSES) assert.equal(lessonPlan(c.slug).periods.length, periods[c.slug], c.slug);
@@ -100,23 +113,44 @@ test("lessonplan-e: all 12 plans have every cell filled, from the course content
       }
       for (const t of shown[shown.length - 1].takeaway) assert.ok(known.has(t), `${c.slug}: 帶走這個 not in the content: ${t}`);
     }
-    for (const k of p.answerKey) {
-      for (const q of k.questions) {
-        assert.ok(q.prompt.trim() && q.why.trim() && q.answer.length > 0 && q.answer.every((a) => a.trim()), `${c.slug} unit ${k.unit.index}: an answer-key entry is incomplete`);
-        assert.ok(!/undefined|\{\{/.test(q.prompt + q.why + q.answer.join("")), `${c.slug}: unfinished text in the answer key`);
+    // Follow-up items 1 and 3: a repeated 想一想 points back to the unit it repeats; a plan carries no answers.
+    for (const u of p.units) {
+      if (u.repeats !== null) {
+        assert.ok(u.repeats < u.index, `${c.slug} unit ${u.index} repeats a later unit`);
+        assert.equal(p.units[u.repeats - 1].hook, u.hook);
+      } else {
+        assert.equal(p.units.findIndex((x) => x.hook === u.hook), u.index - 1, `${c.slug} unit ${u.index}: an unmarked repeat`);
       }
     }
+    assert.ok(!("answerKey" in p), "no answer key in a plan");
+    assert.ok(!/correct|explanation|modelAnswer/.test(JSON.stringify(p)), `${c.slug}: answer fields in the plan`);
     assert.deepEqual(p.objectives, courseOutline(c.slug).info.objectives);
   }
 });
 
-test("lessonplan-e: the page uses the spec's fixed labels, and the answer key starts folded", () => {
+test("lessonplan-e: the units that repeat a question, and the ones with no wrong answer, are the expected ones", () => {
+  const repeats = Object.fromEntries(COURSES.map((c) => [c.slug, lessonPlan(c.slug).units.filter((u) => u.repeats).map((u) => `${u.index}>${u.repeats}`)]).filter(([, v]) => (v as string[]).length));
+  assert.deepEqual(repeats, { zhiya: ["3>1"], qixin: ["3>2"], cunqian: ["3>2"], xuedai: ["6>2"], baoxian: ["6>1"] });
+  // Simulation finals and unscored units get the "what did you choose" line; scored units keep 最常選錯.
+  const open = Object.fromEntries(COURSES.map((c) => [c.slug, lessonPlan(c.slug).units.filter((u) => u.open).map((u) => u.index)]));
+  assert.deepEqual(open.zhiya, [1, 3]);
+  assert.deepEqual(open.xinyong, []);
+  assert.deepEqual(open.touzi, []);
+  for (const c of COURSES) {
+    const o = courseOutline(c.slug);
+    for (const u of lessonPlan(c.slug).units) assert.equal(u.open, o.modules[u.index - 1].simulation || o.modules[u.index - 1].scored === 0, `${c.slug} unit ${u.index}`);
+  }
+});
+
+test("lessonplan-e: the page uses the spec's fixed labels, and has no answer key", () => {
   const src = read("app/(site)/teachers/[slug]/page.tsx");
-  for (const label of ["暖身", "全班一起想", "討論和收尾", "和組員比答案，寫下一件帶走的事", "做完後回頭看：{u.hook}你的想法有變嗎？", "{u.title}：大家最常選錯哪一個？為什麼會這樣想？", "這個單元比較長，討論可以縮短或留到下一節。", "選修，適合提早做完的學生", "老師用：建議答案", "列印教案", "開一個房間", "姓名：＿＿＿＿　班級：＿＿＿＿", "我一開始的答案：＿＿＿＿　做完後我的想法：＿＿＿＿", "差在哪？為什麼？", "今天帶走的一件事："]) {
+  for (const label of ["暖身", "全班一起想", "討論和收尾", "和組員比答案，寫下一件帶走的事", "做完後回頭看：${u.hook}你的想法有變嗎？", "${u.title}：大家最常選錯哪一個？為什麼會這樣想？", "${u.title}：你做了什麼選擇？如果重來一次，你會改哪一個？為什麼？", "同第 ${u.repeats} 個單元的問題，請學生比較做之前和做之後的想法。", "這個單元比較長，討論可以縮短或留到下一節。", "選修，適合提早做完的學生", "列印教案", "開一個房間", "姓名：＿＿＿＿　班級：＿＿＿＿", "我一開始的答案：＿＿＿＿　做完後我的想法：＿＿＿＿", "差在哪？為什麼？", "今天帶走的一件事："]) {
     assert.ok(src.includes(label), `missing: ${label}`);
   }
-  assert.match(src, /<details className=\{s\.key\}>/);
-  assert.ok(!/<details[^>]*\bopen\b/.test(src), "the answer key is collapsed by default");
+  // Follow-up item 3: the answer key is gone from the page, and so from print.
+  assert.ok(!/<details|建議答案|answerKey/.test(src), "no answer key on the plan page");
+  assert.ok(!/\.key\b|keyQ|keyA|keyWhy/.test(read("app/(site)/teachers/teachers.module.css")), "no answer-key styles left");
+  assert.match(src, /<td data-label="時間">\{period\.wrap\} 分鐘<\/td>/);
   assert.match(src, /export const dynamicParams = false;/);
   assert.match(src, /href=\{`\/class\/host\?line=\$\{slug\}`\}/);
 });
@@ -204,15 +238,24 @@ test("classroom-e: a room closes 12 hours after its last activity (clock passed 
   assert.equal(isRoomOpen({ status: "active", created_at: t0.toISOString(), started_at: null }, after(12.5 * 3600_000)), false);
 });
 
-test("classroom-e: 3 open rooms per account, 10 wrong codes per 10 minutes, and the fixed messages", () => {
+test("classroom-e: 3 open rooms per account; wrong codes: 10 per device and 50 per address in 10 minutes; the fixed messages", () => {
   assert.equal(MAX_OPEN_ROOMS, 3);
-  assert.equal(JOIN_MAX_WRONG, 10);
+  assert.equal(JOIN_MAX_WRONG_DEVICE, 10);
+  assert.equal(JOIN_MAX_WRONG_IP, 50);
   assert.equal(JOIN_WINDOW_MS, 10 * 60 * 1000);
   const now = Date.UTC(2026, 10, 14);
   const tries = (n: number, ago: number) => Array.from({ length: n }, () => now - ago);
-  assert.equal(joinBlocked(tries(9, 1000), now), false);
-  assert.equal(joinBlocked(tries(10, 1000), now), true);
-  assert.equal(joinBlocked([...tries(9, 1000), ...tries(5, JOIN_WINDOW_MS + 1)], now), false, "old tries no longer count");
+  assert.equal(joinBlocked(tries(9, 1000), now, JOIN_MAX_WRONG_DEVICE), false);
+  assert.equal(joinBlocked(tries(10, 1000), now, JOIN_MAX_WRONG_DEVICE), true);
+  assert.equal(joinBlocked(tries(49, 1000), now, JOIN_MAX_WRONG_IP), false, "a class behind one address can mistype 49 times");
+  assert.equal(joinBlocked(tries(50, 1000), now, JOIN_MAX_WRONG_IP), true);
+  assert.equal(joinBlocked([...tries(9, 1000), ...tries(5, JOIN_WINDOW_MS + 1)], now, JOIN_MAX_WRONG_DEVICE), false, "old tries no longer count");
+  // Both counts are checked before a code is looked up, and both are recorded on a miss.
+  const guard = read("lib/classGuard.ts");
+  assert.match(guard, /joinBlocked\(fromAddress, now, JOIN_MAX_WRONG_IP\)/);
+  assert.match(guard, /joinBlocked\(fromDevice, now, JOIN_MAX_WRONG_DEVICE\)/);
+  assert.match(guard, /recordJoinMiss\(visitorHash\(req\)\), recordJoinMiss\(deviceKey\(device\)\)/);
+  assert.match(guard, /res\.cookies\.set\(CLASS_DEVICE_COOKIE, device, \{ httpOnly: true/);
   assert.equal(CLASS_COPY.tooManyRooms, "你已經有 3 個房間開著。先關掉一個再開新的。");
   assert.equal(CLASS_COPY.closeRoom, "關閉房間");
   assert.equal(CLASS_COPY.roomClosed, "這個房間已經關閉，請跟老師要新的代碼。");
@@ -236,6 +279,33 @@ test("classroom-e: hosting redirects a signed-out visitor to sign-up; joining st
   assert.match(read("app/(site)/signup/page.tsx"), /const next = safeNext\(wanted\);/);
   for (const ok of ["/class/host", "/class/host?line=zhiya", "/class/life/host", "/today"]) assert.equal(safeNext(ok), ok);
   for (const bad of ["//evil.example", "https://evil.example", "/\\evil", "javascript:alert(1)", "", undefined, 3]) assert.equal(safeNext(bad), null, String(bad));
+});
+
+test("classroom-e: a quiz counts correct answers only: no speed, no ranked list, each student sees their own score", () => {
+  const play = read("components/class/QuizPlay.tsx");
+  const host = read("components/class/QuizHost.tsx");
+  const board = read("app/api/class/leaderboard/route.ts");
+  for (const [name, src] of [["QuizPlay", play], ["QuizHost", host], ["/class", read("app/(site)/class/page.tsx")]] as const) {
+    assert.ok(!/越快越準|又快又準|速度|排行榜|total_ms|totalMs|toFixed\(1\)/.test(src), `${name} still mentions speed or a ranking`);
+  }
+  assert.ok(!/Date\.now\(\)|startedAt/.test(play), "the student page measures no time");
+  assert.match(play, /答對 \{result\.score\} \/ \{result\.total\} 題/);
+  // The class screen gets nicknames and who has handed in, in join order: no score, no time, no rank.
+  assert.match(board, /\.sort\(\(a, b\) => a\.joined_at\.localeCompare\(b\.joined_at\)\)\s*\.map\(\(p\) => \(\{ id: p\.id, display_name: p\.display_name, submitted: Boolean\(p\.submitted_at\) \}\)\)/);
+  assert.ok(!/score: p\.score|total_ms/.test(board));
+  assert.ok(!/p\.score|i \+ 1\}<\/span>/.test(host), "the host screen shows no student's score or place");
+  assert.match(host, /全班結果/);
+  assert.match(read("app/api/class/submit/route.ts"), /submitClassResult\(participantId, score, null, answers\)/);
+});
+
+test("privacy-e: the technical-data paragraph says what the wrong-code limit keeps, and the date moved", () => {
+  const src = read("app/(site)/privacy/page.tsx");
+  const at = src.indexOf("3. 技術性資料");
+  assert.ok(at > 0);
+  assert.ok(src.slice(at, at + 400).includes("為了防止有人亂猜房間代碼，我們會暫存一組由你的網路位址轉成、無法還原的代碼，10 分鐘後自動刪除。"));
+  assert.equal(LEGAL_UPDATED_AT, "2026 年 11 月 14 日");
+  assert.equal(LEGAL_CHANGES[0].date, "2026-11-14");
+  assert.equal(LEGAL_CHANGES[0].page, "privacy");
 });
 
 test("classroom-e: results are percent correct per question and the median; no class view ranks by money", () => {

@@ -15,6 +15,7 @@
  */
 import { chromium } from "playwright";
 import { playTurn, waitHeading } from "./playDriver.mjs";
+import { createTracker } from "./realDb.mjs";
 
 const BASE = process.env.BASE_URL ?? "http://localhost:3210";
 if (!/^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(BASE)) throw new Error("local dev server only");
@@ -31,9 +32,10 @@ const open = async (cookie) => {
   return { ctx, page };
 };
 
-// spec 12 TCH-5: opening a room needs an account.
-const account = async (name) =>
-  (await (await fetch(BASE + "/api/signup", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ name, school: "本機測試", grade: "高二" }) })).json()).access_code;
+// spec 12 TCH-5: opening a room needs an account. On a real database (E2E_REAL_DB=1) this is always the one
+// test account, and everything the run creates is deleted at the end (tests/e2e/realDb.mjs).
+const track = createTracker({ base: BASE, out: process.env.OUT ?? process.cwd() });
+const account = (name) => track.account(name);
 
 // ---- 1. 即時測驗 ------------------------------------------------------------
 {
@@ -47,6 +49,7 @@ const account = async (name) =>
   await codeEl.waitFor({ timeout: 15_000 });
   const code = (await codeEl.innerText()).trim();
   check(/^[A-Z0-9]{4,6}$/.test(code), `測驗: the teacher gets a room code (${code})`);
+  track.code(code);
 
   const student = await open();
   await student.page.goto(BASE + "/class/play", { waitUntil: "networkidle" });
@@ -55,7 +58,7 @@ const account = async (name) =>
   await student.page.getByRole("button", { name: "加入" }).click();
   await student.page.getByText("已加入房間").waitFor({ timeout: 15_000 });
   await teacher.page.getByText("課堂走查").waitFor({ timeout: 15_000 });
-  check(true, "測驗: the student joins and shows on the teacher's leaderboard");
+  check(true, "測驗: the student joins and shows on the teacher's screen");
 
   await teacher.page.getByRole("button", { name: "開始測驗" }).click();
   const send = student.page.getByRole("button", { name: /^送出/ });
@@ -63,13 +66,16 @@ const account = async (name) =>
   // Answer every question with its first option (the score is whatever it is).
   for (const fs of await student.page.locator("fieldset").all()) await fs.getByRole("button").first().click();
   await send.click();
-  await student.page.getByText(/\/ 10，用了/).waitFor({ timeout: 15_000 });
-  const scoreText = await student.page.getByText(/\/ 10，用了/).innerText();
-  const score = scoreText.match(/^(\d+) \/ 10/)?.[1];
-  check(score != null, `測驗: the student sends all answers (${scoreText.trim()})`);
-  const row = teacher.page.locator("div", { hasText: "課堂走查" }).filter({ hasText: `${score} / 10` });
-  await row.first().waitFor({ timeout: 15_000 });
-  check(true, `測驗: the teacher's leaderboard shows 課堂走查 at ${score} / 10`);
+  // 2026-11-14: correct answers only. The student sees their own score; the teacher's screen shows the
+  // class by question and the median, and each student only as handed in.
+  await student.page.getByText(/^答對 \d+ \/ 10 題$/).waitFor({ timeout: 15_000 });
+  const scoreText = (await student.page.getByText(/^答對 \d+ \/ 10 題$/).innerText()).trim();
+  const score = scoreText.match(/答對 (\d+) \/ 10 題/)?.[1];
+  const studentText = (await student.page.locator("main").innerText()).replace(/\s+/g, " ");
+  check(score != null && !/秒|排行榜/.test(studentText), `測驗: the student sees their own score and no time or ranking (${scoreText})`);
+  await teacher.page.getByText("全班結果 · 1 人交卷").waitFor({ timeout: 15_000 });
+  const teacherText = (await teacher.page.locator("main").innerText()).replace(/\s+/g, " ");
+  check(teacherText.includes(`中位數 ${score} / 10 題`) && teacherText.includes("課堂走查 已交卷") && !/排行榜|秒/.test(teacherText) && !new RegExp(`課堂走查 ${score} / 10`).test(teacherText), `測驗: the teacher sees results by question and the median (${score}), not the student's score`);
   await teacher.page.getByRole("button", { name: "結束這場" }).click();
   await teacher.ctx.close();
   await student.ctx.close();
@@ -77,11 +83,8 @@ const account = async (name) =>
 
 // ---- 2. 人生賽局 ------------------------------------------------------------
 {
-  const signup = await (await fetch(BASE + "/api/signup", {
-    method: "POST",
-    headers: { "content-type": "application/json" },
-    body: JSON.stringify({ name: "隊伍走查", school: "本機測試", grade: "高二" }),
-  })).json();
+  // On a real database the same test account hosts the round and plays in it.
+  const signup = { access_code: await account("隊伍走查") };
   const teacher = await open(await account("賽局老師"));
   await teacher.page.goto(BASE + "/class/life/host", { waitUntil: "networkidle" });
   await teacher.page.getByRole("button", { name: "建立房間" }).click();
@@ -89,6 +92,7 @@ const account = async (name) =>
   await codeEl.waitFor({ timeout: 15_000 });
   const code = (await codeEl.innerText()).replace(/\s/g, "");
   check(/^[A-Z0-9]{4,6}$/.test(code), `人生賽局: the teacher gets a room code (${code})`);
+  track.code(code);
   await teacher.page.getByRole("button", { name: "開始", exact: true }).click();
   await teacher.page.getByRole("button", { name: "結束這場" }).waitFor({ timeout: 15_000 });
 
@@ -115,6 +119,12 @@ const account = async (name) =>
 }
 
 await browser.close();
+// A real database: take away the rooms and participants this run created, and say what went.
+const cleaned = await track.cleanup();
+if (cleaned) {
+  console.log("cleanup:", JSON.stringify({ rooms: cleaned.deleted.rooms.length, participants: cleaned.deleted.participants.length, attempts: cleaned.deleted.attempts, refused: cleaned.refused.length, left: cleaned.left }));
+  check(cleaned.refused.length === 0 && cleaned.left.roomsOfAccount === 0, "cleanup: every room the test account opened is gone");
+}
 console.log(results.join("\n"));
 console.log(errors.length ? `page errors:\n${errors.join("\n")}` : "page errors: 0");
 const fails = results.filter((r) => r.startsWith("FAIL")).length;

@@ -6,19 +6,24 @@
  *   USE_DEV_STORE=1 SUPABASE_URL= SUPABASE_SERVICE_ROLE_KEY= npx next dev -p 3210
  *   BASE_URL=http://localhost:3210 OUT=/some/dir node tests/e2e/teachers-e.mjs
  *
- * Local dev server on the file store only: it signs up test accounts, opens
- * and closes rooms, and edits .devstore.json to age a room past 12 hours.
+ * A local dev server, by default on the file store: it signs up test
+ * accounts, opens and closes rooms, and ages one past 12 hours.
  * OUT gets the screenshots (375 and 1280 wide) and the PDF of /teachers/zhiya.
+ *
+ * E2E_REAL_DB=1 (with E2E_SUPABASE_URL / E2E_SUPABASE_KEY, and the local
+ * server pointed at the same database) uses one test account and deletes
+ * every room, participant and wrong-code row it made: tests/e2e/realDb.mjs.
  */
-import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
+import { writeFileSync, mkdirSync } from "node:fs";
 import path from "node:path";
 import { chromium } from "playwright";
+import { createTracker } from "./realDb.mjs";
 
 const BASE = process.env.BASE_URL ?? "http://localhost:3210";
 if (!/^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(BASE)) throw new Error("local dev server only");
 const OUT = process.env.OUT ?? path.join(process.cwd(), ".e2e-out");
 mkdirSync(OUT, { recursive: true });
-const STORE = path.join(process.cwd(), ".devstore.json");
+const track = createTracker({ base: BASE, out: OUT });
 
 const SLUGS = ["zhiya", "qixin", "cunqian", "zhapian", "xinyong", "touzi", "xuedai", "zuwu", "baoxian", "baoshui", "chuangye", "caiwujuece"];
 const ALPHABET = /^[ABCDEFGHJKLMNPQRSTUVWXYZ23456789]{6}$/;
@@ -28,11 +33,6 @@ const get = (p, init = {}) => fetch(BASE + p, { redirect: "manual", ...init });
 const text = (html) => html.replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>/g, "").replace(/<[^>]+>/g, " ").replace(/&[a-z#0-9]+;/g, " ").replace(/\s+/g, " ");
 const anchors = (html) => [...html.matchAll(/<a\b[^>]*href="([^"]+)"[^>]*>([\s\S]*?)<\/a>/g)].map((m) => ({ href: m[1].replace(/&amp;/g, "&"), text: text(m[2]).trim() }));
 
-async function signup(name) {
-  const res = await fetch(BASE + "/api/signup", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ name, school: "測試高中", grade: "高二" }) });
-  if (!res.ok) throw new Error(`signup ${res.status}`);
-  return (await res.json()).access_code;
-}
 const as = (code, ip) => ({ cookie: `fs_access_code=${code}; fs_signed_in=1`, "content-type": "application/json", ...(ip ? { "x-forwarded-for": ip } : {}) });
 const post = (p, body, headers = { "content-type": "application/json" }) => fetch(BASE + p, { method: "POST", headers, body: JSON.stringify(body) });
 
@@ -69,9 +69,19 @@ const periodsOnIndex = {};
     const cells = [...html.matchAll(/<td\b[^>]*>([\s\S]*?)<\/td>/g)].map((m) => text(m[1]).trim());
     const bad = cells.filter((c) => !c || /undefined|null|\{\{/.test(c));
     check(res.status === 200 && cells.length >= 12 && bad.length === 0, `lessonplan-e: ${slug} renders, ${cells.length} cells, none empty`);
-    check(/<details\b(?![^>]*\bopen\b)[^>]*>/.test(html) || !html.includes("老師用：建議答案"), `lessonplan-e: ${slug} answer key is collapsed`);
+    check(!/<details\b/.test(html) && !text(html).includes("建議答案"), `lessonplan-e: ${slug} has no answer key`);
     periodsOnPlan[slug] = Number(text(html).match(/建議 (\d+) 節課/)?.[1]);
     check((text(html).match(/第 \d+ 節/g) ?? []).length === periodsOnPlan[slug] && (html.match(/<table\b/g) ?? []).length === periodsOnPlan[slug], `lessonplan-e: ${slug} has a table per period (${periodsOnPlan[slug]})`);
+  }
+  {
+    const zhiya = text(await (await get("/teachers/zhiya")).text());
+    check(zhiya.includes("同第 1 個單元的問題，請學生比較做之前和做之後的想法。"), "lessonplan-e: 職涯線's final points back to unit 1's question");
+    check(zhiya.includes("職涯抉擇模擬：你做了什麼選擇？如果重來一次，你會改哪一個？為什麼？") && zhiya.includes("你的興趣地圖：你做了什麼選擇？") && zhiya.includes("比較兩份工作：大家最常選錯哪一個？為什麼會這樣想？"), "lessonplan-e: the discussion line follows whether a unit has a wrong answer");
+    const cunqian = text(await (await get("/teachers/cunqian")).text());
+    check(periodsOnPlan.cunqian === 1 && /5 分鐘 討論和收尾/.test(cunqian) && !/10 分鐘 討論和收尾/.test(cunqian), "lessonplan-e: 存錢線 (31 minutes of units) is one period that closes in 5 minutes");
+    check(/10 分鐘 討論和收尾/.test(zhiya), "lessonplan-e: 職涯線 (30 minutes of units) keeps the 10-minute close");
+    const privacy = text(await (await get("/privacy")).text()).replace(/ /g, "");
+    check(privacy.includes("為了防止有人亂猜房間代碼，我們會暫存一組由你的網路位址轉成、無法還原的代碼，10分鐘後自動刪除。") && privacy.includes("最後更新日期：2026年11月14日"), "privacy-e: the new sentence and date are on /privacy");
   }
   // ---------------------------------------------------------- periods-e
   for (const slug of SLUGS) {
@@ -123,62 +133,82 @@ const periodsOnIndex = {};
     check((await (await get(p)).text()).includes(`<title>${title}</title>`), `classroom-e: ${p} title is ${title}`);
   }
 
-  const teacher = await signup("王老師");
+  const teacher = await track.account("王老師");
   const rooms = [];
   for (let i = 0; i < 3; i++) {
     const res = i === 2 ? await fetch(BASE + "/api/class/life/create", { method: "POST", headers: as(teacher) }) : await post("/api/class/create", { line_slug: "zhiya" }, as(teacher));
     rooms.push(await res.json());
+    track.room(rooms[i]);
   }
   check(rooms.every((r) => ALPHABET.test(r.code ?? "")), `classroom-e: room codes use the alphabet (${rooms.map((r) => r.code).join(" ")})`);
   const fourth = await post("/api/class/create", { line_slug: "zhiya" }, as(teacher));
   const body = await fourth.json();
+  track.room(body);
   check(fourth.status === 409 && body.message === "你已經有 3 個房間開著。先關掉一個再開新的。" && body.rooms?.length === 3, `classroom-e: a 4th room is refused with the 3 open ones (${fourth.status})`);
-  const other = await signup("陳老師");
-  check((await post("/api/class/close", { room_id: rooms[0].room_id }, as(other))).status === 404, "classroom-e: another account cannot close the room");
+  // A second identity exists only on the file store; a real database gets one test account.
+  const other = await track.secondAccount("陳老師");
+  if (other) check((await post("/api/class/close", { room_id: rooms[0].room_id }, as(other))).status === 404, "classroom-e: another account cannot close the room");
   check((await post("/api/class/close", { room_id: rooms[0].room_id }, as(teacher))).status === 200, "classroom-e: the host closes one");
   const again = await post("/api/class/create", { line_slug: "touzi" }, as(teacher));
+  const againRoom = await again.json();
+  track.room(againRoom);
   check(again.status === 200, "classroom-e: then a new room opens");
-  const closed = await post("/api/class/join", { code: rooms[0].code, display_name: "小安" }, { "content-type": "application/json", "x-forwarded-for": "203.0.113.1" });
+  const closed = await post("/api/class/join", { code: rooms[0].code, display_name: "小安" }, { "content-type": "application/json", "x-forwarded-for": track.ip("203.0.113.1") });
   check(closed.status === 410 && (await closed.json()).message === "這個房間已經關閉，請跟老師要新的代碼。", `classroom-e: a closed room's code says it is closed (${closed.status})`);
 
-  // 12 hours without activity: age the second room in the file store.
+  // 12 hours without activity: age the second room.
   const live = rooms[1];
-  const ok1 = await post("/api/class/join", { code: live.code, display_name: "小安" }, { "content-type": "application/json", "x-forwarded-for": "203.0.113.2" });
+  const ok1 = await post("/api/class/join", { code: live.code, display_name: "小安" }, { "content-type": "application/json", "x-forwarded-for": track.ip("203.0.113.2") });
   check(ok1.status === 200, "classroom-e: an open room can be joined");
-  const store = JSON.parse(readFileSync(STORE, "utf8"));
-  const row = store.class_rooms.find((r) => r.id === live.room_id);
-  row.last_active_at = new Date(Date.now() - 12.1 * 3600 * 1000).toISOString();
-  row.created_at = row.last_active_at;
-  writeFileSync(STORE, JSON.stringify(store));
-  const aged = await post("/api/class/join", { code: live.code, display_name: "小明" }, { "content-type": "application/json", "x-forwarded-for": "203.0.113.2" });
+  await track.ageRoom(live.room_id);
+  const aged = await post("/api/class/join", { code: live.code, display_name: "小明" }, { "content-type": "application/json", "x-forwarded-for": track.ip("203.0.113.2") });
   check(aged.status === 410, `classroom-e: 12 hours after its last activity the room is closed (${aged.status})`);
   const afterAge = await post("/api/class/create", { line_slug: "zhiya" }, as(teacher));
+  const room = await afterAge.json();
+  track.room(room);
   check(afterAge.status === 200, "classroom-e: an aged-out room no longer counts toward the 3");
 
-  // Wrong codes: 10 in 10 minutes, then wait. Its own address, so nothing else here is blocked.
-  // A fresh address each run: the last run's wrong codes still count for ten minutes.
-  const guesser = { "content-type": "application/json", "x-forwarded-for": `198.51.100.${1 + (Date.now() % 250)}` };
-  const tries = [];
-  for (let i = 0; i < 10; i++) tries.push((await post("/api/class/join", { code: "ZZZZZ" + "23456789AB"[i], display_name: "x" }, guesser)).status);
-  const eleventh = await post("/api/class/join", { code: again.ok ? (await again.clone().json()).code : "ZZZZZZ", display_name: "x" }, guesser);
-  check(tries.every((s) => s === 404) && eleventh.status === 429 && (await eleventh.json()).message === "試太多次了，請 10 分鐘後再試。", `classroom-e: 10 wrong codes, then 429 even for a right one (${tries.join(",")} then ${eleventh.status})`);
-  check((await get(`/api/class/room?code=ZZZZZ2`, { headers: guesser })).status === 429, "classroom-e: the code lookup shares the limit");
-  check((await get(`/api/class/room?code=${(await again.clone().json()).code}`, { headers: { "x-forwarded-for": "203.0.113.3" } })).status === 200, "classroom-e: another visitor is not affected");
+  // Wrong codes, per device: 10 in 10 minutes from one device cookie, then wait. Fresh addresses each run:
+  // the last run's wrong codes still count for ten minutes.
+  const n = 1 + (Date.now() % 120);
+  const addrA = track.ip(`198.51.100.${n}`);
+  const json = { "content-type": "application/json" };
+  const first = await post("/api/class/join", { code: "ZZZZZ2", display_name: "x" }, { ...json, "x-forwarded-for": addrA });
+  const deviceCookie = track.device(first);
+  check(first.status === 404 && deviceCookie !== "", "classroom-e: a wrong code is a 404 and gives the device its cookie");
+  const tries = [first.status];
+  for (let i = 1; i < 10; i++) tries.push((await post("/api/class/join", { code: "ZZZZZ" + "23456789AB"[i], display_name: "x" }, { ...json, "x-forwarded-for": addrA, cookie: deviceCookie })).status);
+  const eleventh = await post("/api/class/join", { code: againRoom.code, display_name: "x" }, { ...json, "x-forwarded-for": addrA, cookie: deviceCookie });
+  check(tries.every((x) => x === 404) && eleventh.status === 429 && (await eleventh.json()).message === "試太多次了，請 10 分鐘後再試。", `classroom-e: 10 wrong codes from one device, then 429 even for a right one (${tries.join(",")} then ${eleventh.status})`);
+  check((await get(`/api/class/room?code=ZZZZZ2`, { headers: { "x-forwarded-for": addrA, cookie: deviceCookie } })).status === 429, "classroom-e: the code lookup shares the limit");
+  // The same address, another device: a classmate on the same wifi is not blocked by one phone's mistakes.
+  const classmate = await get(`/api/class/room?code=${againRoom.code}`, { headers: { "x-forwarded-for": addrA } });
+  check(classmate.status === 200, `classroom-e: another device at the same address still gets in (${classmate.status})`);
 
-  // Results: percent correct per question and the median; nicknames only.
-  const room = await afterAge.json();
+  // Wrong codes, per address: 50 in 10 minutes whatever the device, then wait.
+  const addrB = track.ip(`198.51.100.${n + 125}`);
+  const fromB = [];
+  for (let i = 0; i < 50; i++) {
+    const res = await post("/api/class/join", { code: "YYYY" + "23456789AB"[i % 10] + "23456789AB"[Math.floor(i / 10)], display_name: "x" }, { ...json, "x-forwarded-for": addrB });
+    track.device(res);
+    fromB.push(res.status);
+  }
+  const fiftyFirst = await get(`/api/class/room?code=${againRoom.code}`, { headers: { "x-forwarded-for": addrB } });
+  check(fromB.every((x) => x === 404) && fiftyFirst.status === 429, `classroom-e: 50 wrong codes from one address (each a new device), then 429 (${fromB.filter((x) => x === 404).length} x 404, then ${fiftyFirst.status})`);
+  check((await get(`/api/class/room?code=${againRoom.code}`, { headers: { "x-forwarded-for": track.ip("203.0.113.3") } })).status === 200, "classroom-e: another address is not affected");
+
+  // Results: percent correct per question and the median. The class screen gets no student's score.
   const marks = [[true, true, true, true, true, false, false, false, false, false], [true, false, false, false, false, false, false, false, false, false]];
   for (const [i, m] of marks.entries()) {
-    const j = await post("/api/class/join", { code: room.code, display_name: `學生${i + 1}` }, { "content-type": "application/json", "x-forwarded-for": "203.0.113.4" });
+    const j = await post("/api/class/join", { code: room.code, display_name: `學生${i + 1}` }, { "content-type": "application/json", "x-forwarded-for": track.ip("203.0.113.4") });
     const cookie = (j.headers.get("set-cookie") ?? "").split(";")[0];
     const pid = (await j.json()).participant_id;
-    await post("/api/class/submit", { participant_id: pid, score: m.filter(Boolean).length, total_ms: 60000, correct: m }, { "content-type": "application/json", cookie });
+    await post("/api/class/submit", { participant_id: pid, score: m.filter(Boolean).length, correct: m }, { "content-type": "application/json", cookie });
   }
   const board = await (await get(`/api/class/leaderboard?room_id=${room.room_id}`)).json();
   check(board.results?.submitted === 2 && board.results.percent[0] === 100 && board.results.percent[1] === 50 && board.results.percent[9] === 0 && board.results.median === 3, `classroom-e: results by question and the median (${JSON.stringify(board.results?.percent)} median ${board.results?.median})`);
-  check(board.participants.every((p) => !("answers" in p)) && !/netWorth|net_worth|淨資產/.test(JSON.stringify(board)), "classroom-e: nicknames and scores only; nothing about money");
+  check(board.participants.length === 2 && board.participants.every((p) => !("answers" in p) && !("score" in p) && !("total_ms" in p) && p.submitted === true) && board.participants[0].display_name === "學生1" && !/netWorth|net_worth|淨資產/.test(JSON.stringify(board)), "classroom-e: the class screen gets nicknames in join order and who handed in; no score, no time, nothing about money");
   globalThis.teacher = teacher;
-  globalThis.resultsRoom = room;
 }
 
 // ------------------------------------------- browser: preselect, print, shots
@@ -200,6 +230,25 @@ const errors = [];
   await page.waitForSelector("text=你已經有 3 個房間開著。先關掉一個再開新的。");
   check((await page.getByRole("button", { name: "關閉房間" }).count()) === 3, "classroom-e: the limit screen lists 3 rooms, each with 關閉房間");
   await page.screenshot({ path: `${OUT}/class-host-limit-1280.png` });
+  // The host screen of a room with results: by question and the median, students without scores or places.
+  await page.getByRole("button", { name: "關閉房間" }).first().click();
+  await page.waitForFunction(() => [...document.querySelectorAll("button")].filter((x) => x.textContent?.trim() === "關閉房間").length === 2);
+  await page.getByRole("button", { name: "建立房間" }).click();
+  const hostCode = page.locator("p.money").first();
+  await hostCode.waitFor({ timeout: 20_000 });
+  const liveCode = (await hostCode.innerText()).trim();
+  track.code(liveCode);
+  await page.getByRole("button", { name: "開始測驗" }).click();
+  for (const [i, m] of [[true, true, false, false, false, false, false, false, false, false], [true, false, false, false, false, false, false, false, false, false]].entries()) {
+    const j = await post("/api/class/join", { code: liveCode, display_name: `走查${i + 1}` }, { "content-type": "application/json", "x-forwarded-for": track.ip("203.0.113.5") });
+    const cookie = (j.headers.get("set-cookie") ?? "").split(";")[0];
+    await post("/api/class/submit", { participant_id: (await j.json()).participant_id, score: m.filter(Boolean).length, correct: m }, { "content-type": "application/json", cookie });
+  }
+  await page.getByText("全班結果 · 2 人交卷").waitFor({ timeout: 20_000 });
+  const hostText = (await page.locator("main").innerText()).replace(/\s+/g, " ");
+  check(/中位數 1\.5 \/ 10 題/.test(hostText) && hostText.includes("答對 100%") && hostText.includes("走查1 已交卷") && !/\d \/ 10(?! 題)/.test(hostText) && !/排行榜|秒/.test(hostText), "classroom-e: the host screen shows results by question and the median; students have no score, time or place");
+  await page.screenshot({ path: `${OUT}/class-host-results-1280.png`, fullPage: true });
+  await page.getByRole("button", { name: "結束這場" }).click();
   await page.goto(BASE + "/class/life/host", { waitUntil: "load" });
   check((await page.title()) === "人生賽局 | 錢途", `classroom-e: /class/life/host title (${await page.title()})`);
   await ctx.close();
@@ -259,6 +308,13 @@ for (const [w, h] of [[375, 812], [1280, 900]]) {
 await browser.close();
 
 check(errors.length === 0, `no page errors (${errors.slice(0, 2).join(" | ")})`);
+
+// A real database: take away everything this run created, and say what went.
+const cleaned = await track.cleanup();
+if (cleaned) {
+  console.log("cleanup:", JSON.stringify({ rooms: cleaned.deleted.rooms.length, participants: cleaned.deleted.participants.length, attempts: cleaned.deleted.attempts, refused: cleaned.refused.length, left: cleaned.left }));
+  check(cleaned.refused.length === 0 && cleaned.left.roomsOfAccount === 0, "cleanup: every room the test account opened is gone");
+}
 console.log(results.join("\n"));
 const failed = results.filter((r) => r.startsWith("FAIL")).length;
 console.log(`\n${results.length - failed} / ${results.length} passed. Output in ${OUT}`);
