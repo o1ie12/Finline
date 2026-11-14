@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { PrintButton } from "@/components/teachers/PrintButton";
 import { COURSES } from "@/content/curriculum";
 import { lineVars } from "@/lib/design/lineVars";
-import { WARMUP_MINUTES, WRAP_MINUTES, lessonPlan, type PlanPeriod } from "@/lib/lessonPlan";
+import { WARMUP_MINUTES, lessonPlan, type PlanPeriod, type PlanUnit } from "@/lib/lessonPlan";
 import { getLine, isLineSlug } from "@/lib/lines";
 import { pageMeta } from "@/lib/pageMeta";
 import k from "@/components/course/kit.module.css";
@@ -33,8 +33,8 @@ const Lines = ({ n }: { n: number }) => (
 
 /**
  * A course's lesson plan (spec 12 TCH-3, TCH-4): one table per class period,
- * the extras, the answer key behind a fold, and a worksheet. Every sentence
- * that is not a fixed label comes from the course data (lib/lessonPlan.ts).
+ * the extras and a worksheet. Every sentence that is not a fixed label comes
+ * from the course data (lib/lessonPlan.ts). No answers: the page is public.
  */
 export default async function LessonPlanPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
@@ -120,41 +120,6 @@ export default async function LessonPlanPage({ params }: { params: Promise<{ slu
         </section>
       ) : null}
 
-      {p.answerKey.length ? (
-        <details className={s.key}>
-          <summary>
-            <h2 className={s.h2}>老師用：建議答案</h2>
-          </summary>
-          {p.answerKey.map(({ unit, questions }) => (
-            <div key={unit.index} className={s.keyUnit}>
-              <h3 className={s.h3}>
-                單元 {unit.index}：{unit.title}
-              </h3>
-              <ol>
-                {questions.map((q) => (
-                  <li key={q.prompt}>
-                    <p className={s.keyQ}>{q.prompt}</p>
-                    {q.answer.length === 1 ? (
-                      <p className={s.keyA}>{q.answer[0]}</p>
-                    ) : (
-                      <ul className={s.keyA}>
-                        {q.answer.map((a) => (
-                          <li key={a}>{a}</li>
-                        ))}
-                      </ul>
-                    )}
-                    <p className={s.keyWhy}>
-                      <b>為什麼</b>
-                      {q.why}
-                    </p>
-                  </li>
-                ))}
-              </ol>
-            </div>
-          ))}
-        </details>
-      ) : null}
-
       <section className={s.sheet} aria-labelledby="sheet-h">
         <h2 id="sheet-h" className={s.sheetTitle}>
           {p.name} 學習單
@@ -162,7 +127,7 @@ export default async function LessonPlanPage({ params }: { params: Promise<{ slu
         <p className={s.sheetName}>姓名：＿＿＿＿　班級：＿＿＿＿</p>
         {/* Each question once: a final that returns to an earlier unit's 想一想 is not asked again on paper. */}
         {p.units
-          .filter((u, i) => u.hook && p.units.findIndex((x) => x.hook === u.hook) === i)
+          .filter((u) => u.hook && u.repeats === null)
           .map((u) => (
             <div key={u.index} className={s.sheetUnit}>
               <h3 className={s.h3}>
@@ -187,6 +152,9 @@ export default async function LessonPlanPage({ params }: { params: Promise<{ slu
     </div>
   );
 }
+
+/** A unit that returns to an earlier unit's 想一想: the plan points back instead of printing it twice. */
+const sameAs = (u: PlanUnit) => `同第 ${u.repeats} 個單元的問題，請學生比較做之前和做之後的想法。`;
 
 function Period({ period }: { period: PlanPeriod }) {
   const shown = period.units.filter((u) => u.shown);
@@ -213,7 +181,7 @@ function Period({ period }: { period: PlanPeriod }) {
               <td data-label="時間">{WARMUP_MINUTES} 分鐘</td>
               <td data-label="環節">暖身</td>
               <td data-label="學生做什麼">全班一起想</td>
-              <td data-label="老師可以問">{first.hook}</td>
+              <td data-label="老師可以問">{first.repeats ? sameAs(first) : first.hook}</td>
             </tr>
           ) : null}
           {shown.map((u) => (
@@ -223,17 +191,17 @@ function Period({ period }: { period: PlanPeriod }) {
                 單元 {u.index}：{u.title}
               </td>
               <td data-label="學生做什麼">{u.does}</td>
-              <td data-label="老師可以問">做完後回頭看：{u.hook}你的想法有變嗎？</td>
+              <td data-label="老師可以問">{u.repeats ? sameAs(u) : `做完後回頭看：${u.hook}你的想法有變嗎？`}</td>
             </tr>
           ))}
           <tr>
-            <td data-label="時間">{WRAP_MINUTES} 分鐘</td>
+            <td data-label="時間">{period.wrap} 分鐘</td>
             <td data-label="環節">討論和收尾</td>
             <td data-label="學生做什麼">和組員比答案，寫下一件帶走的事</td>
             <td data-label="老師可以問">
               <ul>
                 {shown.map((u) => (
-                  <li key={u.index}>{u.title}：大家最常選錯哪一個？為什麼會這樣想？</li>
+                  <li key={u.index}>{u.open ? `${u.title}：你做了什麼選擇？如果重來一次，你會改哪一個？為什麼？` : `${u.title}：大家最常選錯哪一個？為什麼會這樣想？`}</li>
                 ))}
               </ul>
               {last?.takeaway.length ? (

@@ -98,14 +98,12 @@
 }
 
 /* The site's reset removes list markers; these lists are steps and points. */
-.steps,
-.key ol {
+.steps {
   list-style: decimal;
 }
 .list,
 .facts ul,
-.plan ul,
-ul.keyA {
+.plan ul {
   list-style: disc;
 }
 
@@ -238,59 +236,10 @@ ul.keyA {
     box-shadow: inset 0 0 0 1px var(--ink);
   }
 }
-.page a:focus-visible,
-.page summary:focus-visible {
+.page a:focus-visible {
   outline: 3px solid var(--focus);
   outline-offset: 3px;
   border-radius: 6px;
-}
-
-/* ---- the answer key, folded ---- */
-.key {
-  border-radius: 16px;
-  background: var(--surface);
-  box-shadow: 0 0 0 1px var(--hairline);
-  padding: 4px 20px;
-}
-.key summary {
-  display: flex;
-  align-items: center;
-  min-height: 56px;
-  cursor: pointer;
-}
-.key summary h2 {
-  display: inline;
-}
-.key ol {
-  margin: 8px 0 0;
-  padding-left: 1.4em;
-  display: grid;
-  gap: 14px;
-}
-.keyUnit {
-  padding: 14px 0 18px;
-  border-top: 1px solid var(--hairline);
-}
-.keyQ,
-.keyA,
-.keyWhy {
-  margin: 0;
-  font-size: 0.9375rem;
-  line-height: 1.7;
-}
-.keyQ {
-  font-weight: 700;
-}
-ul.keyA {
-  padding-left: 1.2em;
-}
-.keyWhy {
-  color: var(--ink-2);
-}
-.keyWhy b {
-  margin-right: 8px;
-  font-size: 0.8125rem;
-  color: var(--ink);
 }
 
 /* ---- the worksheet: a sheet of paper on screen, a page of its own in print ---- */
@@ -454,7 +403,6 @@ ul.keyA {
   .text,
   .note,
   .facts dd,
-  .keyWhy,
   .kicker {
     color: #000;
   }
@@ -463,16 +411,12 @@ ul.keyA {
   .plan,
   .steps,
   .list,
-  .sheetUnit,
-  .keyQ,
-  .keyA,
-  .keyWhy {
+  .sheetUnit {
     font-size: 10.5pt;
     line-height: 1.55;
   }
   .plan,
   .tableCard,
-  .key,
   .sheet {
     box-shadow: none;
     border-radius: 0;
@@ -496,8 +440,7 @@ ul.keyA {
     color: #000;
   }
   .plan tr,
-  .sheetUnit,
-  .keyUnit li {
+  .sheetUnit {
     break-inside: avoid;
   }
   .period + .period {
@@ -510,13 +453,6 @@ ul.keyA {
   }
   .sheetUnit {
     gap: 2pt;
-  }
-  .key {
-    padding: 0;
-  }
-  /* The answer key prints only when the teacher opened it first. */
-  .key:not([open]) {
-    display: none;
   }
   .blank i {
     height: 19pt;
