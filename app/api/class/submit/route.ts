@@ -16,7 +16,6 @@ export async function POST(req: Request) {
   const b = (body ?? {}) as Record<string, unknown>;
   const participantId = b.participant_id;
   const score = Number(b.score);
-  const totalMs = Number(b.total_ms);
 
   if (typeof participantId !== "string") {
     return NextResponse.json({ error: "invalid_participant" }, { status: 400 });
@@ -31,9 +30,8 @@ export async function POST(req: Request) {
   if (!Number.isFinite(score) || score < 0 || score > 10) {
     return NextResponse.json({ error: "invalid_score" }, { status: 400 });
   }
-  if (!Number.isFinite(totalMs) || totalMs < 0) {
-    return NextResponse.json({ error: "invalid_time" }, { status: 400 });
-  }
+  // 2026-11-14: a quiz counts correct answers only. A time an older page
+  // still sends is ignored, and none is stored.
 
   // spec 12 TCH-5: right or wrong per question, for the room's percent
   // correct. Optional, and only its shape is trusted: true/false, at most
@@ -42,7 +40,7 @@ export async function POST(req: Request) {
   const answers = marks && marks.filter(Boolean).length === score ? marks : null;
 
   try {
-    const participant = await submitClassResult(participantId, score, totalMs, answers);
+    const participant = await submitClassResult(participantId, score, null, answers);
     if (!participant) {
       return NextResponse.json({ error: "participant_not_found" }, { status: 404 });
     }

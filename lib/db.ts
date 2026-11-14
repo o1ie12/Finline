@@ -1136,9 +1136,11 @@ export async function touchClassRoom(roomId: string, now: Date = new Date()): Pr
   }
 }
 
-// Wrong room codes per visitor, for the join limit. On a database without
-// migration-27 the count lives in this process only (a weaker limit, since
-// each server instance counts on its own).
+// Wrong room codes, for the join limits. A row's ip_hash is either the
+// salted hash of a network address or, prefixed `dev:`, of a device's cookie
+// (lib/classGuard.ts): the same table and window serve both counts. On a
+// database without migration-27 the count lives in this process only (a
+// weaker limit, since each server instance counts on its own).
 const memoryMisses = new Map<string, number[]>();
 
 /** The times (ms) of this visitor's wrong codes inside the window. */
@@ -1235,7 +1237,8 @@ export async function joinClassRoom(
 export async function submitClassResult(
   participantId: string,
   score: number,
-  totalMs: number,
+  /** Not measured any more (2026-11-14: a quiz counts correct answers only); null on new rows. */
+  totalMs: number | null,
   /** migration-27: right or wrong per question, for the room's percent correct. */
   answers: boolean[] | null = null,
 ): Promise<ClassParticipant | null> {
@@ -1277,8 +1280,9 @@ export async function submitClassResult(
   return (existing as ClassParticipant) ?? null;
 }
 
-/** Leaderboard order: accuracy first, then speed — matches the spec's
- * "scored on speed + accuracy" with accuracy as the primary sort key. */
+/** A room's participants. The order here (score, then the time older rows
+ * carry) is no longer shown anywhere: the class screen lists students in
+ * the order they joined, without scores (app/api/class/leaderboard). */
 export async function getClassParticipants(roomId: string): Promise<ClassParticipant[]> {
   const b = backend();
   if (b === "none") throw new BackendNotConfiguredError();

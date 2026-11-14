@@ -11,7 +11,7 @@ export default function ClassLandingPage() {
     <div className="mx-auto max-w-md px-4 py-14 sm:px-6">
       <h1 className="text-3xl font-black tracking-tight">課堂模式</h1>
       <p className="mt-3 text-[15px] leading-relaxed text-ink-soft">
-        老師開一場即時測驗，學生用房間代碼加入，答完後看誰又快又準。題目直接使用各門課的前後測題庫，不用另外準備。
+        老師開一場即時測驗，學生用房間代碼加入。題目直接使用各門課的前後測題庫，不用另外準備。
       </p>
 
       <div className="mt-8 space-y-3">

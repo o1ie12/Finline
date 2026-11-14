@@ -1,8 +1,9 @@
 /**
  * Class-mode room rules (spec 12 TCH-5). Pure, so each rule is tested
  * without a database or a clock: the code alphabet, when a room counts as
- * open, how many a host may keep open, the join limit, and the room's
- * results (percent correct per question, the median score). Results never
+ * open, how many a host may keep open, the join limits, and the room's
+ * results (percent correct per question, the median score). A quiz counts
+ * correct answers only: no speed, and no ranking of students. Results never
  * involve money: a quiz room has none, and the 人生賽局 round ranks by
  * 財務健康分 (lib/lifeGame/class.ts).
  */
@@ -36,11 +37,18 @@ export function isRoomOpen(room: RoomClock, now: Date): boolean {
 }
 
 export const JOIN_WINDOW_MS = 10 * 60 * 1000;
-export const JOIN_MAX_WRONG = 10;
+/**
+ * Wrong codes in 10 minutes before the next try is refused: 10 from one
+ * device (its cookie), 50 from one network address. A whole class shares
+ * its school's address, so that limit is the looser one; a single phone
+ * guessing codes is stopped by the first.
+ */
+export const JOIN_MAX_WRONG_DEVICE = 10;
+export const JOIN_MAX_WRONG_IP = 50;
 
-/** After 10 wrong codes in 10 minutes, the next try is refused. `wrongAt` are the times of earlier wrong tries. */
-export function joinBlocked(wrongAt: number[], now: number): boolean {
-  return wrongAt.filter((t) => now - t < JOIN_WINDOW_MS).length >= JOIN_MAX_WRONG;
+/** `wrongAt` are the times of earlier wrong tries by one device or one address; `max` is that kind's limit. */
+export function joinBlocked(wrongAt: number[], now: number, max: number): boolean {
+  return wrongAt.filter((t) => now - t < JOIN_WINDOW_MS).length >= max;
 }
 
 export interface RoomResults {

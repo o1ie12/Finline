@@ -1,7 +1,8 @@
 import "server-only";
-import { createHash } from "node:crypto";
+import { createHash, randomUUID } from "node:crypto";
+import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
-import { CLASS_COPY, MAX_OPEN_ROOMS, joinBlocked } from "@/lib/classRooms";
+import { CLASS_COPY, JOIN_MAX_WRONG_DEVICE, JOIN_MAX_WRONG_IP, MAX_OPEN_ROOMS, joinBlocked } from "@/lib/classRooms";
 import { listOpenClassRoomsForHost, recentJoinMisses, recordJoinMiss, touchClassRoom } from "@/lib/db";
 import { getLine } from "@/lib/lines";
 import { getCurrentStudent } from "@/lib/session";
@@ -31,28 +32,50 @@ export async function refuseOverLimit(student: Student): Promise<NextResponse | 
   return NextResponse.json({ error: "too_many_rooms", message: CLASS_COPY.tooManyRooms, rooms: open.map(roomSummary) }, { status: 409 });
 }
 
+/** The device's cookie for the wrong-code limit: a random id, nothing about the person. */
+export const CLASS_DEVICE_COOKIE = "fs_class_device";
+
+// The salt has to be a secret: an address hashed with a value anyone can
+// read in the repo could be found again by trying every address. The
+// database key is on every server that can write these rows and nowhere
+// else; it only goes into the hash. CLASS_RATE_SALT overrides it.
+const SALT = process.env.CLASS_RATE_SALT || process.env.SUPABASE_SERVICE_ROLE_KEY || "finline-class-rooms-local";
+const salted = (what: string) => createHash("sha256").update(`${SALT}:${what}`).digest("hex");
+
 /**
- * The visitor, as a salted hash of their address: enough to count wrong
- * codes for ten minutes, and nothing that can be read back as an address.
+ * The visitor's network address as a salted hash: enough to count wrong
+ * codes for ten minutes. The address itself is never stored.
  */
 export function visitorHash(req: Request): string {
   const forwarded = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim();
-  const ip = forwarded || req.headers.get("x-real-ip") || "unknown";
-  const salt = process.env.CLASS_RATE_SALT || process.env.SESSION_SECRET || "finline-class-rooms";
-  return createHash("sha256").update(`${salt}:${ip}`).digest("hex");
+  return salted(forwarded || req.headers.get("x-real-ip") || "unknown");
 }
 
-/** Null when this visitor may try a code; otherwise the 429. */
+/** The key a device's wrong codes are counted under (the same table; `dev:` keeps the two kinds apart). */
+export const deviceKey = (deviceId: string) => `dev:${salted(deviceId)}`;
+
+async function deviceId(): Promise<string | null> {
+  const v = (await cookies()).get(CLASS_DEVICE_COOKIE)?.value;
+  return v && /^[0-9a-f-]{36}$/i.test(v) ? v : null;
+}
+
+/** Null when this visitor may try a code; otherwise the 429. Ten wrong codes from this device, or fifty from this address, in ten minutes. */
 export async function refuseIfBlocked(req: Request): Promise<NextResponse | null> {
-  const misses = await recentJoinMisses(visitorHash(req));
-  if (!joinBlocked(misses, Date.now())) return null;
+  const now = Date.now();
+  const device = await deviceId();
+  const [fromAddress, fromDevice] = await Promise.all([recentJoinMisses(visitorHash(req)), device ? recentJoinMisses(deviceKey(device)) : Promise.resolve([])]);
+  if (!joinBlocked(fromAddress, now, JOIN_MAX_WRONG_IP) && !joinBlocked(fromDevice, now, JOIN_MAX_WRONG_DEVICE)) return null;
   return NextResponse.json({ error: "too_many_attempts", message: CLASS_COPY.tooManyTries }, { status: 429 });
 }
 
-/** A code that matched no room: count it, and answer as before. */
+/** A code that matched no room: count it for the address and for the device (which gets its cookie now if it had none), and answer as before. */
 export async function wrongCode(req: Request): Promise<NextResponse> {
-  await recordJoinMiss(visitorHash(req));
-  return NextResponse.json({ error: "room_not_found" }, { status: 404 });
+  const known = await deviceId();
+  const device = known ?? randomUUID();
+  await Promise.all([recordJoinMiss(visitorHash(req)), recordJoinMiss(deviceKey(device))]);
+  const res = NextResponse.json({ error: "room_not_found" }, { status: 404 });
+  if (!known) res.cookies.set(CLASS_DEVICE_COOKIE, device, { httpOnly: true, sameSite: "lax", secure: process.env.NODE_ENV === "production", path: "/", maxAge: 60 * 60 * 12 });
+  return res;
 }
 
 export function roomClosed(): NextResponse {

@@ -21,8 +21,7 @@ export function QuizPlay() {
   const [participantId, setParticipantId] = useState<string | null>(null);
   const [lineSlug, setLineSlug] = useState<string | null>(null);
   const [answers, setAnswers] = useState<Record<string, number>>({});
-  const [result, setResult] = useState<{ score: number; totalMs: number } | null>(null);
-  const startedAtRef = useRef<number | null>(null);
+  const [result, setResult] = useState<{ score: number; total: number } | null>(null);
   const pollRef = useRef<number | null>(null);
 
   useEffect(() => {
@@ -32,10 +31,7 @@ export function QuizPlay() {
         const res = await fetch(`/api/class/room?code=${code}`);
         const data = await res.json();
         const status = data.status as ClassRoomStatus | undefined;
-        if (status === "active") {
-          startedAtRef.current = Date.now();
-          setPhase("playing");
-        }
+        if (status === "active") setPhase("playing");
       } catch {
         /* keep waiting; the poll retries */
       }
@@ -72,12 +68,7 @@ export function QuizPlay() {
       }
       setParticipantId(data.participant_id);
       setLineSlug(data.line_slug);
-      if (data.status === "active") {
-        startedAtRef.current = Date.now();
-        setPhase("playing");
-      } else {
-        setPhase("waiting");
-      }
+      setPhase(data.status === "active" ? "playing" : "waiting");
     } catch {
       setError("網路連線出了問題，請再試一次。");
     } finally {
@@ -92,18 +83,18 @@ export function QuizPlay() {
       (acc, q) => acc + (finalAnswers[q.id] === q.answer ? 1 : 0),
       0,
     );
-    const totalMs = startedAtRef.current ? Date.now() - startedAtRef.current : 0;
-    setResult({ score, totalMs });
+    // Correct answers only: no time is measured or sent.
+    setResult({ score, total: questions.length });
     setPhase("submitted");
     try {
       await fetch("/api/class/submit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         // Right or wrong per question, for the room's percent correct (spec 12 TCH-5).
-        body: JSON.stringify({ participant_id: participantId, score, total_ms: totalMs, correct: questions.map((q) => finalAnswers[q.id] === q.answer) }),
+        body: JSON.stringify({ participant_id: participantId, score, correct: questions.map((q) => finalAnswers[q.id] === q.answer) }),
       });
     } catch {
-      /* the score is already shown locally; a failed write just won't reach the leaderboard */
+      /* the score is already shown locally; a failed write just won't reach the class results */
     }
   }
 
@@ -180,7 +171,7 @@ export function QuizPlay() {
           className="font-display text-xs font-bold uppercase tracking-widest"
           style={{ color: line?.colorInk ?? "var(--color-ink)" }}
         >
-          {line?.name} · 越快越準分數越高
+          {line?.name}
         </p>
         <div className="mt-4 space-y-4">
           {questions.map((q, qi) => (
@@ -229,11 +220,9 @@ export function QuizPlay() {
     return (
       <div className="mx-auto max-w-sm px-4 py-14 text-center sm:px-6">
         <p className="text-2xl font-black">
-          {result.score} / 10，用了 {(result.totalMs / 1000).toFixed(1)} 秒
+          答對 {result.score} / {result.total} 題
         </p>
-        <p className="mt-2 text-[15px] leading-relaxed text-ink-soft">
-          看老師的畫面，排行榜會即時更新。
-        </p>
+        <p className="mt-2 text-[15px] leading-relaxed text-ink-soft">這是你自己的分數。老師的畫面只顯示全班每一題的答對比例。</p>
         <Link
           href="/class"
           className="mt-6 inline-flex items-center justify-center rounded-xl border border-hairline bg-surface px-5 py-3 text-base font-semibold hover:border-ink"

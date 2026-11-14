@@ -5,7 +5,14 @@ import Link from "next/link";
 import { LINES } from "@/lib/lines";
 import type { LineSlug } from "@/lib/lines";
 import type { RoomResults } from "@/lib/classRooms";
-import type { ClassParticipant, ClassRoomStatus } from "@/lib/types";
+import type { ClassRoomStatus } from "@/lib/types";
+
+/** A student on the class screen: a nickname and whether they have handed in. No score. */
+interface Joined {
+  id: string;
+  display_name: string;
+  submitted: boolean;
+}
 import { GuideLink, OpenRooms, type OpenRoom } from "./OpenRooms";
 
 interface RoomState {
@@ -18,8 +25,10 @@ interface RoomState {
 
 /**
  * The teacher's quiz room (spec 12 TCH-5): pick a course (preselected from
- * /class/host?line=), get a code, start and end the round, and see who has
- * handed in, each question's percent correct and the room's median.
+ * /class/host?line=), get a code, start and end the round, and see each
+ * question's percent correct and the room's median. Students are listed in
+ * the order they joined with whether they have handed in: no scores and no
+ * ranking on this screen, which is usually projected.
  */
 export function QuizHost({ initialLine }: { initialLine: LineSlug | null }) {
   const [lineSlug, setLineSlug] = useState<LineSlug>(initialLine ?? LINES[0].slug);
@@ -27,7 +36,7 @@ export function QuizHost({ initialLine }: { initialLine: LineSlug | null }) {
   const [openRooms, setOpenRooms] = useState<OpenRoom[] | null>(null);
   const [room, setRoom] = useState<RoomState | null>(null);
   const [status, setStatus] = useState<ClassRoomStatus>("waiting");
-  const [participants, setParticipants] = useState<ClassParticipant[]>([]);
+  const [participants, setParticipants] = useState<Joined[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [creating, setCreating] = useState(false);
   const pollRef = useRef<number | null>(null);
@@ -213,33 +222,18 @@ export function QuizHost({ initialLine }: { initialLine: LineSlug | null }) {
         </section>
       ) : null}
 
-      <section aria-labelledby="leaderboard-heading" className="mt-8">
-        <h2 id="leaderboard-heading" className="text-lg font-bold">
-          學生 · {participants.length} 人加入
+      <section aria-labelledby="students-heading" className="mt-8">
+        <h2 id="students-heading" className="text-lg font-bold">
+          學生 · {participants.length} 人加入，{participants.filter((p) => p.submitted).length} 人交卷
         </h2>
         <div className="mt-3 space-y-2">
           {participants.length === 0 && (
             <p className="text-sm text-ink-faint">還沒有人加入。</p>
           )}
-          {participants.map((p, i) => (
-            <div
-              key={p.id}
-              className="flex items-center justify-between gap-3 rounded-xl border border-hairline bg-surface px-4 py-3"
-            >
-              <span className="flex items-center gap-3">
-                <span className="money w-6 text-sm font-bold text-ink-faint">{i + 1}</span>
-                <span className="font-semibold">{p.display_name}</span>
-              </span>
-              <span className="flex items-center gap-3 text-sm">
-                {p.submitted_at ? (
-                  <>
-                    <span className="money font-semibold">{p.score} / 10</span>
-                    <span className="text-ink-faint">{(p.total_ms! / 1000).toFixed(1)}s</span>
-                  </>
-                ) : (
-                  <span className="text-ink-faint">作答中…</span>
-                )}
-              </span>
+          {participants.map((p) => (
+            <div key={p.id} className="flex items-center justify-between gap-3 rounded-xl border border-hairline bg-surface px-4 py-3">
+              <span className="font-semibold">{p.display_name}</span>
+              <span className="text-sm text-ink-faint">{p.submitted ? "已交卷" : status === "active" ? "作答中…" : "已加入"}</span>
             </div>
           ))}
         </div>
