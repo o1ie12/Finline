@@ -331,3 +331,19 @@
   background: var(--chip-off);
   font-size: var(--text-label);
 }
+
+/* spec 12 TCH-5.6: the link back to the teachers' guide, under every class screen */
+.guide {
+  margin: 0;
+  text-align: center;
+  font-size: 0.875rem;
+}
+.guide a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--ink);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}

@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { touchIfStale } from "@/lib/classGuard";
 import { handleAction } from "@/lib/lifeGame/api";
 import { loadTeamGame, persistTeamGame } from "@/lib/lifeGame/classServer";
 import { playerBody, requirePlayer, serverError } from "../_lib/guard";
@@ -51,6 +52,8 @@ export async function POST(req: Request) {
     }
     const saved = await persistTeamGame(loaded.save, result.state);
     if (!saved) return NextResponse.json({ error: "stale" }, { status: 409 });
+    // spec 12 TCH-5: a round in use stays open.
+    await touchIfStale(player.room);
     return NextResponse.json(playerBody(player, result.state, loaded.ctx));
   } catch (e) {
     return serverError(e, "class life action failed");

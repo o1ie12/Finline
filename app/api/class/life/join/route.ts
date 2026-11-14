@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
-import { getClassParticipants, getClassRoomByCode, joinClassRoom } from "@/lib/db";
+import { refuseIfBlocked, roomClosed, wrongCode } from "@/lib/classGuard";
+import { isRoomOpen } from "@/lib/classRooms";
+import { getClassParticipants, getClassRoomByCode, joinClassRoom, touchClassRoom } from "@/lib/db";
 import { normalizeAccessCode } from "@/lib/accessCode";
 import { DISPLAY_NAME_MAX, normalizeTeam } from "@/lib/lifeGame/class";
 import { CLASS_PARTICIPANT_COOKIE, accessCookieOptions, getCurrentStudent } from "@/lib/session";
@@ -35,11 +37,15 @@ export async function POST(req: Request) {
     const typed = typeof b.display_name === "string" ? b.display_name.replace(/\s+/g, " ").trim() : "";
     const displayName = [...(typed || student.name || "同學")].slice(0, DISPLAY_NAME_MAX).join("");
 
+    // spec 12 TCH-5: ten wrong codes in ten minutes, then wait.
+    const blocked = await refuseIfBlocked(req);
+    if (blocked) return blocked;
     const room = await getClassRoomByCode(code);
-    if (!room) return NextResponse.json({ error: "room_not_found" }, { status: 404 });
+    if (!room) return wrongCode(req);
     // A quiz room's code is for /class/play, not here.
     if (!isLifeRoom(room)) return NextResponse.json({ error: "not_life_room" }, { status: 409 });
-    if (room.status === "finished") return NextResponse.json({ error: "room_finished" }, { status: 409 });
+    // Ended by the host, or unused for 12 hours.
+    if (!isRoomOpen(room, new Date())) return roomClosed();
 
     // Joining again from the same browser into the same team reuses the row,
     // so a reload does not count the student twice.
@@ -49,6 +55,7 @@ export async function POST(req: Request) {
       ? (await getClassParticipants(room.id)).find((p) => p.id === existingId && normalizeTeam(p.team) === team)
       : undefined;
     participant ??= await joinClassRoom(room.id, displayName, team);
+    await touchClassRoom(room.id);
 
     const res = NextResponse.json({
       participant_id: participant.id,

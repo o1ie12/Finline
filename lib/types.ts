@@ -108,6 +108,9 @@ export interface ClassRoom {
   // the column is NOT NULL; branch on kind, never on line_slug.
   kind?: ClassRoomKind;
   seed?: number | null; // the shared life-game seed every team plays (life rooms only)
+  // migration-27 (spec 12 TCH-5). Optional: rows and databases from before it lack them.
+  host_student_id?: string | null; // who opened the room; the 3-open-rooms limit counts these
+  last_active_at?: string | null; // last create / join / start / submit; closed 12 hours after it
   created_at: string;
 }
 
@@ -119,6 +122,7 @@ export interface ClassParticipant {
   total_ms: number | null; // total time to answer all questions, once submitted
   submitted_at: string | null;
   team?: string | null; // life rooms only (migration-25); null on quiz rooms
+  answers?: boolean[] | null; // migration-27: right or wrong per question, for the room's percent correct
   joined_at: string;
 }
 

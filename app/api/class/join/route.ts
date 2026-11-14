@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
-import { getClassRoomByCode, joinClassRoom, isNotConfigured } from "@/lib/db";
+import { refuseIfBlocked, roomClosed, wrongCode } from "@/lib/classGuard";
+import { isRoomOpen } from "@/lib/classRooms";
+import { getClassRoomByCode, joinClassRoom, isNotConfigured, touchClassRoom } from "@/lib/db";
 import { normalizeAccessCode } from "@/lib/accessCode";
 import { CLASS_PARTICIPANT_COOKIE, accessCookieOptions } from "@/lib/session";
 
@@ -21,17 +23,19 @@ export async function POST(req: Request) {
   if (!displayName) return NextResponse.json({ error: "invalid_name" }, { status: 400 });
 
   try {
+    // spec 12 TCH-5: ten wrong codes in ten minutes, then wait.
+    const blocked = await refuseIfBlocked(req);
+    if (blocked) return blocked;
+
     const room = await getClassRoomByCode(code);
     // A 人生賽局 room (kind 'life') has its own join route; its code must
     // never start a quiz here.
-    if (!room || (room.kind ?? "quiz") !== "quiz") {
-      return NextResponse.json({ error: "room_not_found" }, { status: 404 });
-    }
-    if (room.status === "finished") {
-      return NextResponse.json({ error: "room_finished" }, { status: 409 });
-    }
+    if (!room || (room.kind ?? "quiz") !== "quiz") return wrongCode(req);
+    // Ended by the host, or unused for 12 hours.
+    if (!isRoomOpen(room, new Date())) return roomClosed();
 
     const participant = await joinClassRoom(room.id, displayName);
+    await touchClassRoom(room.id);
     const res = NextResponse.json({
       participant_id: participant.id,
       room_id: room.id,

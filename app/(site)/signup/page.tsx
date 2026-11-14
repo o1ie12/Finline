@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { pageMeta } from "@/lib/pageMeta";
+import { safeNext } from "@/lib/safeNext";
 import Link from "next/link";
 import SignupForm from "@/components/SignupForm";
 import GoogleSignInButton from "@/components/GoogleSignInButton";
@@ -35,9 +36,11 @@ function errorBanner(code: string | undefined): string | null {
 export default async function SignupPage({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string; tap?: string }>;
+  searchParams: Promise<{ error?: string; tap?: string; next?: string }>;
 }) {
-  const { error, tap } = await searchParams;
+  const { error, tap, next: wanted } = await searchParams;
+  // Only a plain path on this site (lib/safeNext.ts).
+  const next = safeNext(wanted);
   const banner = errorBanner(error);
 
   return (
@@ -81,7 +84,7 @@ export default async function SignupPage({
             </p>
           )}
           {/* Google sign-in sits in the login card, next to the code login. */}
-          <SignupForm googleLogin={isGoogleAuthConfigured() ? <GoogleSignInButton intent="signin" /> : null} />
+          <SignupForm next={next} googleLogin={isGoogleAuthConfigured() ? <GoogleSignInButton intent="signin" /> : null} />
           <p className="mt-6 text-center text-xs text-ink-faint">
             建立帳號即代表您同意
             <Link href="/terms" className="underline hover:text-ink">

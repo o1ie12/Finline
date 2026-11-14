@@ -7,6 +7,8 @@
 import type { ApiError } from "@/components/play/api";
 import type { TeamStanding } from "@/lib/lifeGame/class";
 import type { GamePayload } from "@/lib/lifeGame/view";
+import type { OpenRoom } from "@/components/class/OpenRooms";
+import { CLASS_COPY } from "@/lib/classRooms";
 import type { ClassRoomStatus } from "@/lib/types";
 
 export type { ApiError };
@@ -81,12 +83,13 @@ export interface HostRoom {
   status: ClassRoomStatus;
 }
 
-export async function createRoom(): Promise<{ ok: true; room: HostRoom } | { ok: false; error: string }> {
+export async function createRoom(): Promise<{ ok: true; room: HostRoom } | { ok: false; error: string; rooms?: OpenRoom[] }> {
   try {
     const res = await fetch("/api/class/life/create", { method: "POST" });
     const b = await readJson(res);
     if (res.ok && typeof b.room_id === "string") return { ok: true, room: b as unknown as HostRoom };
-    return { ok: false, error: typeof b.error === "string" ? b.error : "server_error" };
+    // spec 12 TCH-5: a 4th open room is refused with the list of the open ones.
+    return { ok: false, error: typeof b.error === "string" ? b.error : "server_error", rooms: Array.isArray(b.rooms) ? (b.rooms as OpenRoom[]) : undefined };
   } catch {
     return { ok: false, error: "network" };
   }
@@ -129,6 +132,9 @@ const ERROR_TEXT: Record<string, string> = {
   room_not_found: "找不到這個房間，請確認代碼。",
   not_life_room: "這個代碼是測驗房間，請到「課堂測驗」加入。",
   room_finished: "這場已經結束了。",
+  room_closed: CLASS_COPY.roomClosed,
+  too_many_attempts: CLASS_COPY.tooManyTries,
+  too_many_rooms: CLASS_COPY.tooManyRooms,
   room_not_active: "老師還沒開始，或這場已經結束。",
   not_joined: "你還沒加入這個房間，請重新加入。",
   no_session: "請先登入，才能和隊友一起玩。",

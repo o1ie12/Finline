@@ -1,10 +1,16 @@
 import { NextResponse } from "next/server";
+import { refuseOverLimit, requireHost } from "@/lib/classGuard";
 import { createClassRoom, isNotConfigured } from "@/lib/db";
 import { isLineSlug } from "@/lib/lines";
 import { getPrePostQuestions } from "@/lib/prePostQuestions";
 
 export const runtime = "nodejs";
 
+/**
+ * Open a quiz room. Body: { line_slug }. The host must be signed in, and
+ * may keep at most 3 rooms open (spec 12 TCH-5): a 4th is refused with the
+ * list of the open ones.
+ */
 export async function POST(req: Request) {
   let body: unknown;
   try {
@@ -22,7 +28,12 @@ export async function POST(req: Request) {
   }
 
   try {
-    const room = await createClassRoom(lineSlug);
+    const host = await requireHost();
+    if (host instanceof NextResponse) return host;
+    const over = await refuseOverLimit(host);
+    if (over) return over;
+
+    const room = await createClassRoom(lineSlug, host.id);
     return NextResponse.json({
       room_id: room.id,
       code: room.code,

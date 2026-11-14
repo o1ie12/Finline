@@ -10,7 +10,7 @@ import { getCurrentStudent } from "@/lib/session";
 import type { Student } from "@/lib/types";
 
 export const metadata: Metadata = {
-  title: "人生賽局 課堂模式",
+  title: "人生賽局",
   description: "加入老師的房間，和隊友一起過日子。",
   robots: { index: false },
 };

@@ -27,7 +27,7 @@ function errorMessage(code: string | undefined): string {
  * Google sign-in is configured (it is a server component), shown in the
  * login card next to the code login. Absent: the card is code-only.
  */
-export default function SignupForm({ googleLogin = null }: { googleLogin?: ReactNode } = {}) {
+export default function SignupForm({ googleLogin = null, next = null }: { googleLogin?: ReactNode; /** Where to go afterwards (a path on this site, checked by the page). */ next?: string | null } = {}) {
   const router = useRouter();
 
   const [name, setName] = useState("");
@@ -85,7 +85,7 @@ export default function SignupForm({ googleLogin = null }: { googleLogin?: React
         return;
       }
       emitSessionChange();
-      router.push(typeof data?.destination === "string" ? data.destination : "/today");
+      router.push(next ?? (typeof data?.destination === "string" ? data.destination : "/today"));
     } catch {
       setResumeError("網路連線出了問題，請再試一次。");
     } finally {
@@ -135,7 +135,7 @@ export default function SignupForm({ googleLogin = null }: { googleLogin?: React
         {/* A new account sets a goal once (今天 sends it to the goal step),
             then rides on to 今天. */}
         <Link
-          href="/today"
+          href={next ?? "/today"}
           className="mt-6 inline-flex w-full items-center justify-center rounded-xl bg-ink px-6 py-3.5 text-base font-semibold text-white transition-transform hover:-translate-y-0.5"
         >
           開始上課

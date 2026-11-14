@@ -8,6 +8,7 @@ import { Notice, SecondaryButton } from "@/components/play/ui";
 import { STRESS_LABEL } from "@/lib/lifeGame/stats";
 import type { ClassRoomStatus } from "@/lib/types";
 import { classErrorText, createRoom, fetchLeaderboard, setRoomStatus, type HostRoom, type Leaderboard } from "./api";
+import { OpenRooms, type OpenRoom } from "@/components/class/OpenRooms";
 import s from "./classLife.module.css";
 
 const STORAGE_KEY = "fs_class_life_host";
@@ -52,6 +53,7 @@ export function ClassLifeHost() {
   const [board, setBoard] = useState<Leaderboard | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [openRooms, setOpenRooms] = useState<OpenRoom[] | null>(null);
 
   useEffect(() => {
     const stored = readStored();
@@ -80,9 +82,18 @@ export function ClassLifeHost() {
     const res = await createRoom();
     setBusy(false);
     if (!res.ok) {
+      if (res.error === "no_session") {
+        window.location.assign(`/signup?next=${encodeURIComponent("/class/life/host")}`);
+        return;
+      }
+      if (res.error === "too_many_rooms" && res.rooms?.length) {
+        setOpenRooms(res.rooms);
+        return;
+      }
       setError(res.error === "network" ? classErrorText("network") : "建立房間時發生問題，請再試一次。");
       return;
     }
+    setOpenRooms(null);
     writeStored(res.room);
     setBoard(null);
     setRoom(res.room);
@@ -126,6 +137,7 @@ export function ClassLifeHost() {
                 {error}
               </Notice>
             ) : null}
+            {openRooms?.length ? <OpenRooms rooms={openRooms} onChange={(left) => setOpenRooms(left.length ? left : null)} /> : null}
             <div>
               <PrimaryButton type="button" block onClick={open} disabled={busy}>
                 {busy ? "建立中…" : "建立房間"}

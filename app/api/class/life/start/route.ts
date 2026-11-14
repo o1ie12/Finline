@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getClassRoom, setClassRoomStatus } from "@/lib/db";
+import { getClassRoom, setClassRoomStatus, touchClassRoom } from "@/lib/db";
 import { isLifeRoom, isRoomId, serverError } from "../_lib/guard";
 
 export const runtime = "nodejs";
@@ -27,6 +27,7 @@ export async function POST(req: Request) {
     if (!result.ok) {
       return NextResponse.json({ error: result.reason }, { status: result.reason === "not_found" ? 404 : 403 });
     }
+    await touchClassRoom(result.room.id);
     return NextResponse.json({ room_id: result.room.id, status: result.room.status });
   } catch (e) {
     return serverError(e, "class life start failed");

@@ -1,4 +1,6 @@
 import { NextResponse } from "next/server";
+import { refuseIfBlocked, wrongCode } from "@/lib/classGuard";
+import { isRoomOpen } from "@/lib/classRooms";
 import { getClassRoomByCode, isNotConfigured } from "@/lib/db";
 import { normalizeAccessCode } from "@/lib/accessCode";
 
@@ -11,12 +13,16 @@ export async function GET(req: Request) {
   if (!code) return NextResponse.json({ error: "invalid_code" }, { status: 400 });
 
   try {
+    // spec 12 TCH-5: this lookup takes a code too, so it shares the join limit.
+    const blocked = await refuseIfBlocked(req);
+    if (blocked) return blocked;
     const room = await getClassRoomByCode(code);
-    if (!room) return NextResponse.json({ error: "room_not_found" }, { status: 404 });
+    if (!room) return wrongCode(req);
     return NextResponse.json({
       room_id: room.id,
       line_slug: room.line_slug,
       status: room.status,
+      open: isRoomOpen(room, new Date()),
     });
   } catch (e) {
     if (isNotConfigured(e)) {

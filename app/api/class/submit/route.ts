@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { CLASS_PARTICIPANT_COOKIE } from "@/lib/session";
-import { submitClassResult, isNotConfigured } from "@/lib/db";
+import { submitClassResult, isNotConfigured, touchClassRoom } from "@/lib/db";
 
 export const runtime = "nodejs";
 
@@ -35,11 +35,18 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "invalid_time" }, { status: 400 });
   }
 
+  // spec 12 TCH-5: right or wrong per question, for the room's percent
+  // correct. Optional, and only its shape is trusted: true/false, at most
+  // 20, and as many trues as the score.
+  const marks = Array.isArray(b.correct) && b.correct.length <= 20 && b.correct.every((x) => typeof x === "boolean") ? (b.correct as boolean[]) : null;
+  const answers = marks && marks.filter(Boolean).length === score ? marks : null;
+
   try {
-    const participant = await submitClassResult(participantId, score, totalMs);
+    const participant = await submitClassResult(participantId, score, totalMs, answers);
     if (!participant) {
       return NextResponse.json({ error: "participant_not_found" }, { status: 404 });
     }
+    await touchClassRoom(participant.room_id);
     return NextResponse.json({ participant });
   } catch (e) {
     if (isNotConfigured(e)) {

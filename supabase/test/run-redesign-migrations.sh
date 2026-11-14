@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Test harness for the redesign migrations (21..25). Builds a throwaway
+# Test harness for the redesign migrations (21..27). Builds a throwaway
 # Postgres cluster in a temp dir on its own port and socket, so it never
 # touches a running server, the qidian_dev database or Supabase:
 #
@@ -67,8 +67,10 @@ UPS=(
   migration-24-task-results.sql
   migration-25-class-life-rooms.sql
   migration-26-line-completions-rls.sql
+  migration-27-class-room-limits.sql
 )
 DOWNS=(
+  migration-27-class-room-limits-down.sql
   migration-26-line-completions-rls-down.sql
   migration-25-class-life-rooms-down.sql
   migration-24-task-results-down.sql
@@ -130,6 +132,20 @@ assert_up_state() { # assert_up_state <label>
     "select count(*) from class_rooms where kind <> 'quiz' or seed is not null;"
   expect "$1: existing participants have no team" "0" "select count(*) from class_participants where team is not null;"
   expect "$1: existing students have no avatar" "0" "select count(*) from students where avatar is not null;"
+  # migration 27 (spec 12 TCH-5)
+  expect "$1: class_rooms.host_student_id uuid null" "uuid|YES" \
+    "select data_type, is_nullable from information_schema.columns where table_name='class_rooms' and column_name='host_student_id';"
+  expect "$1: class_rooms.last_active_at not null, default now()" "NO|now()" \
+    "select is_nullable, column_default from information_schema.columns where table_name='class_rooms' and column_name='last_active_at';"
+  expect "$1: class_participants.answers jsonb null" "jsonb|YES" \
+    "select data_type, is_nullable from information_schema.columns where table_name='class_participants' and column_name='answers';"
+  expect "$1: table class_join_attempts exists" "class_join_attempts" "select to_regclass('public.class_join_attempts');"
+  expect "$1: RLS enabled on class_join_attempts, no policies" "t|0" \
+    "select relrowsecurity, (select count(*) from pg_policies where tablename='class_join_attempts') from pg_class where oid='public.class_join_attempts'::regclass;"
+  expect "$1: index class_rooms_host_open_idx (partial)" "t" \
+    "select i.indpred is not null from pg_index i where i.indexrelid='public.class_rooms_host_open_idx'::regclass;"
+  expect "$1: existing rooms have no host, no marks on participants" "0|0" \
+    "select (select count(*) from class_rooms where host_student_id is not null), (select count(*) from class_participants where answers is not null);"
 }
 
 assert_down_state() { # assert_down_state <label>
@@ -142,6 +158,10 @@ assert_down_state() { # assert_down_state <label>
   expect "$1: class_rooms.seed gone" "f" "select exists (select 1 from information_schema.columns where table_name='class_rooms' and column_name='seed');"
   expect "$1: class_participants.team gone" "f" "select exists (select 1 from information_schema.columns where table_name='class_participants' and column_name='team');"
   expect "$1: class_rooms_kind_check gone" "0" "select count(*) from pg_constraint where conname='class_rooms_kind_check';"
+  expect "$1: class_rooms.host_student_id gone" "f" "select exists (select 1 from information_schema.columns where table_name='class_rooms' and column_name='host_student_id');"
+  expect "$1: class_rooms.last_active_at gone" "f" "select exists (select 1 from information_schema.columns where table_name='class_rooms' and column_name='last_active_at');"
+  expect "$1: class_participants.answers gone" "f" "select exists (select 1 from information_schema.columns where table_name='class_participants' and column_name='answers');"
+  expect "$1: table class_join_attempts gone" "" "select to_regclass('public.class_join_attempts');"
 }
 
 banner "throwaway cluster in $TMP (port $PORT)"

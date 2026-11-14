@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { setClassRoomStatus, isNotConfigured } from "@/lib/db";
+import { setClassRoomStatus, isNotConfigured, touchClassRoom } from "@/lib/db";
 
 export const runtime = "nodejs";
 
@@ -28,6 +28,7 @@ export async function POST(req: Request) {
       const status = result.reason === "not_found" ? 404 : 403;
       return NextResponse.json({ error: result.reason }, { status });
     }
+    await touchClassRoom(result.room.id);
     return NextResponse.json({ room: result.room });
   } catch (e) {
     if (isNotConfigured(e)) {

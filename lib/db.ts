@@ -1,9 +1,10 @@
 import "server-only";
 import { createClient, SupabaseClient } from "@supabase/supabase-js";
-import { randomUUID } from "node:crypto";
+import { randomInt, randomUUID } from "node:crypto";
 import { promises as fs } from "node:fs";
 import path from "node:path";
 import { generateAccessCode } from "@/lib/accessCode";
+import { JOIN_WINDOW_MS, generateRoomCode as roomCode, isRoomOpen } from "@/lib/classRooms";
 import { isLineSlug, lineIdForSlug } from "@/lib/lines";
 import { bankVersionOf, prePostBankVersion } from "@/lib/prePostQuestions";
 import type { SimKind } from "@/lib/sims/types";
@@ -111,6 +112,8 @@ interface DevData {
   line_tests: LineTest[];
   class_rooms: ClassRoom[];
   class_participants: ClassParticipant[];
+  /** migration-27: wrong room codes per visitor (salted hash), for the join limit. */
+  class_join_attempts?: { ip_hash: string; attempted_at: string }[];
   historical_prices: HistoricalPrice[];
   sim_portfolios: SimPortfolio[];
   line_completions: LineCompletion[];
@@ -885,12 +888,23 @@ export async function getLineTests(
 // name. host_token (returned only to whoever creates the room) authorizes
 // starting/ending a round in place of a full teacher account system.
 
+// spec 12 TCH-5: six characters from the room alphabet, from node:crypto.
 function generateRoomCode(): string {
-  return generateAccessCode();
+  return roomCode(randomInt);
 }
 
-export async function createClassRoom(lineSlug: string): Promise<ClassRoom> {
-  return insertClassRoom(lineSlug, {}, "createClassRoom");
+/**
+ * migration-27 may not be on a database yet (it is applied by hand). A write
+ * that names one of its columns or its table fails with one of these codes;
+ * callers then do what they did before it. PostgREST reports a column or
+ * table it does not know as PGRST204 / PGRST205, Postgres as 42703 / 42P01.
+ */
+function lacksMigration27(error: { code?: string } | null): boolean {
+  return !!error && ["42703", "42P01", "PGRST204", "PGRST205"].includes(error.code ?? "");
+}
+
+export async function createClassRoom(lineSlug: string, hostStudentId: string | null = null): Promise<ClassRoom> {
+  return insertClassRoom(lineSlug, {}, "createClassRoom", hostStudentId);
 }
 
 /**
@@ -902,11 +916,12 @@ export async function createClassRoom(lineSlug: string): Promise<ClassRoom> {
 export const LIFE_ROOM_LINE_SLUG = "caiwujuece";
 
 /** A 人生賽局 class round (migration-25): every team plays the same seed. */
-export async function createLifeClassRoom(seed: number): Promise<ClassRoom> {
+export async function createLifeClassRoom(seed: number, hostStudentId: string | null = null): Promise<ClassRoom> {
   return insertClassRoom(
     LIFE_ROOM_LINE_SLUG,
     { kind: "life", seed },
     "createLifeClassRoom",
+    hostStudentId,
   );
 }
 
@@ -917,11 +932,15 @@ async function insertClassRoom(
   lineSlug: string,
   extra: Pick<ClassRoom, "kind" | "seed">,
   label: string,
+  hostStudentId: string | null,
 ): Promise<ClassRoom> {
   const b = backend();
   if (b === "none") throw new BackendNotConfiguredError();
 
   const hostToken = randomUUID();
+  // migration-27: who opened it. Sent only when there is a host, and dropped
+  // if the database does not have the column yet.
+  let owner: { host_student_id?: string } = hostStudentId ? { host_student_id: hostStudentId } : {};
 
   if (b === "dev") {
     return devMutate((data) => {
@@ -936,6 +955,8 @@ async function insertClassRoom(
         status: "waiting",
         started_at: null,
         ...extra,
+        ...owner,
+        last_active_at: new Date().toISOString(),
         created_at: new Date().toISOString(),
       };
       data.class_rooms.push(room);
@@ -955,10 +976,15 @@ async function insertClassRoom(
         line_id: lineIdForSlug(lineSlug),
         status: "waiting",
         ...extra,
+        ...owner,
       })
       .select()
       .single();
     if (!error && data) return data as ClassRoom;
+    if (lacksMigration27(error) && owner.host_student_id) {
+      owner = {};
+      continue;
+    }
     if (error && error.code !== "23505") {
       throw new Error(`${label} failed: ${error.message}`);
     }
@@ -1055,6 +1081,118 @@ export async function setClassRoomStatus(
   return { ok: true, room: data as ClassRoom };
 }
 
+/** spec 12 TCH-5: the rooms this account has open (not ended, used within 12 hours), newest first. */
+export async function listOpenClassRoomsForHost(studentId: string, now: Date = new Date()): Promise<ClassRoom[]> {
+  const b = backend();
+  if (b === "none") throw new BackendNotConfiguredError();
+  const open = (rows: ClassRoom[]) => rows.filter((r) => isRoomOpen(r, now)).sort((a, b) => b.created_at.localeCompare(a.created_at));
+
+  if (b === "dev") {
+    const data = await devRead();
+    return open(data.class_rooms.filter((r) => r.host_student_id === studentId));
+  }
+  const { data, error } = await supabase().from("class_rooms").select().eq("host_student_id", studentId).neq("status", "finished");
+  // Before migration-27 no room has a host: nothing to count.
+  if (lacksMigration27(error)) return [];
+  if (error) throw new Error(`listOpenClassRoomsForHost failed: ${error.message}`);
+  return open((data as ClassRoom[]) ?? []);
+}
+
+/** The host closes one of their own rooms. False when it is not theirs. */
+export async function closeClassRoomAsHost(roomId: string, studentId: string): Promise<boolean> {
+  const b = backend();
+  if (b === "none") throw new BackendNotConfiguredError();
+
+  if (b === "dev") {
+    return devMutate((data) => {
+      const row = data.class_rooms.find((r) => r.id === roomId && r.host_student_id === studentId);
+      if (!row) return false;
+      row.status = "finished";
+      return true;
+    });
+  }
+  const { data, error } = await supabase().from("class_rooms").update({ status: "finished" }).eq("id", roomId).eq("host_student_id", studentId).select("id");
+  if (lacksMigration27(error)) return false;
+  if (error) throw new Error(`closeClassRoomAsHost failed: ${error.message}`);
+  return (data ?? []).length > 0;
+}
+
+/** Something happened in the room: the 12-hour clock starts again. Never fails a request. */
+export async function touchClassRoom(roomId: string, now: Date = new Date()): Promise<void> {
+  const b = backend();
+  if (b === "none") return;
+  try {
+    if (b === "dev") {
+      await devMutate((data) => {
+        const row = data.class_rooms.find((r) => r.id === roomId);
+        if (row) row.last_active_at = now.toISOString();
+      });
+      return;
+    }
+    const { error } = await supabase().from("class_rooms").update({ last_active_at: now.toISOString() }).eq("id", roomId);
+    if (error && !lacksMigration27(error)) console.error("touchClassRoom failed", error.message);
+  } catch (e) {
+    console.error("touchClassRoom failed", e);
+  }
+}
+
+// Wrong room codes per visitor, for the join limit. On a database without
+// migration-27 the count lives in this process only (a weaker limit, since
+// each server instance counts on its own).
+const memoryMisses = new Map<string, number[]>();
+
+/** The times (ms) of this visitor's wrong codes inside the window. */
+export async function recentJoinMisses(ipHash: string, now: Date = new Date()): Promise<number[]> {
+  const since = now.getTime() - JOIN_WINDOW_MS;
+  const fromMemory = () => (memoryMisses.get(ipHash) ?? []).filter((t) => t > since);
+  const b = backend();
+  if (b === "none") return fromMemory();
+  if (b === "dev") {
+    const data = await devRead();
+    return (data.class_join_attempts ?? []).filter((r) => r.ip_hash === ipHash).map((r) => new Date(r.attempted_at).getTime()).filter((t) => t > since);
+  }
+  const { data, error } = await supabase().from("class_join_attempts").select("attempted_at").eq("ip_hash", ipHash).gt("attempted_at", new Date(since).toISOString());
+  if (error) {
+    if (!lacksMigration27(error)) console.error("recentJoinMisses failed", error.message);
+    return fromMemory();
+  }
+  return ((data as { attempted_at: string }[]) ?? []).map((r) => new Date(r.attempted_at).getTime());
+}
+
+/** Record one wrong code, and forget every attempt older than the window. */
+export async function recordJoinMiss(ipHash: string, now: Date = new Date()): Promise<void> {
+  const since = now.getTime() - JOIN_WINDOW_MS;
+  const inMemory = () => {
+    for (const [k, v] of memoryMisses) {
+      const kept = v.filter((t) => t > since);
+      if (kept.length) memoryMisses.set(k, kept);
+      else memoryMisses.delete(k);
+    }
+    memoryMisses.set(ipHash, [...(memoryMisses.get(ipHash) ?? []), now.getTime()]);
+  };
+  const b = backend();
+  if (b === "none") return inMemory();
+  try {
+    if (b === "dev") {
+      await devMutate((data) => {
+        data.class_join_attempts = (data.class_join_attempts ?? []).filter((r) => new Date(r.attempted_at).getTime() > since);
+        data.class_join_attempts.push({ ip_hash: ipHash, attempted_at: now.toISOString() });
+      });
+      return;
+    }
+    const db = supabase();
+    const { error } = await db.from("class_join_attempts").insert({ ip_hash: ipHash, attempted_at: now.toISOString() });
+    if (error) {
+      if (!lacksMigration27(error)) console.error("recordJoinMiss failed", error.message);
+      return inMemory();
+    }
+    await db.from("class_join_attempts").delete().lt("attempted_at", new Date(since).toISOString());
+  } catch (e) {
+    console.error("recordJoinMiss failed", e);
+    inMemory();
+  }
+}
+
 /** `team` is for life rooms (migration-25). Leave it out for a quiz room:
  * the insert is then exactly what it was before, and works on a database
  * without the team column. */
@@ -1098,11 +1236,14 @@ export async function submitClassResult(
   participantId: string,
   score: number,
   totalMs: number,
+  /** migration-27: right or wrong per question, for the room's percent correct. */
+  answers: boolean[] | null = null,
 ): Promise<ClassParticipant | null> {
   const b = backend();
   if (b === "none") throw new BackendNotConfiguredError();
 
-  const patch = { score, total_ms: totalMs, submitted_at: new Date().toISOString() };
+  const base = { score, total_ms: totalMs, submitted_at: new Date().toISOString() };
+  const patch = answers ? { ...base, answers } : base;
 
   // First submission sticks. Without this, the same browser could replay
   // the round and overwrite its score with a better one — the participant
@@ -1119,13 +1260,11 @@ export async function submitClassResult(
     });
   }
 
-  const { data, error } = await supabase()
-    .from("class_participants")
-    .update(patch)
-    .eq("id", participantId)
-    .is("submitted_at", null)
-    .select()
-    .maybeSingle();
+  const write = (values: typeof base | typeof patch) =>
+    supabase().from("class_participants").update(values).eq("id", participantId).is("submitted_at", null).select().maybeSingle();
+  let { data, error } = await write(patch);
+  // Before migration-27 there is no answers column: the score still counts.
+  if (lacksMigration27(error) && answers) ({ data, error } = await write(base));
   if (error) throw new Error(`submitClassResult failed: ${error.message}`);
   if (data) return data as ClassParticipant;
   // Nothing updated: either unknown, or already submitted — read it back so

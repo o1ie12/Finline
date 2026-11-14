@@ -1,5 +1,7 @@
 import type { ReactNode } from "react";
+import Link from "next/link";
 import { StationScene } from "@/components/game/StationScene";
+import { CLASS_COPY } from "@/lib/classRooms";
 import s from "./classLife.module.css";
 
 /**
@@ -11,7 +13,13 @@ export function ClassLifeShell({ children }: { children: ReactNode }) {
   return (
     <div className="game-shell">
       <StationScene />
-      <div className={s.frame}>{children}</div>
+      <div className={s.frame}>
+        {children}
+        {/* spec 12 TCH-5.6: every class page links back to the guide. */}
+        <p className={s.guide}>
+          <Link href="/teachers">{CLASS_COPY.guide}</Link>
+        </p>
+      </div>
     </div>
   );
 }
