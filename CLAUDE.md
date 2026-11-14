@@ -36,5 +36,7 @@
 - **Class mode rules** are pure in `lib/classRooms.ts` (code alphabet, 12-hour close, 3 open rooms, join limit, results by question); `lib/classGuard.ts` applies them in the `/api/class/*` routes. Hosting needs a session; joining a quiz room does not.
 - **migration-27** (`class_rooms.host_student_id`, `last_active_at`, `class_participants.answers`, `class_join_attempts`) is applied by hand. `lacksMigration27()` in `lib/db.ts` makes every use fall back on a database without it.
 - `/signup?next=` is honoured for a plain path on this site (`lib/safeNext.ts`).
+- **Follow-up (same day):** a plan carries no answers (the page is public); unit budget is 35 minutes with a 5-minute close above 30; a quiz counts correct answers only and the class screen shows no student's score or place; wrong codes are limited to 10 per device cookie and 50 per address (`dev:`-prefixed keys share `class_join_attempts`), hashed with a server-only salt.
+- **Class tests on a real database:** `E2E_REAL_DB=1` makes `tests/e2e/teachers-e.mjs` and `class-e.mjs` use one test account and delete what they create (`tests/e2e/realDb.mjs`). Never edit `.env.local` to point at production.
 - Report and open questions: `docs/redesign/12-teachers-report.md`. Tests: `tests/teachers.test.ts`, `tests/e2e/teachers-e.mjs`.
 

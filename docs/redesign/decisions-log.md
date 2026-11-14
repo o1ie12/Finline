@@ -1,0 +1,31 @@
+# Report notes (running)
+## Decisions
+- Life game: 0050 yield 1.47% semi-annual (Jan/Jul), 0056 6.95% quarterly (verified). Spec placeholders were 2.5% / 6%.
+- Monte Carlo "holding through" interpreted as: invest all cash above NT$5,000 into 市值型 ETF monthly from turn 12, never sell (86% of seeds see ≥10% drawdown). With only 20% saved into ETF and leftover cash idle, it is 7%.
+- Autopilot/leftover: cash the student never allocates stays as cash (no auto-spend). Big idle cash piles are possible.
+- Starter jobs: 平面設計 30k, 會計 30k, 照顧服務 32k, 技術工 35k (C6).
+- Essentials = living costs (housing, utilities, food, transport, phone, daily, student loan); excludes debt paydowns, premiums, courses.
+- Insurance bought this turn covers from next turn. 定存 interest paid monthly into 活存. Break early: 活存 rate for months held (示意).
+- Card: paying less than the minimum counts as missed (late fee). Game record only worsens.
+- Card can cover bill spending only (not the card bill or debts). Events auto-pay cash → 活存 → 定存 → 欠款; card only when the student picks 刷卡 (concert).
+- Tax notice: game withholds nothing monthly, so the notice is a bill or "不用繳稅".
+- Wrap: price continues with continuous returns at the seam.
+- Station tasks write task_results + module_progress (when passed or 2nd attempt), never simulation_runs (any run marks the sim done).
+- Fonts: repo deliberately loads Noto Sans TC at runtime (LCP); kept. Barlow Condensed via next/font.
+- Route groups (site)/(game); regression tests updated only for moved file paths.
+- Content xuedai NumberSteps tolerance 200/100 (agent choice) + added formula card 每月還款怎麼估.
+- 詐騙線 placement departs from 04's order: station 9 假投資 → case 3 (投資老師), 11 客服 → case 4 (解除分期), 12 交友 → case 6 (假冒親友); cases 1, 2, 5 in 案件庫. Matches each station's lesson.
+- NOTE: .claude/launch.json has a local redesign-devstore entry; restore before final commit (git checkout .claude/launch.json)
+- Placement rule (plan §2.3): last task set = simulation page; leftovers → 加碼任務 (/line/[slug]/task/[id]); 信用線 C is a 加碼任務.
+- Replaced sims (消費, 存錢, 信用, 投資, 保險, 詐騙) stay reachable at ?classic=1 and still write their profile fields; new terminals write none (C3). 信用線 creditRecord comes from Task A at station 4.
+- Kept sims (職涯, 租屋, 學貸, 報稅, 創業, 財務決策): why-first card + lesson cards + reveal; 報稅/創業 after-steps as a library task (`<slug>.after.v1`).
+- Wrapped quiz stations: why-first card above the old reading page + quiz (reveal not keyed to quiz answers).
+- Station counts done on pass or 2nd attempt; module_progress quiz_score = percent (out of 100).
+- 投資線 Task C after-note computed server-side (2020-03, −14.1%, recovered within 6 months; text says when not).
+- Tour v2 = 3 steps (character, today's stop, map); mode toggle + help moved into the settings menu.
+- Migration 26 added: RLS on line_completions (gap in 20).
+- trading-cost rates moved to lib/tradingCosts.ts (bundle fix: payslip page no longer ships the price seed).
+- Lines converted in grouped commits, not one line per commit (content agents worked in parallel); each line's content is its own file.
+- Onboarding: 先跳過 shown to everyone who hasn't onboarded (can't tell new vs existing); goal requires all 5 ticks.
+- Hook questions written for non-first task sets (04 gives one per line).
+- Tool: playwright 1.60.0 in scratchpad only.

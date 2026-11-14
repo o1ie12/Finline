@@ -1,6 +1,11 @@
 # 12: teacher page and class mode, report (2026-11-14)
 
-Branch `feat/teachers`, built from `main` at `497c25c`. Not pushed, not merged.
+Branch `feat/teachers`, built from `main` at `497c25c`.
+
+**Read the follow-up at the end first.** It changes the periods table, removes
+the answer key, and replaces the join limit and the quiz ranking described
+below. The first round (up to `1d4fe64`) was merged to `main` on the owner's
+instruction and is live; the follow-up commits are on the branch only.
 
 **Before this reaches production, `supabase/migration-27-class-room-limits.sql`
 has to be applied** (additive; down file beside it; tested up, down and
@@ -168,3 +173,162 @@ The screenshots were taken on localhost, so `/teachers` shows the
 
 Teacher accounts, assigning courses and a class progress page, exporting
 pre/post results, a teacher interest form.
+
+---
+
+# Follow-up (2026-11-14)
+
+On `feat/teachers` after `1d4fe64`. Not pushed to `main`. No email address,
+mailto link or contact rule was added, changed or removed (`lib/site.ts` is
+untouched; the diff has no line with a mailto or a contact constant).
+
+## Each item
+
+| # | Item | State | Commit | Test |
+|---|---|---|---|---|
+| 1 | A final's question that repeats an earlier unit's prints 「同第 n 個單元的問題，請學生比較做之前和做之後的想法。」 | fixed | `46e7586` | `lessonplan-e` |
+| 2 | Simulation finals and unscored units get 「[unit title]：你做了什麼選擇？如果重來一次，你會改哪一個？為什麼？」 | fixed | `46e7586` | `lessonplan-e` |
+| 3 | Answer key removed, page and print | fixed | `46e7586` | `lessonplan-e` |
+| 4 | Unit budget 35 minutes; 31 to 35 closes in 5 | fixed | `46e7586` | `periods-e` |
+| 5 | Wrong codes: 50 per address, 10 per device cookie, per 10 minutes | fixed | `700f869` | `classroom-e` |
+| 6 | Quiz counts correct answers only; no speed; no ranked list | fixed | `700f869` | `classroom-e`, `class-e` |
+| 7 | Privacy sentence and date | fixed | `b46ff2e` | `privacy-e` |
+| | Tests, and the real-database run | done | `ac03108` and the commit after it | below |
+
+`npm run check`: 223 tests pass, content, contrast and design checks pass,
+lint 0 errors, `check:names` 0 hits.
+
+## Notes on each
+
+1. The sentence replaces the question in the unit's own row, and in the
+   暖身 row when that unit opens a period (保險線's second period is only its
+   final, so both rows there carry it). Five courses: 職涯線 3→1, 消費線 3→2,
+   存錢線 3→2, 學貸線 6→2, 保險線 6→1. The worksheet still asks each question once.
+2. "Unscored" is a unit with no scored question. Today that is every
+   simulation final plus 職涯線 unit 1.
+3. `lessonPlan()` no longer builds an answer key at all, so nothing can leak
+   it; the styles and the print rule are gone too.
+4. One function still feeds `/teachers`, `/teachers/[slug]` and the course
+   page. The 「一節課怎麼上」 list on `/teachers` still says 「討論和收尾 10 分鐘」
+   (fixed copy from the first spec); four courses now have a period that
+   closes in 5.
+5. A device is a random-id cookie (`fs_class_device`, httpOnly, 12 hours)
+   set on the first wrong code. Its count is kept in the same table as the
+   address count, under a `dev:` prefix, so no new migration. A request that
+   sends no cookie counts as a new device each time; the address limit is
+   what stops that. **The privacy sentence in item 7 speaks only of the
+   network address; this cookie is not mentioned there.**
+6. Three things you did not give copy for, so I wrote the minimum:
+   - the student's result: 「答對 N / 10 題」 and 「這是你自己的分數。老師的畫面只
+     顯示全班每一題的答對比例。」;
+   - the host screen keeps a list of nicknames **in the order they joined**,
+     each marked 已加入 / 作答中 / 已交卷, with no score, time or place. A
+     teacher needs to see who is in the room and who is done. Say if the list
+     should go entirely;
+   - `/class`: the clause 「答完後看誰又快又準」 is deleted from the lead.
+   The endpoint the host screen polls no longer sends any student's score or
+   time. No time is measured or stored (`total_ms` is null on new rows).
+7. The privacy and terms pages share one date by the repo's rule
+   (`lib/legal.ts`), so the terms page shows 2026 年 11 月 14 日 too, and the
+   privacy page's change list gained one line. To make 「無法還原」 true, the
+   hash is now salted with a server-only secret instead of a value readable in
+   the repo (`lib/classGuard.ts`).
+
+## Periods per course (35-minute budget)
+
+| 代碼 | 課程 | 單元分鐘 | 節數 | 分節（單元分鐘，收尾） |
+|---|---|---|---|---|
+| FL101 | 職涯線 | 6 + 14 + 10 = 30 | 1 | 1, 2, 3（30，收尾 10） |
+| FL102 | 消費線 | 6 + 14 + 10 = 30 | 1 | 1, 2, 3（30，收尾 10） |
+| FL103 | 存錢線 | 11 + 10 + 10 = 31 | **1** (was 2) | 1, 2, 3（31，收尾 5） |
+| FL104 | 詐騙線 | 9 + 8 + 9 + 9 + 8 + 10 = 53 | 2 | 1 to 4（35，收尾 5）/ 5, 6（18，收尾 10） |
+| FL201 | 信用線 | 24 + 11 + 4 = 39 | 2 | 1, 2（35，收尾 5）/ 3（4，收尾 10） |
+| FL202 | 投資線 | 7 + 6 + 8 + 8 = 29 | 1 | 1 to 4（29，收尾 10） |
+| FL203 | 學貸線 | 6 + 9 + 6 + 6 + 6 + 10 = 43 | 2 | 1 to 5（33，收尾 5）/ 6（10，收尾 10） |
+| FL204 | 租屋線 | 6 + 6 + 6 + 6 + 6 + 10 = 40 | 2 | 1 to 5（30，收尾 10）/ 6（10，收尾 10） |
+| FL205 | 保險線 | 4 + 6 + 6 + 6 + 6 + 10 = 38 | 2 | 1 to 5（28，收尾 10）/ 6（10，收尾 10） |
+| FL301 | 報稅線 | 6 + 6 + 6 + 6 + 6 + 10 = 40 | 2 | 1 to 5（30，收尾 10）/ 6（10，收尾 10） |
+| FL302 | 創業線 | 6 + 6 + 6 + 6 + 6 + 10 = 40 | 2 | 1 to 5（30，收尾 10）/ 6（10，收尾 10） |
+| FL401 | 財務決策線 | 8 + 10 = 18 | 1 | 1, 2（18，收尾 10） |
+
+Only 存錢線 changes its number of periods. 信用線's second period now holds a
+single 4-minute unit.
+
+## The run against the real database
+
+A local server on this branch's code, pointed at the production Supabase
+project (migration-27 confirmed visible first). One test account. Both
+scripts pass:
+
+- `tests/e2e/teachers-e.mjs`: 114 of 114.
+- `tests/e2e/class-e.mjs`: 10 of 10 (a quiz round and a 人生賽局 round, teacher
+  and student in two browsers).
+
+This exercised the Supabase paths that the file store cannot: the owner
+column and the 3-room limit, closing a room, the 12-hour rule from
+`last_active_at`, both wrong-code counts in `class_join_attempts`, and
+per-question marks in `class_participants.answers`.
+
+**One run stopped early, and why.** The first real run stopped on an error
+in my own test, not in the product: the step that ages a room by 12 hours
+changed `last_active_at` but not `created_at`, so the room still counted as
+open, and later steps failed before the cleanup ran. I removed what it left
+by exact match (below), fixed the step, and made both scripts clean up even
+when they stop on an error.
+
+### Deleted
+
+Every row was matched by its exact id or key. A room was deleted only if the
+test account opened it.
+
+| Run | Rooms | Participants | Wrong-code rows |
+|---|---|---|---|
+| Stopped run, removed by hand | 4: WL6FHB (life), PDEDQQ, MSYJXR, 2EQQNS | 2: 小安, 小明 | 120 |
+| `teachers-e` | 6: 7PTZT5 (life), DSEUCC, E8RVXC, VC7FGA, 5CFE3R, 54N6AY | 5: 小安, 學生1, 學生2, 走查1, 走查2 | 120 |
+| `class-e` | 2: JAD3A3, LWEM7C (life) | 2: 課堂走查, 隊伍走查 | 0 |
+| **Total** | **12** | **9** | **240** |
+
+Row counts before and after:
+
+| Table | Before | After |
+|---|---|---|
+| `class_rooms` | 1 | 1 (the room that was already there; never touched) |
+| `class_participants` | 0 | 0 |
+| `class_join_attempts` | 0 | 0 |
+| `students` | 40 | 41 |
+| `life_game_saves` | 1 | 2 |
+
+### Still there (not in the list I was told to delete)
+
+- The test account: 自動測試帳號, school 自動測試, id
+  `6a244ee9-992f-4ba1-9f71-141135be650d`. It has no progress, results or
+  activity rows.
+- One 人生賽局 team save it made in `class-e`: id
+  `cab34a5c-9f5f-4a61-94aa-3f5318d6ce9c` (第1隊 of the deleted room LWEM7C).
+
+Say the word and I will delete both, by those ids.
+
+### How the run was set up
+
+The production address and key were already in `.env.local`, commented out.
+That file was not edited. The preview launcher may not read it, so for the
+length of the run they were copied into `.env.development.local` (ignored by
+git, owner-only permissions), which Next loads first; that file was deleted
+as soon as the second script finished, the server was stopped, and nothing
+is listening. Neither value was printed or written anywhere else.
+
+## Attached (refreshed)
+
+`docs/redesign/12-teachers/`: the four page screenshots, `teachers-zhiya.pdf`
+(2 pages), `class-host-limit-1280.png`, and new `class-host-results-1280.png`
+(the host screen with results by question, the median, and students without
+scores).
+
+## Not verified
+
+- Printing from Safari or Firefox.
+- The join limits on a real school network.
+- Production itself does not have these follow-up changes until the branch
+  is merged: the live site still shows the answer key and the old quiz
+  screens from the first round.
+
