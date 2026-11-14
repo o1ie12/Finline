@@ -664,3 +664,17 @@
   outline-offset: 2px;
   border-radius: 6px;
 }
+
+/* spec 12 TCH-2: the public catalogue's line for teachers */
+.teach {
+  margin: 0;
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  color: var(--ink-2);
+}
+.teach a {
+  color: var(--ink);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}

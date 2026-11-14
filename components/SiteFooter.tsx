@@ -3,6 +3,7 @@ import HomeLink from "@/components/HomeLink";
 
 const LINKS = [
   { href: "/lines", label: "課程目錄" },
+  { href: "/teachers", label: "給老師" },
   { href: "/transfer", label: "轉乘站" },
   { href: "/about", label: "關於我們" },
   { href: "/partnerships", label: "合作夥伴" },

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { pageMeta } from "@/lib/pageMeta";
 
 export const metadata: Metadata = pageMeta({
@@ -18,6 +19,13 @@ export default function PartnershipsPage() {
       </h1>
       <p className="mx-auto mt-4 max-w-md text-[15px] leading-relaxed text-ink-soft">
         目前還沒有正式確定的合作夥伴。這裡會在合作關係確定後更新。
+      </p>
+      <p className="mx-auto mt-4 max-w-md text-[15px] leading-relaxed text-ink-soft">
+        想在課堂上使用錢途？請看{" "}
+        <Link href="/teachers" className="font-semibold text-ink underline underline-offset-4">
+          給老師
+        </Link>
+        。
       </p>
     </div>
   );

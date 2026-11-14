@@ -1,0 +1,507 @@
+/*
+  給老師 and the lesson plans (spec 12). The site's calm surfaces: white
+  cards on paper with a hairline, one ink button, the course's colour only
+  on its code. Tables turn into stacked rows on a phone.
+*/
+.page {
+  width: 100%;
+  max-width: 960px;
+  box-sizing: border-box;
+  margin: 0 auto;
+  padding: 40px 24px 72px;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  color: var(--ink);
+}
+.head {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.crumb {
+  margin: 0;
+  font-size: 0.875rem;
+}
+.crumb a,
+.link,
+.table a,
+.planLink {
+  color: var(--ink);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.kicker {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--ink-2);
+}
+.h1 {
+  margin: 0;
+  font: 900 2.5rem/1.2 var(--font-voice);
+  letter-spacing: -0.01em;
+}
+.lead {
+  margin: 0;
+  max-width: 44em;
+  font-size: 1.0625rem;
+  line-height: 1.8;
+  color: var(--ink-2);
+}
+.section,
+.period {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.h2 {
+  margin: 0;
+  font: 800 1.375rem/1.35 var(--font-voice);
+}
+.h3 {
+  margin: 0;
+  font: 700 1.0625rem/1.4 var(--font-voice);
+}
+.text {
+  margin: 0;
+  max-width: 44em;
+  font-size: 1rem;
+  line-height: 1.8;
+  color: var(--ink-2);
+}
+.note {
+  margin: 0;
+  font-size: 0.875rem;
+  line-height: 1.7;
+  color: var(--ink-3);
+}
+.steps,
+.list {
+  margin: 0;
+  padding-left: 1.4em;
+  max-width: 44em;
+  display: grid;
+  gap: 8px;
+  font-size: 1rem;
+  line-height: 1.8;
+}
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+/* ---- facts under a plan's title ---- */
+.facts {
+  display: grid;
+  gap: 10px;
+  margin: 6px 0 0;
+}
+.facts > div {
+  display: grid;
+  grid-template-columns: 7.5em minmax(0, 1fr);
+  gap: 12px;
+  font-size: 0.9375rem;
+  line-height: 1.7;
+}
+.facts dt {
+  font-weight: 700;
+}
+.facts dd {
+  margin: 0;
+  color: var(--ink-2);
+}
+.facts ul {
+  margin: 0;
+  padding-left: 1.2em;
+}
+
+/* ---- tables ---- */
+.tableCard {
+  border-radius: 16px;
+  background: var(--surface);
+  box-shadow: 0 0 0 1px var(--hairline), 0 1px 2px rgba(20, 23, 26, 0.04);
+  overflow: hidden;
+}
+.table,
+.plan {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9375rem;
+  line-height: 1.7;
+}
+.table th,
+.table td,
+.plan th,
+.plan td {
+  padding: 12px 16px;
+  text-align: left;
+  vertical-align: top;
+  border-top: 1px solid var(--hairline);
+}
+.table thead th,
+.plan thead th {
+  border-top: 0;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--ink-2);
+  white-space: nowrap;
+}
+.table tbody th {
+  font-weight: 700;
+}
+.table td {
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.group th {
+  padding-top: 18px;
+  background: var(--surface-2);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--ink-2);
+}
+.plan {
+  border-radius: 16px;
+  background: var(--surface);
+  box-shadow: 0 0 0 1px var(--hairline), 0 1px 2px rgba(20, 23, 26, 0.04);
+  overflow: hidden;
+}
+.plan td:first-child {
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+.plan td:nth-child(2) {
+  font-weight: 700;
+  min-width: 8em;
+}
+.plan ul {
+  margin: 0;
+  padding-left: 1.2em;
+}
+.plan .take {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px dashed var(--hairline-strong);
+  list-style: "· ";
+}
+
+/* ---- class mode links ---- */
+.cards {
+  display: grid;
+  gap: 12px;
+}
+@media (min-width: 640px) {
+  .cards {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+.cardDark,
+.cardLight {
+  display: flex;
+  align-items: center;
+  min-height: 72px;
+  padding: 0 22px;
+  border-radius: 16px;
+  font: 700 1.0625rem/1.3 var(--font-voice);
+  text-decoration: none;
+}
+.cardDark {
+  background: var(--ink);
+  color: var(--ink-inv);
+}
+.cardLight {
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: inset 0 0 0 1px var(--hairline-strong);
+}
+@media (hover: hover) {
+  .cardLight:hover {
+    box-shadow: inset 0 0 0 1px var(--ink);
+  }
+}
+.page a:focus-visible,
+.page summary:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+/* ---- the answer key, folded ---- */
+.key {
+  border-radius: 16px;
+  background: var(--surface);
+  box-shadow: 0 0 0 1px var(--hairline);
+  padding: 4px 20px;
+}
+.key summary {
+  display: flex;
+  align-items: center;
+  min-height: 56px;
+  cursor: pointer;
+}
+.key summary h2 {
+  display: inline;
+}
+.key ol {
+  margin: 8px 0 0;
+  padding-left: 1.4em;
+  display: grid;
+  gap: 14px;
+}
+.keyUnit {
+  padding: 14px 0 18px;
+  border-top: 1px solid var(--hairline);
+}
+.keyQ,
+.keyA,
+.keyWhy {
+  margin: 0;
+  font-size: 0.9375rem;
+  line-height: 1.7;
+}
+.keyQ {
+  font-weight: 700;
+}
+ul.keyA {
+  padding-left: 1.2em;
+}
+.keyWhy {
+  color: var(--ink-2);
+}
+.keyWhy b {
+  margin-right: 8px;
+  font-size: 0.8125rem;
+  color: var(--ink);
+}
+
+/* ---- the worksheet: a sheet of paper on screen, a page of its own in print ---- */
+.sheet {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 28px 24px 30px;
+  border-radius: 16px;
+  background: var(--surface);
+  box-shadow: 0 0 0 1px var(--hairline);
+}
+.sheetTitle {
+  margin: 0;
+  font: 800 1.375rem/1.3 var(--font-voice);
+}
+.sheetName {
+  margin: 0;
+  font-size: 1rem;
+}
+.sheetUnit {
+  display: grid;
+  gap: 6px;
+  font-size: 0.9375rem;
+  line-height: 1.7;
+}
+.sheetUnit p {
+  margin: 0;
+}
+.blank {
+  display: grid;
+}
+.blank i {
+  display: block;
+  height: 30px;
+  border-bottom: 1px solid var(--hairline-strong);
+}
+.printFooter {
+  display: none;
+}
+
+/* ---- a phone: tables read as stacked rows ---- */
+@media (max-width: 639px) {
+  .page {
+    padding: 28px 16px 56px;
+    gap: 32px;
+  }
+  .h1 {
+    font-size: 2rem;
+  }
+  .facts > div {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2px;
+  }
+  .table thead,
+  .plan thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+  .table,
+  .table tbody,
+  .table tr,
+  .plan,
+  .plan tbody,
+  .plan tr {
+    display: block;
+  }
+  .table tr,
+  .plan tr {
+    padding: 12px 16px;
+    border-top: 1px solid var(--hairline);
+  }
+  .plan tbody tr:first-child {
+    border-top: 0;
+  }
+  .table tr.group {
+    padding: 10px 16px;
+    background: var(--surface-2);
+  }
+  .table th,
+  .table td,
+  .plan td {
+    display: block;
+    padding: 0;
+    border: 0;
+    white-space: normal;
+  }
+  .table tbody tr:not(.group) {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 6px 10px;
+  }
+  .table tbody tr:not(.group) td:nth-of-type(n + 2):not(:last-child) {
+    grid-row: 2;
+    font-size: 0.875rem;
+    color: var(--ink-2);
+  }
+  .table tbody tr:not(.group) td:nth-of-type(2) {
+    grid-column: 1 / 2;
+  }
+  .table tbody tr:not(.group) td:last-child {
+    grid-row: 1;
+    grid-column: 3;
+  }
+  .table .group th {
+    padding: 0;
+    background: none;
+  }
+  .planLink {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+  .plan td {
+    margin-top: 4px;
+  }
+  .plan td:first-child {
+    margin-top: 0;
+    font-size: 0.8125rem;
+    color: var(--ink-2);
+  }
+  .plan td:nth-child(n + 3)::before {
+    content: attr(data-label);
+    display: block;
+    margin-top: 6px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--ink-3);
+  }
+}
+
+/* ---- print (TCH-4): A4, black on white, a period per page, then the worksheet ---- */
+@media print {
+  .page {
+    max-width: none;
+    padding: 0;
+    gap: 14pt;
+    color: #000;
+    font-size: 10.5pt;
+  }
+  .h1 {
+    font-size: 20pt;
+  }
+  .h2,
+  .sheetTitle {
+    font-size: 13pt;
+  }
+  .lead,
+  .text,
+  .note,
+  .facts dd,
+  .keyWhy,
+  .kicker {
+    color: #000;
+  }
+  .lead,
+  .facts > div,
+  .plan,
+  .steps,
+  .list,
+  .sheetUnit,
+  .keyQ,
+  .keyA,
+  .keyWhy {
+    font-size: 10.5pt;
+    line-height: 1.55;
+  }
+  .plan,
+  .tableCard,
+  .key,
+  .sheet {
+    box-shadow: none;
+    border-radius: 0;
+    background: #fff;
+  }
+  .plan {
+    border: 1px solid #000;
+  }
+  .plan th,
+  .plan td {
+    padding: 6pt 8pt;
+    border-top: 1px solid #000;
+  }
+  .plan thead th {
+    color: #000;
+  }
+  .plan tr,
+  .sheetUnit,
+  .keyUnit li {
+    break-inside: avoid;
+  }
+  .period + .period {
+    break-before: page;
+  }
+  .sheet {
+    break-before: page;
+    padding: 0;
+    gap: 12pt;
+  }
+  .key {
+    padding: 0;
+  }
+  /* The answer key prints only when the teacher opened it first. */
+  .key:not([open]) {
+    display: none;
+  }
+  .blank i {
+    height: 22pt;
+    border-bottom: 1px solid #000;
+  }
+  .printFooter {
+    display: block;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: 0;
+    font-size: 8pt;
+    text-align: center;
+  }
+}

@@ -6,6 +6,7 @@ import { durationText, type CourseOutline, type OutlineModule } from "@/lib/curr
 import { LEVEL_NAME, moduleGrade, percent, type Best } from "@/lib/grades";
 import type { LessonCard } from "@/lib/tasks/types";
 import { GuestSync } from "@/components/player/GuestSync";
+import { coursePeriods } from "@/lib/lessonPlan";
 import { DocArt } from "./DocArt";
 import { SampleQuestion } from "./SampleQuestion";
 import k from "./kit.module.css";
@@ -71,7 +72,8 @@ export function CoursePage({ v }: { v: CourseView }) {
   const track = TRACKS[info.track];
   const done = v.modules.filter((m) => m.status === "done").length;
   const started = done > 0 || v.modules.some((m) => m.best);
-  const periods = Math.max(1, Math.ceil(totals.minutes / 45));
+  // One source for the number of class periods (lib/lessonPlan.ts).
+  const periods = coursePeriods(o);
   // The sign says where this student goes next (the first module before they start).
   const at =
     v.signedIn && v.next
@@ -501,10 +503,10 @@ export function CoursePage({ v }: { v: CourseView }) {
               ) : null}
             </section>
 
-            {/* ---- 給老師與合作單位 ---- */}
+            {/* ---- 給老師 (spec 12 TCH-2, TCH-6) ---- */}
             <section className={s.section} aria-labelledby="teach-h">
               <h2 id="teach-h" className={s.h2}>
-                給老師與合作單位
+                給老師
               </h2>
               <dl className={s.details}>
                 <div>
@@ -515,7 +517,7 @@ export function CoursePage({ v }: { v: CourseView }) {
                 </div>
                 <div>
                   <dt>課堂時間</dt>
-                  <dd>約 {periods} 節課（每節 45 分鐘，依任務時間估算）</dd>
+                  <dd>建議 {periods} 節課（每節 45 分鐘，含暖身和討論）</dd>
                 </div>
                 <div>
                   <dt>評量</dt>
@@ -531,7 +533,7 @@ export function CoursePage({ v }: { v: CourseView }) {
                 ) : null}
               </dl>
               <p className={s.lead}>
-                想在班上或活動裡使用這門課，請看 <Link href="/partnerships">合作方式</Link>。
+                想在班上用這門課？看 <Link href={`/teachers/${line.slug}`}>這門課的教案</Link>，或 <Link href="/teachers">課堂使用說明</Link>。
               </p>
             </section>
 

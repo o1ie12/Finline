@@ -36,5 +36,5 @@ export default async function LinesPage() {
     /* not configured: the catalogue without progress */
   }
   const start = getLine(START_LINE)!;
-  return <Catalogue art={catalogueArt()} courses={programView(mine)} signedIn={Boolean(mine)} start={mine ? { href: "/today", label: "回到我的學習" } : { href: `/line/${START_LINE}`, label: `從第一門課開始：${start.name}` }} />;
+  return <Catalogue teachers art={catalogueArt()} courses={programView(mine)} signedIn={Boolean(mine)} start={mine ? { href: "/today", label: "回到我的學習" } : { href: `/line/${START_LINE}`, label: `從第一門課開始：${start.name}` }} />;
 }

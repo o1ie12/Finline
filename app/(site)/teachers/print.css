@@ -1,0 +1,21 @@
+/*
+  Printing a lesson plan (spec 12 TCH-4): only the plan. The site's header,
+  footer and navigation, every button and anything marked data-no-print stay
+  off the paper. Global, because the site chrome is outside the page.
+*/
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 15mm;
+  }
+  body:has([data-lesson-plan]) {
+    background: #fff !important;
+  }
+  body:has([data-lesson-plan]) :is(header, footer, nav, button, [data-no-print], nextjs-portal) {
+    display: none !important;
+  }
+  body:has([data-lesson-plan]) * {
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+}

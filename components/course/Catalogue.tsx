@@ -24,11 +24,14 @@ export function Catalogue({
   start,
   framed = false,
   art = [],
+  teachers = false,
 }: {
   courses: ProgramCourse[];
   signedIn: boolean;
   start: { href: string; label: string };
   framed?: boolean;
+  /** The public catalogue points teachers to 給老師 (spec 12 TCH-2); the signed-in 課程 tab does not. */
+  teachers?: boolean;
   /** Up to three task documents, drawn as the header's artwork (lib/coursePreview.ts). */
   art?: Material[];
 }) {
@@ -46,6 +49,11 @@ export function Catalogue({
           <p className={s.kicker}>課程目錄</p>
           <h1 className={s.h1}>{PROGRAM.name}</h1>
           <p className={s.intro}>{PROGRAM.promise}</p>
+          {teachers ? (
+            <p className={s.teach}>
+              老師想在課堂上用？看 <Link href="/teachers">給老師</Link>。
+            </p>
+          ) : null}
           <p className={s.facts}>
             <span>{courses.length} 門課</span>
             <span>{modules} 個單元</span>
