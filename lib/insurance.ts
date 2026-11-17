@@ -3,7 +3,7 @@
  * in force from 115/7/1 (2026-07-01).
  * Source: 強制汽車責任保險給付標準 (amended 115/5/29),
  * https://law.moj.gov.tw/LawClass/LawAll.aspx?pcode=G0390067, and the FSC's
- * 2026-05-28 release. Checked 2026-10-24 (docs/finline-redesign/VERIFIED.md
+ * 2026-05-28 release. Checked 2026-10-24 (docs/archive/finline-redesign/VERIFIED.md
  * item 6). Do not use the older NT$2,000,000 figure.
  */
 export const MANDATORY_AUTO_INSURANCE = {
@@ -17,7 +17,7 @@ export const MANDATORY_AUTO_INSURANCE = {
  * together, NT$ and foreign-currency deposits combined. The amount is set by
  * the regulators, not written in the statute (存款保險條例 §13).
  * Source: CDIC FAQ Q7, https://www.cdic.gov.tw/main_deposit/faq.aspx?uid=59&pid=59,
- * checked 2026-10-24 (docs/finline-redesign/VERIFIED.md item 1).
+ * checked 2026-10-24 (docs/archive/finline-redesign/VERIFIED.md item 1).
  */
 export const DEPOSIT_INSURANCE_CAP = 3_000_000;
 

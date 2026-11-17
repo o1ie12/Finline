@@ -5,7 +5,7 @@
  * Sources:
  * - Card interest cap 15%: already verified in the repo (04 §15 footer;
  *   lib/creditCard.ts).
- * - ETF codes and suffix meanings: docs/redesign/sources.md item 12 (TWSE
+ * - ETF codes and suffix meanings: docs/sources.md item 12 (TWSE
  *   product pages). 00982B holds USD bonds, so the bond example is
  *   00679B 元大美債20年. The letter card stays date-free.
  * - Task C prices: real split-adjusted 0050 monthly closes from SEED_ROWS,

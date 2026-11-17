@@ -154,7 +154,7 @@ Each is a new `TaskSet` in the existing engine, same 5-step flow, answers server
 
 # PART E. DESIGN BUILD SPEC (replaces `05` Part D and supersedes `01` sections 2, 3, 5, 6)
 
-> **Superseded by docs/design/ (professional course-platform redesign). Part F and the audit content still apply.**
+> **Superseded by docs/archive/design/ (professional course-platform redesign). Part F and the audit content still apply.**
 
 **How to use this part.** Everything below is decided. Do not run the Part D "three directions" process; Ryan's brief was: Apple-grade UI, simple-game character art, keep the old metro look but with more soul, Forage-like (real work, real teaching, but it plays like a game). This part is the direction. Claude Code only codes it.
 
@@ -583,7 +583,7 @@ One file per scene, default export a function returning `<svg class="scene" …>
 | 創業線 | Small shopfront (小店), morning | day | `#FFE3C2` sky · `#F4EBDD` wall, `#B8C0C8` shutter · `--line` + white awning stripes · `#fff` | B: half-open shutter; counter with 「營業中」 sign; R: crates of goods; hanging bulb; chalkboard menu |
 | 財務決策線 | Rooftop at dusk | **night** | sky bands `#2B3A67` / `#6B5B95` / `#F4A261` (three flat bands, no gradient) · `#3B4660` roof · `#1E2A44` skyline · `#FFD27A` windows | B: skyline silhouettes with lit windows; R: signpost with two arrows (left, right) in `--line` and white; L: railing |
 
-Review gate (E16): the platform and the bank are built; each of the other 10 is built from this table, rendered, and reviewed with the character standing in it (all 8 outfit colors) before the next. Screenshots go in `docs/design/screens/`.
+Review gate (E16): the platform and the bank are built; each of the other 10 is built from this table, rendered, and reviewed with the character standing in it (all 8 outfit colors) before the next. Screenshots go in `docs/archive/design/screens/`.
 
 ---
 
@@ -727,7 +727,7 @@ lib/design/lowend.ts            low-end flag (E17)
 app/dev/ui/page.tsx             dev-only gallery of every component, light and dark (404 in production)
 scripts/check-contrast.mjs      E18
 tests/e2e/design.spec.ts        E18
-docs/design/DESIGN.md           pointer to this part + the final tokens; docs/design/screens/ holds review shots
+docs/archive/design/DESIGN.md           pointer to this part + the final tokens; docs/archive/design/screens/ holds review shots
 ```
 
 ---
@@ -741,7 +741,7 @@ docs/design/DESIGN.md           pointer to this part + the final tokens; docs/de
 5. **Life-game turn** (all 7 steps), the three tabs, creator, line page, results. Commit per screen.
 6. **Train transition.**
 7. **Scenes** for the other 10 lines, subagents, one scene per commit, each reviewed with the character standing in it (E9.4 gate).
-8. **Motion and reduced-motion pass**, then the full acceptance suite (E18). Screenshots to `docs/design/screens/`.
+8. **Motion and reduced-motion pass**, then the full acceptance suite (E18). Screenshots to `docs/archive/design/screens/`.
 
 Part A (content and logic), B (economy) and C (structure) ship first and are not blocked by this part; do them in the current visuals and let step 4 re-skin them.
 
@@ -775,7 +775,7 @@ Part A (content and logic), B (economy) and C (structure) ship first and are not
 | Tokens | `grep -E '#[0-9A-Fa-f]{3,8}\b' components/**/*.tsx app/**/*.tsx` outside `components/art/**` returns nothing |
 | Copy | No emoji in strings; no 「我的工具」, 「提交」, 「下一張」, 「下一題」; every button label is in the E7.16 vocabulary or a task-specific verb; no 「我們」 |
 | Art budgets | Each scene ≤ 20KB, character markup ≤ 12KB |
-| Screenshots | `shot.py` or Playwright writes `docs/design/screens/<screen>-<viewport>-<scheme>.png` for each screen at 390×844 and 1440×900, light and dark. **Ryan reviews screenshots, not code.** |
+| Screenshots | `shot.py` or Playwright writes `docs/archive/design/screens/<screen>-<viewport>-<scheme>.png` for each screen at 390×844 and 1440×900, light and dark. **Ryan reviews screenshots, not code.** |
 
 ---
 
@@ -1038,7 +1038,7 @@ Production has real students. Saved position is keyed by **stop name, not index*
 ## G6. Content crosswalk against the partner deck (private, never committed)
 Hard rule from the top of this file: no partner names, slide references or deck files in the repo or in commits. So the deck stays **outside the repo**.
 - Oliver keeps the PDF locally (not under the repo folder) and gives Claude Code its path in the session.
-- Claude Code writes the result to `docs/design/private/CONTENT-CROSSWALK.md`, and `docs/design/private/` is added to `.gitignore` **before** the file is created. Check with `git status` that nothing from it is staged.
+- Claude Code writes the result to `docs/archive/design/private/CONTENT-CROSSWALK.md`, and `docs/archive/design/private/` is added to `.gitignore` **before** the file is created. Check with `git status` that nothing from it is staged.
 - Method: for every row of section 1 of this file, open the matching slide, confirm the row's status (COVERED, GAP, SKIP), and for COVERED find where it lives (line, station id, step id). Columns: slide, what it says in one line, where in the repo or GAP, discrepancy. Do not change content and do not copy any deck number (section 3 lists the deck's errors).
 - Also confirm that each P1 and P2 task from section 2 exists, where, and that its numbers come from the engine.
 
@@ -1058,7 +1058,7 @@ Oliver's idea (2026-10-24). Same idea as the optional line-end check in F3.4, so
 
 ## G9. Second walk: test-account run of a full station (2026-10-24, evening)
 
-Walked the live site end to end on a test account. Summary of the items; what was done for each is in `docs/design/SHIP-LOG.md` (round 2).
+Walked the live site end to end on a test account. Summary of the items; what was done for each is in `docs/archive/design/SHIP-LOG.md` (round 2).
 
 - **High:**
   1. After a station and its turn, the student lands on the old standalone simulation, with a different income and a second pre-reading.

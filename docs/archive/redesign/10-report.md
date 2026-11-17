@@ -2,7 +2,7 @@
 
 - **Branch:** `feat/spec-v2`, from `main` (b96a15a). Not merged; Ryan merges.
 - **Preview:** https://finance-learn-pp34opunu-olivers-projects-1298c00d.vercel.app (behind the Vercel login). The preview build passed, which is the `next build` check.
-- **Screens at 390 × 844:** `docs/design/screens/stop10/` (gitignored; remake them with `node tests/e2e/stop10-shots.mjs`). One full-page and one viewport shot each of:
+- **Screens at 390 × 844:** `docs/archive/design/screens/stop10/` (gitignored; remake them with `node tests/e2e/stop10-shots.mjs`). One full-page and one viewport shot each of:
   - a station start (IN01);
   - the compare screen, passed (CR03);
   - the compare screen, failed (CR03);

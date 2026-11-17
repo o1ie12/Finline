@@ -6,7 +6,7 @@
  * resolved task, goal, student and attempt) and returns that step's key.
  * Nothing is stored: the attempt is still recorded once, by submitTask,
  * when the module ends. Because the key comes back, a student could ask
- * before choosing; that is accepted (docs/redesign/13-player.md).
+ * before choosing; that is accepted (docs/archive/redesign/13-player.md).
  */
 import { countTaskAttempts } from "@/lib/db";
 import { getLine } from "@/lib/lines";

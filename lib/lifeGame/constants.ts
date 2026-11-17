@@ -43,7 +43,7 @@ export const PAYROLL = TAX_YEAR.payroll;
 
 /**
  * 2026 最低工資 (monthly). 勞動部 公告: 115年1月1日起 每月最低工資 NT$29,500.
- * See docs/redesign/sources.md item 1 for the URL and quote.
+ * See docs/sources.md item 1 for the URL and quote.
  */
 export const MIN_MONTHLY_WAGE_2026 = 29_500;
 

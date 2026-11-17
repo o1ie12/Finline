@@ -3,7 +3,7 @@
 ## Round 3: feat/product (the product pass), 2026-11-02
 
 `feat/product` sits on `main` (dcc4148), so the merge is a fast-forward with no
-migrations. Evidence: `docs/design/SHIP-LOG.md`, round 3.
+migrations. Evidence: `docs/archive/design/SHIP-LOG.md`, round 3.
 
 - **One mode is now the default everywhere, production included.**
   `next.config.ts` reads `NEXT_PUBLIC_FLOW_V2 ?? "1"`, so no Vercel variable is
@@ -18,7 +18,7 @@ migrations. Evidence: `docs/design/SHIP-LOG.md`, round 3.
 ## Round 2: feat/flow-v2 (06 Part G and G9), 2026-10-25
 
 `feat/design-e` is on `main` (0fbb116). `feat/flow-v2` sits on top of it, so
-the merge is a fast-forward with no migrations. Evidence: `docs/design/SHIP-LOG.md`, round 2.
+the merge is a fast-forward with no migrations. Evidence: `docs/archive/design/SHIP-LOG.md`, round 2.
 
 ### The flag
 
@@ -80,7 +80,7 @@ the merge is a fast-forward with no migrations. Evidence: `docs/design/SHIP-LOG.
     281 files, +24,711 / −1,800. Checked commit: `d6fdda7`. Preview (behind Vercel login):
     https://finance-learn-mpehnb7cf-olivers-projects-1298c00d.vercel.app.
   - The merge is a fast-forward. There are no new migrations.
-- **Evidence for every item:** `docs/design/SHIP-LOG.md`.
+- **Evidence for every item:** `docs/archive/design/SHIP-LOG.md`.
 
 ### DONE BY CLAUDE CODE
 
@@ -108,7 +108,7 @@ the merge is a fast-forward with no migrations. Evidence: `docs/design/SHIP-LOG.
     because of about 0.9 MB of Noto Sans TC files. See SHIP-LOG step 7.
 - [x] The 8 tasks without documents are listed, with what each needs
   (TODO-VERIFY).
-- [x] The old Part E and 01 design specs point to `docs/design/`.
+- [x] The old Part E and 01 design specs point to `docs/archive/design/`.
 
 ### NEEDS A HUMAN
 

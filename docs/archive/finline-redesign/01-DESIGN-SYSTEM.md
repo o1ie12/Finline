@@ -1,6 +1,6 @@
 # 01. Design System and Screens
 
-> **Superseded by docs/design/ (professional course-platform redesign). Part F and the audit content still apply.**
+> **Superseded by docs/archive/design/ (professional course-platform redesign). Part F and the audit content still apply.**
 
 Everything visual for the game shell (every page after login). The landing page keeps its current design.
 

@@ -1,11 +1,11 @@
 # STOP 1: tokens, character and shell
 
-Branch `feat/design-e`, built on `fix/playtest-05`, pushed as its own branch for a Vercel preview. `main` is untouched. Screenshots are in `docs/design/screens/` (390×844, light and dark; desktop where noted).
+Branch `feat/design-e`, built on `fix/playtest-05`, pushed as its own branch for a Vercel preview. `main` is untouched. Screenshots are in `docs/archive/design/screens/` (390×844, light and dark; desktop where noted).
 
 ## Done
 
-1. **Specs in the repo.** `docs/finline-redesign/` holds 00 to 06 from your paste, with partner organisation names removed (the repo is public). 06 is renamed `06-DECK-AUDIT.md`. `scripts/check-names.ts` (`npm run check:names`) scans every changed file and commit message with the content check's hashed deny list.
-2. **VERIFY, all nine items** (`docs/finline-redesign/VERIFIED.md`, official sources only, quotes and URLs):
+1. **Specs in the repo.** `docs/archive/finline-redesign/` holds 00 to 06 from your paste, with partner organisation names removed (the repo is public). 06 is renamed `06-DECK-AUDIT.md`. `scripts/check-names.ts` (`npm run check:names`) scans every changed file and commit message with the content check's hashed deny list.
+2. **VERIFY, all nine items** (`docs/archive/finline-redesign/VERIFIED.md`, official sources only, quotes and URLs):
    - **VERIFIED:**
      - deposit insurance
      - free credit report

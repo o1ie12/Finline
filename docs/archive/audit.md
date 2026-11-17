@@ -68,7 +68,7 @@ No course content was expanded or rewritten.
 ## Note on the Phase 0 audit
 
 The Phase 0 repo-discovery audit (commit `08aa287`, 461 lines) was written to
-`docs/audit.md` on the `feature/credit-card-simulation` branch and never
+`docs/archive/audit.md` on the `feature/credit-card-simulation` branch and never
 merged. It is not on `main`, which is why this file had to be created rather
 than appended to. Whether to bring that inventory forward is a separate
 decision — parts of it describe a pre-rebuild codebase and would need

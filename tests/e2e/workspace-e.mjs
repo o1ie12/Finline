@@ -23,7 +23,7 @@ if (!/^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(BASE)) throw new Error("l
 const [keyPath, PATH, NAME, wrongArg] = process.argv.slice(2);
 const KEY = JSON.parse(readFileSync(keyPath, "utf8"));
 const WRONG = wrongArg === undefined ? -1 : Number(wrongArg);
-const OUT = new URL("../../docs/design/screens/", import.meta.url).pathname;
+const OUT = new URL("../../docs/archive/design/screens/", import.meta.url).pathname;
 mkdirSync(OUT, { recursive: true });
 
 const results = [];

@@ -2,7 +2,7 @@
  * 租屋線 content (04-CONTENT §10). No new task set: the existing lease clause
  * hunt is the terminal, wrapped with the 簽約前三查 card and the reveal.
  *
- * Sources (docs/redesign/sources.md item 13):
+ * Sources (docs/sources.md item 13):
  * - Deposit ≤ 2 months' rent: 租賃住宅市場發展及管理條例 §7
  *   「押金之金額，不得逾二個月之租金總額。」
  * - Model contract name 「住宅租賃契約書範本」: 內政部地政司.

@@ -124,7 +124,7 @@ Run Impeccable's `init` to produce `PRODUCT.md`. It must say, in these words: Tr
 
 ### D3. Study references, don't copy them
 
-Use Hallmark's study mode on screenshots Ryan provides (Forage task screens, Duolingo lesson flow, any games he likes) to extract principles: pacing, how one task fills a screen, button weight, feedback moments. Write the findings into `docs/design/references.md`. Never copy a brand's assets, logo, characters or exact look.
+Use Hallmark's study mode on screenshots Ryan provides (Forage task screens, Duolingo lesson flow, any games he likes) to extract principles: pacing, how one task fills a screen, button weight, feedback moments. Write the findings into `docs/archive/design/references.md`. Never copy a brand's assets, logo, characters or exact look.
 
 ### D4. Three directions, static, before any code
 

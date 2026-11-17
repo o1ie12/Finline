@@ -148,7 +148,7 @@ Things to know:
 
 ## Attached
 
-In `docs/redesign/12-teachers/`:
+In `docs/archive/redesign/12-teachers/`:
 
 - `teachers-375.png`, `teachers-1280.png`
 - `teachers-zhiya-375.png`, `teachers-zhiya-1280.png`
@@ -319,7 +319,7 @@ is listening. Neither value was printed or written anywhere else.
 
 ## Attached (refreshed)
 
-`docs/redesign/12-teachers/`: the four page screenshots, `teachers-zhiya.pdf`
+`docs/archive/redesign/12-teachers/`: the four page screenshots, `teachers-zhiya.pdf`
 (2 pages), `class-host-limit-1280.png`, and new `class-host-results-1280.png`
 (the host screen with results by question, the median, and students without
 scores).

@@ -290,12 +290,12 @@ simulated mode:** `/` at 12.3 s and the course page at 5.1 s.
 
 ## 9. Superseded notes on the old design specs
 
-- **Added** the line 「Superseded by docs/design/ (professional
+- **Added** the line 「Superseded by docs/archive/design/ (professional
   course-platform redesign). Part F and the audit content still apply.」 in
   two places:
   - under the `# PART E. DESIGN BUILD SPEC` heading of
-    `docs/finline-redesign/06-DECK-AUDIT.md`;
-  - at the top of `docs/finline-redesign/01-DESIGN-SYSTEM.md`.
+    `docs/archive/finline-redesign/06-DECK-AUDIT.md`;
+  - at the top of `docs/archive/finline-redesign/01-DESIGN-SYSTEM.md`.
 - **The file name:** there is no `06-FINLEA-AUDIT.md` in the repo or the spec
   folder. `06-DECK-AUDIT.md` is the only 06 audit, and its Part E is the
   design build spec, so that is the file meant. The copies in
@@ -337,7 +337,7 @@ is fine for this round. The flow change is behind `NEXT_PUBLIC_FLOW_V2`.
 `next.config.ts` derives the flag: on for Vercel preview builds, off for
 production, and an explicit value always wins.
 
-**The spec:** Part G was added to `docs/finline-redesign/06-DECK-AUDIT.md` and
+**The spec:** Part G was added to `docs/archive/finline-redesign/06-DECK-AUDIT.md` and
 03 points to it. The copy in the spec folder names the partner organisations
 in plain text, so those names were replaced, and the in-repo file keeps its
 scrubbed name. `check-names`: 0 hits.
@@ -566,7 +566,7 @@ labels and copy are done, the visual rebuild is not.
 ### Facts
 
 - **Sources added:** `verifiedOn` 2026-10 and three sources from `VERIFIED.md` items 2 (free credit report) and 3 (DBR22) on 信用站. No number changed.
-- **Score range 200 to 800:** not in `VERIFIED.md`. Its source is `docs/redesign/sources.md` item 10, so it needs confirming there.
+- **Score range 200 to 800:** not in `VERIFIED.md`. Its source is `docs/sources.md` item 10, so it needs confirming there.
 - **0.825% 活期儲蓄:** not in `VERIFIED.md`. It is dated and sourced in `lib/rates.ts` (臺灣銀行, 2026-10-06).
 - **Payslip 勞保 NT$800 and 健保 NT$496: CHECK.** These need the official insured-salary tables.
 - **Deposit insurance NT$3,000,000:** matches `VERIFIED.md` item 1.
@@ -593,7 +593,7 @@ labels and copy are done, the visual rebuild is not.
 ## R2-7. Content crosswalk
 
 **DONE, private.**
-- `docs/design/private/` is in `.gitignore`, verified with `git status` and `git check-ignore` before the file was written.
+- `docs/archive/design/private/` is in `.gitignore`, verified with `git status` and `git check-ignore` before the file was written.
 - `CONTENT-CROSSWALK.md` covers all 59 rows of section 1 and the P1/P2 check.
 - It was never committed, and no slide number or deck text is in any committed file.
 

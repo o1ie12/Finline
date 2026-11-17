@@ -39,7 +39,7 @@ $P -f "$SUPA/migration-17-line-slug-no-default.sql"
 $P -f "$SUPA/migration-18-split-adjust-0050.sql"
 $P -f "$SUPA/migration-19-line-test-bank-version.sql"
 $P -f "$SUPA/migration-20-line-completions.sql"  # lib/db.ts reads line_completions
-# Redesign (docs/redesign/plan.md §10). Tested by supabase/test/run-redesign-migrations.sh.
+# Redesign (docs/archive/redesign/plan.md §10). Tested by supabase/test/run-redesign-migrations.sh.
 $P -f "$SUPA/migration-21-life-game-saves.sql"
 $P -f "$SUPA/migration-22-student-avatar.sql"
 $P -f "$SUPA/migration-23-daily-activity.sql"

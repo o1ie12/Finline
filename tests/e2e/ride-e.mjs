@@ -12,7 +12,7 @@ import { playStep, waitHeading } from "./playDriver.mjs";
 
 const BASE = process.env.BASE_URL ?? "http://localhost:3210";
 if (!/^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(BASE)) throw new Error("local dev server only");
-const OUT = new URL("../../docs/design/screens/", import.meta.url).pathname;
+const OUT = new URL("../../docs/archive/design/screens/", import.meta.url).pathname;
 mkdirSync(OUT, { recursive: true });
 const post = (p, body, cookie) =>
   fetch(BASE + p, { method: "POST", headers: { "content-type": "application/json", ...(cookie ? { cookie } : {}) }, body: JSON.stringify(body ?? {}) });

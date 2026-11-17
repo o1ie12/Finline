@@ -1,5 +1,5 @@
 /**
- * 06 E18 screenshots: writes docs/design/screens/<name>-<viewport>-<scheme>.png
+ * 06 E18 screenshots: writes docs/archive/design/screens/<name>-<viewport>-<scheme>.png
  * for each page given, at 390×844 and 1440×900, light and dark. Ryan reviews
  * screenshots, not code. Needs a local dev server (file store):
  *
@@ -16,7 +16,7 @@ const pages = args.filter((a) => !a.startsWith("--")).map((a) => [a.slice(0, a.i
 const phoneOnly = args.includes("--phone-only");
 const full = args.includes("--full");
 const code = args.find((a) => a.startsWith("--cookie="))?.slice(9);
-const OUT = new URL("../docs/design/screens/", import.meta.url).pathname;
+const OUT = new URL("../docs/archive/design/screens/", import.meta.url).pathname;
 mkdirSync(OUT, { recursive: true });
 
 const viewports = phoneOnly ? [[390, 844]] : [[390, 844], [1440, 900]];
@@ -35,7 +35,7 @@ for (const scheme of ["light", "dark"]) { // dark checks that the system setting
       await page.waitForTimeout(500);
       const file = `${OUT}${name}-${w}x${h}-${scheme}.png`;
       await page.screenshot({ path: file, fullPage: full });
-      console.log(file.replace(OUT, "docs/design/screens/"));
+      console.log(file.replace(OUT, "docs/archive/design/screens/"));
     }
     await ctx.close();
   }

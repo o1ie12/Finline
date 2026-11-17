@@ -2,7 +2,7 @@
 
 Branch `redesign/finline-life`. Written at Stage A after a read-only audit of
 the repo at `1a49ca9`. The build package (00 to 04 plus two mockups) lives
-outside the repo; the mockups are copied to `docs/design/` for reference.
+outside the repo; the mockups are copied to `docs/archive/design/` for reference.
 
 Where this plan and the code disagree, the code is right (package rule 1).
 Section 9 lists every conflict found.

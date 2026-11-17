@@ -2,7 +2,7 @@
  * The Part E life-game turn (06 E8.6) by keyboard: a new student plays three
  * months on /turn (month 3 has the ledger), every step checked for page
  * scroll, targets ≥ 44 and the 12px floor, light and dark, and saved to
- * docs/design/screens/.
+ * docs/archive/design/screens/.
  *
  *   BASE_URL=http://localhost:3210 node tests/e2e/turn-e.mjs [WxH]
  */
@@ -14,7 +14,7 @@ import { playStep, waitHeading } from "./playDriver.mjs";
 const BASE = process.env.BASE_URL ?? "http://localhost:3210";
 if (!/^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(BASE)) throw new Error("local dev server only");
 const [W, H] = (process.argv[2] ?? "390x844").split("x").map(Number);
-const OUT = new URL("../../docs/design/screens/", import.meta.url).pathname;
+const OUT = new URL("../../docs/archive/design/screens/", import.meta.url).pathname;
 mkdirSync(OUT, { recursive: true });
 
 const post = (p, body, cookie) =>

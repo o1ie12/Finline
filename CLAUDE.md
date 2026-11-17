@@ -8,7 +8,7 @@
 - **New kinds:** terminal task kinds in `TERMINAL_TASK_KINDS` (11). Old kinds are unchanged and still render.
 - **Migrations 21-26:** `life_game_saves`, `students.avatar`, `daily_activity`, `task_results`, class life rooms (`class_rooms.kind/seed`, `class_participants.team`), RLS on `line_completions`. Each has a down file; `supabase/test/run-redesign-migrations.sh` tests them on a throwaway cluster.
 - **Profile** gains optional `goal`, `careerPriority`, `savedTools`, `seenFullRides`, `onboardedVersion`; 信用線's `creditRecord` now comes from the statement task at station 4.
-- **Plan and sources:** `docs/redesign/plan.md` (decisions, conflicts), `docs/redesign/sources.md` (verified figures).
+- **Plan and sources:** `docs/archive/redesign/plan.md` (decisions, conflicts), `docs/sources.md` (verified figures).
 
 ## Course platform (2026-11-12)
 
@@ -18,7 +18,7 @@
 - **Look (third pass, 2026-11-12):** a quiet dashboard. Shared parts in `components/course/kit.module.css` (ink button, plate, card, glass, sign, dots, level). Glass only on floating chrome; color is the line's own, spent on the plate, the route and a tint behind a document. `DocArt` draws a task's real document as artwork. No ink outlines or hard shadows (tried and rejected as loud).
 - **試做一題:** one scored question per course on the course page, no session: `lib/coursePreview.ts` picks it, `POST /api/preview` scores it; the page never holds the answer.
 - **Loading:** `components/loading/TrainLoader.tsx` via `app/(app)/loading.tsx` and `app/(game)/loading.tsx`.
-- **Copy rules still apply** to the new pages (`scripts/check-content.ts`): no 證書/認證/證照/資格, no reviews or outcome numbers without real data. Report: `docs/redesign/12-curriculum.md`.
+- **Copy rules still apply** to the new pages (`scripts/check-content.ts`): no 證書/認證/證照/資格, no reviews or outcome numbers without real data. Report: `docs/archive/redesign/12-curriculum.md`.
 
 ## Module player and the return loop (2026-11-13)
 
@@ -28,7 +28,7 @@
 - **Weekly goal.** `weekModules` / `weekGoal` in `lib/review.ts`, `profile.weeklyGoal`, `POST /api/week-goal`, `components/course/WeekGoal.tsx`. No streak on the course home.
 - **Completion card.** `components/course/ShareCard.tsx` on `/line/[slug]/certificate`: drawn on a canvas in the browser, colours read from the tokens (no raw hex in `components/course`).
 - **Landing.** The main button starts the first module; a `SampleQuestion` replaces the list of steps (`tests/flow-copy.test.ts`).
-- No migrations. Notes and what was verified: `docs/redesign/13-player.md`.
+- No migrations. Notes and what was verified: `docs/archive/redesign/13-player.md`.
 
 ## Teachers and class mode (2026-11-14, branch `feat/teachers`)
 
@@ -38,5 +38,5 @@
 - `/signup?next=` is honoured for a plain path on this site (`lib/safeNext.ts`).
 - **Follow-up (same day):** a plan carries no answers (the page is public); unit budget is 35 minutes with a 5-minute close above 30; a quiz counts correct answers only and the class screen shows no student's score or place; wrong codes are limited to 10 per device cookie and 50 per address (`dev:`-prefixed keys share `class_join_attempts`), hashed with a server-only salt.
 - **Class tests on a real database:** `E2E_REAL_DB=1` makes `tests/e2e/teachers-e.mjs` and `class-e.mjs` use one test account and delete what they create (`tests/e2e/realDb.mjs`). Never edit `.env.local` to point at production.
-- Report and open questions: `docs/redesign/12-teachers-report.md`. Tests: `tests/teachers.test.ts`, `tests/e2e/teachers-e.mjs`.
+- Report and open questions: `docs/archive/redesign/12-teachers-report.md`. Tests: `tests/teachers.test.ts`, `tests/e2e/teachers-e.mjs`.
 

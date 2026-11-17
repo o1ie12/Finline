@@ -9,8 +9,8 @@
  *   "only minimum" interest are ComputeRefs (lib/tasks/compute.ts), never typed.
  * - 循環利率法定上限 15%: already verified in the repo (04 §15, "card interest
  *   from 入帳日 and the 15% cap").
- * - 信用評分 200 到 800 分 and 「暫時無法評分」: docs/redesign/sources.md item 10.
- * - 無擔保借款不超過月收入 22 倍 (DBR22): docs/redesign/sources.md item 11.
+ * - 信用評分 200 到 800 分 and 「暫時無法評分」: docs/sources.md item 10.
+ * - 無擔保借款不超過月收入 22 倍 (DBR22): docs/sources.md item 11.
  * - The 18 credit reports are fictional; the creditReport document labels the
  *   score 「信用評分（示意）」 and carries 「名稱皆為虛構」.
  */
@@ -560,13 +560,13 @@ export const content: LineContent = {
         {
           kind: "text",
           title: "銀行在看什麼",
-          // 22 倍: DBR22, docs/redesign/sources.md item 11.
+          // 22 倍: DBR22, docs/sources.md item 11.
           body: "有沒有穩定收入、每月要還多少、過去準不準時、最近是不是到處借錢、有沒有幫別人擔保。無擔保的借款總額，原則上不超過月收入的 22 倍。",
         },
         {
           kind: "text",
           title: "信用小白",
-          // 200 到 800 分, 暫時無法評分: docs/redesign/sources.md item 10.
+          // 200 到 800 分, 暫時無法評分: docs/sources.md item 10.
           body: "從沒用過信用卡或貸款的人，不是信用差，是銀行沒資料可看。信用評分介於 200 到 800 分，資料太少會暫時無法評分。",
         },
         {
@@ -622,7 +622,7 @@ export const content: LineContent = {
         ],
         passScore: 0.6,
         // 06 G9 facts: the 22x card line (VERIFIED.md item 3) and the free credit
-        // report card (item 2). The score range is sourced in docs/redesign/sources.md item 10.
+        // report card (item 2). The score range is sourced in docs/sources.md item 10.
         verifiedOn: "2026-10",
         sources: [
           { label: "金管會銀行局新聞稿：無擔保債務不宜超過平均月收入 22 倍（2024-08-08）", url: "https://www.banking.gov.tw/ch/home.jsp?id=540&parentpath=0&mcustomize=news_view.jsp&dataserno=202408080002&dtable=News" },

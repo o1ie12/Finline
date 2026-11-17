@@ -1,6 +1,6 @@
 /**
  * 06 E9.4 review gate: every world with the character in all 8 outfit
- * colors, as one contact strip per scene (docs/design/screens/scene-<kind>.png),
+ * colors, as one contact strip per scene (docs/archive/design/screens/scene-<kind>.png),
  * plus the measured contrast between the character's edge (its dark outline,
  * or the light rim where the scene has one) and the scene behind the
  * character (E9.1.4 asks ≥ 3:1). Local dev server only.
@@ -12,7 +12,7 @@ import { chromium } from "playwright";
 
 const BASE = process.env.BASE_URL ?? "http://localhost:3210";
 if (!/^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(BASE)) throw new Error("local dev server only");
-const OUT = new URL("../docs/design/screens/", import.meta.url).pathname;
+const OUT = new URL("../docs/archive/design/screens/", import.meta.url).pathname;
 mkdirSync(OUT, { recursive: true });
 const KINDS = ["platform", "xinyong", "qixin", "cunqian", "touzi", "baoxian", "zhapian", "zhiya", "xuedai", "baoshui", "zuwu", "chuangye", "caiwujuece"];
 const RIM = new Set(["platform", "qixin", "touzi", "zhapian", "caiwujuece"]);

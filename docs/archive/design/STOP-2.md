@@ -3,7 +3,7 @@
 Branch `feat/design-e`, pushed as its own branch for a Vercel preview. `main` is untouched.
 
 - **Try it:** sign in on the preview, open 今天, press 上車. Stations now open at `/line/[slug]/station/[n]`.
-- **Screenshots** (`docs/design/screens/`):
+- **Screenshots** (`docs/archive/design/screens/`):
   - `review-stop2-390x844-light.png` and `-dark.png`: 今天, hook, task, reveal.
   - `station-NN-*.png`: every screen of 信用站 at 390×844, 375×667 and 1440×900, light and dark.
 

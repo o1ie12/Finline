@@ -9,7 +9,7 @@ import { chromium } from "playwright";
 
 const BASE = process.env.BASE_URL ?? "http://localhost:3210";
 if (!/^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(BASE)) throw new Error("local dev server only");
-const OUT = process.argv[2] ?? new URL("../../docs/design/screens/audit/", import.meta.url).pathname;
+const OUT = process.argv[2] ?? new URL("../../docs/archive/design/screens/audit/", import.meta.url).pathname;
 mkdirSync(OUT, { recursive: true });
 const json = { "content-type": "application/json" };
 const code = (await (await fetch(BASE + "/api/signup", { method: "POST", headers: json, body: JSON.stringify({ name: "小安", grade: "高二" }) })).json()).access_code;

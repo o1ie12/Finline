@@ -12,7 +12,7 @@ This package is five files. Read all five before writing code.
 | `03-TASK-ENGINE.md` | The shared task engine: data model, task types, scoring, result contract |
 | `04-CONTENT.md` | All new content for all 12 lines, in Traditional Chinese, ready to paste |
 
-Two reference mockups come with the package: `mockups/Main.dc.html` (dashboard) and `mockups/Transition.dc.html` (train transition). They are design references, not code to import. They use a design-tool runtime (`support.js`) that does not exist in the repo. Match their layout and feel in our own React components. Put them in `docs/design/` for reference.
+Two reference mockups come with the package: `mockups/Main.dc.html` (dashboard) and `mockups/Transition.dc.html` (train transition). They are design references, not code to import. They use a design-tool runtime (`support.js`) that does not exist in the repo. Match their layout and feel in our own React components. Put them in `docs/archive/design/` for reference.
 
 ---
 
@@ -105,8 +105,8 @@ Priority: **P0** must ship, **P1** should ship, **P2** ship if P0 and P1 are gre
 ### Stage A (P0): Audit and plan (read-only)
 
 1. Explore agents map: `lib/lines.ts`, `lib/modules.ts`, `lib/sims/*`, `lib/outcomeTitle.ts`, `lib/coach.ts`, the profile reader (`financialSnapshot`), `lib/modeModel.ts`, `lib/buildStations.ts`, `lineStatus` and `requiredStations`, `line_completions` read/write paths, `app/dashboard`, `app/simulate`, `app/line/[slug]/*`, `components/sims/*`, `components/SiteHeader.tsx`, footer, `TourProvider`, `CoachPanel`, certificate, passport, class mode routes, `scripts/check-sim-contract.ts`, the test folder, `supabase/` migrations, `historicalPricesSeed.ts`.
-2. Write `docs/redesign/plan.md`: for each stage below, the exact files to create and change, the data each screen reads, migration list, risks, and anything in this package that conflicts with the code.
-3. Fact-checker agents start on every `VERIFY` item now, in parallel. Results go to `docs/redesign/sources.md` (figure, value, URL, date checked, quote).
+2. Write `docs/archive/redesign/plan.md`: for each stage below, the exact files to create and change, the data each screen reads, migration list, risks, and anything in this package that conflicts with the code.
+3. Fact-checker agents start on every `VERIFY` item now, in parallel. Results go to `docs/sources.md` (figure, value, URL, date checked, quote).
 4. Commit the two docs. Continue to Stage B unless a stop condition hit.
 
 ### Stage B (P0): Life game engine (pure logic, no UI)

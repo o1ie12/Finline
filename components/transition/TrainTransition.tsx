@@ -2,7 +2,7 @@
 
 /**
  * Full-screen train ride between stations (01-DESIGN-SYSTEM §7.3, matches
- * docs/design/Transition.dc.html).
+ * docs/archive/design/Transition.dc.html).
  *
  * Every phase change, and the final onDone, comes from a setTimeout built
  * from lib/transitionTiming. CSS animations only paint what the current

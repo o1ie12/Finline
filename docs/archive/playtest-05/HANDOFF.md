@@ -13,7 +13,7 @@ Paste this whole file into the new session as the first message.
     - seven article facts fixed against official sources
     - a 信用線 end-to-end walk with a failed attempt, a retry and a pass (12 of 12 checks passed)
     - a partner-name scan (0 hits)
-    - the report at `docs/playtest-05/report.md`
+    - the report at `docs/archive/playtest-05/report.md`
 - **`npm run check`:** passed (144 tests, contract check, content check with 0 errors).
 - **Part D (design reboot):** do NOT start. Ryan and Oliver will pick after seeing 3 mocked directions.
 
@@ -51,7 +51,7 @@ git push -u origin fix/playtest-05
 
 6. **If anything fails:** fix it, commit, and re-run the checks. Do not push a failing branch.
 
-7. **Update `docs/playtest-05/report.md`:**
+7. **Update `docs/archive/playtest-05/report.md`:**
    - The header line says 「Not pushed yet」. Change it to say it was pushed to `main` with Ryan's approval.
    - The 「Final checks before the push」 line in section 10 should list the check:screens results (screens per size, 0 scroll, 0 errors) and the walk result.
    - Commit (see the commit rules below).
@@ -103,7 +103,7 @@ An old project note says production had 38 rows in `students` on 2026-09-24. The
   - `npm run check` = tests (`tsx --test tests/*.test.ts`) + `scripts/check-sim-contract.ts` + `scripts/check-content.ts`.
   - `npm run check:screens` = `scripts/check-screens.mjs`. It needs a running dev server and refuses any URL that isn't localhost.
 - **No migrations are needed** for any 05 change.
-- **The local `docs/redesign/` folder** (decisions-log.md, next-steps.md) is untracked and not part of this work. Leave it out of commits.
+- **The local `docs/archive/redesign/` folder** (decisions-log.md, next-steps.md) is untracked and not part of this work. Leave it out of commits.
 
 ## Open questions still waiting on Ryan and Oliver (from the report, section 7)
 

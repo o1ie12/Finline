@@ -2,7 +2,7 @@
  * Class mode for the life game (02-LIFE-GAME §8): a teacher's `life` room,
  * teams that share the room's seed, and a leaderboard ranked by 財務健康分.
  *
- * The quiz class mode is untouched (docs/redesign/plan.md, conflict C1). A
+ * The quiz class mode is untouched (docs/archive/redesign/plan.md, conflict C1). A
  * life room is a class_rooms row with kind 'life'; readers branch on kind,
  * never on line_slug.
  *
