@@ -51,7 +51,8 @@ no password, no real name.
 - **Next.js 16** (App Router) and **React 19**, in **TypeScript**
 - **Tailwind CSS v4**, plus CSS modules and design tokens in `app/tokens.css`
 - **Supabase (Postgres)** for all data, reached only from the server
-- **Google sign-in** through Supabase Auth (optional, next to the code login)
+- **Google sign-in** through Supabase Auth, next to the code login. It is
+  switched off for now (`NEXT_PUBLIC_GOOGLE_SIGNIN`); see the roadmap.
 - **Anthropic** and **OpenRouter** for the AI coach
 - **Vercel** for hosting. `main` deploys to production. Functions run in
   `icn1` (`vercel.json`).
@@ -203,7 +204,7 @@ Pages:
 | `/line/[slug]/station/[n]` | A unit. The first unit of a course opens without an account. |
 | `/line/[slug]/end`, `/line/[slug]/simulation` | A course's final |
 | `/line/[slug]/certificate` | Completion record and the card to save |
-| `/signup` | Sign up, or sign in with a code or Google |
+| `/signup` | Sign up, or sign in with a code (and Google, when switched on) |
 | `/today`, `/map`, `/grades` | The three signed-in tabs |
 | `/review` | Missed questions to try again |
 | `/settings` | Account settings |

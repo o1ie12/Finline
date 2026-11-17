@@ -77,8 +77,9 @@ holds that code, or the student's id for Google accounts, as plain values
 that stay valid for a year (`lib/session.ts`). There is no way to sign a
 device out from the server. `POST /api/session` and `POST /api/signup` have
 no rate limit; the only limited endpoints are the class room codes
-(`lib/classGuard.ts`). Google sign-in through Supabase Auth currently fails
-with a redirect mismatch, which is a setting in the Google console, not code.
+(`lib/classGuard.ts`). Google sign-in through Supabase Auth is switched off
+(`NEXT_PUBLIC_GOOGLE_SIGNIN`, `next.config.ts`): Google refuses it with a
+redirect mismatch, which is a setting in the Google console, not code.
 
 **Where.** `lib/session.ts`, `app/api/session/route.ts`,
 `app/api/signup/route.ts`, `app/api/auth/google/`, `lib/supabaseAuth.ts`,

@@ -1,6 +1,6 @@
 /**
  * Without the Supabase keys (a local dev store), Google sign-in stays off
- * even though NEXT_PUBLIC_GOOGLE_SIGNIN defaults to 1 (2026-11-03): no Google
+ * whatever NEXT_PUBLIC_GOOGLE_SIGNIN is set to (it defaults to 0 since 2026-11-17): no Google
  * UI anywhere a student goes, and the Google routes send the visitor back
  * to /signup.
  *

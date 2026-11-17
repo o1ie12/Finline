@@ -7,12 +7,15 @@ import type { NextConfig } from "next";
 const flowV2 = process.env.NEXT_PUBLIC_FLOW_V2 ?? "1";
 
 /**
- * Google sign-in (2026-11-03): on by default now that Google OAuth is set up
- * in Supabase. It still needs SUPABASE_URL and SUPABASE_ANON_KEY at runtime
- * (lib/supabaseAuth.ts); without them the button stays hidden. Roll back
- * with NEXT_PUBLIC_GOOGLE_SIGNIN=0 and a redeploy.
+ * Google sign-in: off by default (2026-11-17). Google refuses the sign-in
+ * with redirect_uri_mismatch until the Supabase callback address is added to
+ * the OAuth client's authorised redirect URIs in Google Cloud Console, so the
+ * button led every student to an error page. Once that is fixed, set
+ * NEXT_PUBLIC_GOOGLE_SIGNIN=1 and redeploy. It also needs SUPABASE_URL and
+ * SUPABASE_ANON_KEY at runtime (lib/supabaseAuth.ts). The code login is
+ * unaffected.
  */
-const googleSignin = process.env.NEXT_PUBLIC_GOOGLE_SIGNIN ?? "1";
+const googleSignin = process.env.NEXT_PUBLIC_GOOGLE_SIGNIN ?? "0";
 
 /**
  * The life simulation in the main path (2026-11-12): off. The platform is a
