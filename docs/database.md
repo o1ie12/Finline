@@ -43,8 +43,9 @@ the mistakes folder (`lib/review.ts`) and the weekly goal.
 
 ### `module_progress` (student data)
 
-One row per student per unit, with the best score as a percentage and when
-the unit was completed. It decides whether a unit counts as done. Written by
+One row per student per unit, with the score at the time the unit was
+completed and when that was. It decides whether a unit counts as done; a
+later, better attempt lives in `task_results`, not here. Written by
 `lib/tasks/submit.ts` and `POST /api/progress`. Read by every page that shows
 progress (`lib/progressModel.ts`).
 
