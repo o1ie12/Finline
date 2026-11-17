@@ -33,6 +33,10 @@ const TAIWAN: { color: string; title: string; body: string; figure: string; unit
   { color: "var(--metro-blue)", title: "信用卡利率有上限", body: "信用卡循環利率最高 15%；只繳最低應繳時，沒繳的部分就用這個利率算利息。", figure: "15%", unit: "循環利率上限", source: "revolvingCap" },
 ];
 
+// 2026-11-17: the 誰在做錢途 section had only placeholders. Set this to true
+// once the team's photos and names (and any partner's written agreement) are in.
+const SHOW_TEAM = false;
+
 const lineCode = (line: LineMeta) => stationLetterCode(line, 1).replace(/\d+$/, "");
 const stationName = (n: number) => getModule(n)?.station ?? "";
 
@@ -238,9 +242,11 @@ export function Landing() {
         </dl>
       </section>
 
-      {/* FL05 who is behind it. Placeholders: photos, names and partner
-          organisations go here once each is supplied and has agreed in
-          writing (11 ABOUT-1); nothing is claimed until then. */}
+      {/* FL05 who is behind it. Photos, names and partner organisations go
+          here once each is supplied and has agreed in writing (11 ABOUT-1);
+          nothing is claimed until then. Hidden until there is something real
+          to show (SHOW_TEAM above): empty frames read as an unfinished site. */}
+      {SHOW_TEAM ? (
       <section className={s.section} aria-labelledby="who-h">
         <SectionTag code="FL05" color="var(--metro-yellow)">
           <h2 id="who-h" className={s.h2}>
@@ -267,10 +273,11 @@ export function Landing() {
           </li>
         </ul>
       </section>
+      ) : null}
 
-      {/* FL06 the fare gate */}
+      {/* The fare gate: the last stop, FL06 with the team section and FL05 without it. */}
       <section className={`${s.section} ${s.last}`} aria-labelledby="go-h">
-        <FareGate />
+        <FareGate code={SHOW_TEAM ? "FL06" : "FL05"} />
       </section>
     </div>
   );

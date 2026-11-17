@@ -28,11 +28,11 @@ function beep() {
 }
 
 /**
- * FL06: drag the 學習卡 onto the reader (or press 直接感應), it beeps, and
+ * The last stop on the landing page: drag the 學習卡 onto the reader (or press 直接感應), it beeps, and
  * 建立我的學習卡 leads to sign-up. The button is the keyboard and
  * switch-access path; the drag is a bonus, never the only way.
  */
-export function FareGate() {
+export function FareGate({ code = "FL06" }: { /** The section's stop number on the landing page. */ code?: string } = {}) {
   const [through, setThrough] = useState(false);
   const [pos, setPos] = useState({ dx: 0, dy: 0, dragging: false });
   const start = useRef<{ x: number; y: number } | null>(null);
@@ -73,7 +73,7 @@ export function FareGate() {
   return (
     <div className={`${s.glass} ${s.gate}`}>
       <div className={s.gateText}>
-        <SectionTag code="FL06" color="var(--metro-yellow)">
+        <SectionTag code={code} color="var(--metro-yellow)">
           <h2 id="go-h" className={s.h2} aria-live="polite">
             {through ? "嗶！歡迎上車" : "刷卡上車"}
           </h2>
