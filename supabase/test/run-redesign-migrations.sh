@@ -3,7 +3,7 @@
 # Postgres cluster in a temp dir on its own port and socket, so it never
 # touches a running server, the qidian_dev database or Supabase:
 #
-#   1. schema.sql + fixtures + the migrations setup-local-db.sh applies
+#   1. schema-legacy.sql + fixtures + the migrations setup-local-db.sh applies
 #   2. baseline snapshot of the rows that already exist
 #   3. 21..25 up; new tables, columns, indexes and RLS present; old rows intact
 #   4. behaviour: unique indexes, defaults, checks, foreign keys, cascades
@@ -175,7 +175,7 @@ LC_ALL=C "$PGBIN/pg_ctl" -D "$TMP/data" -l "$TMP/server.log" \
 q "select version();"
 
 banner "1. build to the state setup-local-db.sh produces"
-apply schema.sql
+apply schema-legacy.sql
 $PSQL -f "$HERE/fixture-seed.sql" >/dev/null; echo "  applied test/fixture-seed.sql"
 for m in \
   migration-08-lines-identity.sql \

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Local test harness for migration-08. Builds a throwaway database from
-# schema.sql, seeds representative rows, then exercises the migration:
+# schema-legacy.sql (the schema before migration-08), seeds representative rows, then exercises the migration:
 #
 #   1. baseline row counts
 #   2. up migration
@@ -24,7 +24,7 @@ dropdb --if-exists "$DB"
 createdb "$DB"
 
 banner "build schema + seed fixtures"
-$PSQL -f "$SUPA/schema.sql" >/dev/null
+$PSQL -f "$SUPA/schema-legacy.sql" >/dev/null
 $PSQL -f "$HERE/fixture-seed.sql" >/dev/null
 echo "ok"
 

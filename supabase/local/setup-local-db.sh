@@ -2,8 +2,10 @@
 # Build a local Postgres that mirrors production's schema state, for
 # developing against a real database instead of the file store.
 #
-# Rebuilds from scratch every run: drops qidian_dev, applies schema.sql, the
-# fixtures, and the migrations that are live in production. Safe to re-run.
+# Rebuilds from scratch every run: drops qidian_dev, applies schema-legacy.sql
+# (the schema before migration-08), the fixtures, and the migrations below.
+# Safe to re-run. For a clean database with no fixtures, use ../schema.sql and
+# ../seed-lines.sql instead (see ../README.md).
 #
 # Prerequisites: postgresql@16 and postgrest (brew).
 # Afterwards: supabase/local/start-local-api.sh, then point .env.local at it.
@@ -19,32 +21,32 @@ echo "rebuilding $DB"
 dropdb --if-exists "$DB"
 createdb "$DB"
 
-$P -f "$SUPA/schema.sql"
+$P -f "$SUPA/schema-legacy.sql"
 $P -f "$SUPA/test/fixture-seed.sql"
 
-# Everything the code on this branch expects. Production is usually a little
-# behind — that is fine and expected while a feature is in development — but
-# local has to be ahead, or the feature cannot be built against a real schema
-# at all.
+# Everything the code on this branch expects. Local has to be at least as far
+# along as production, or a feature cannot be built against a real schema at
+# all. What production has is recorded in supabase/README.md.
 $P -f "$SUPA/migration-08-lines-identity.sql"
 $P -f "$SUPA/migration-10-simulation-kind.sql"
 $P -f "$SUPA/migration-11-student-mode.sql"
-$P -f "$SUPA/migration-12-student-profile.sql"  # not yet applied in production
-$P -f "$SUPA/migration-13-career-line.sql"     # not yet applied in production
-$P -f "$SUPA/migration-14-xiaofei-title.sql"    # not yet applied in production
-$P -f "$SUPA/migration-15-capstone-line.sql"   # not yet applied in production
-$P -f "$SUPA/migration-16-line-slug-fk.sql"    # not yet applied in production
-$P -f "$SUPA/migration-17-line-slug-no-default.sql"  # not yet applied in production
-$P -f "$SUPA/migration-18-split-adjust-0050.sql"   # not yet applied in production
-$P -f "$SUPA/migration-19-line-test-bank-version.sql"  # not yet applied in production
+$P -f "$SUPA/migration-12-student-profile.sql"
+$P -f "$SUPA/migration-13-career-line.sql"
+$P -f "$SUPA/migration-14-xiaofei-title.sql"
+$P -f "$SUPA/migration-15-capstone-line.sql"
+$P -f "$SUPA/migration-16-line-slug-fk.sql"
+$P -f "$SUPA/migration-17-line-slug-no-default.sql"
+$P -f "$SUPA/migration-18-split-adjust-0050.sql"
+$P -f "$SUPA/migration-19-line-test-bank-version.sql"
 $P -f "$SUPA/migration-20-line-completions.sql"  # lib/db.ts reads line_completions
 # Redesign (docs/redesign/plan.md §10). Tested by supabase/test/run-redesign-migrations.sh.
-$P -f "$SUPA/migration-21-life-game-saves.sql"   # not yet applied in production
-$P -f "$SUPA/migration-22-student-avatar.sql"    # not yet applied in production
-$P -f "$SUPA/migration-23-daily-activity.sql"    # not yet applied in production
-$P -f "$SUPA/migration-24-task-results.sql"      # not yet applied in production
-$P -f "$SUPA/migration-25-class-life-rooms.sql"  # not yet applied in production
-$P -f "$SUPA/migration-26-line-completions-rls.sql"  # not yet applied in production
+$P -f "$SUPA/migration-21-life-game-saves.sql"
+$P -f "$SUPA/migration-22-student-avatar.sql"
+$P -f "$SUPA/migration-23-daily-activity.sql"
+$P -f "$SUPA/migration-24-task-results.sql"
+$P -f "$SUPA/migration-25-class-life-rooms.sql"
+$P -f "$SUPA/migration-26-line-completions-rls.sql"
+$P -f "$SUPA/migration-27-class-room-limits.sql"  # class mode limits (lib/classRooms.ts)
 
 # NOTE: migration-09 is deliberately NOT applied. It sets line_id NOT NULL,
 # which is only safe once every write path supplies the column. Applying it

@@ -54,10 +54,12 @@ at the live pilot database.
 
 ## Which migrations to apply locally
 
-`setup-local-db.sh` applies only what is live in production. Adding one before
-it ships there would mean developing against a schema the real database does
-not have — and in the case of `migration-09` specifically, it would hide the
-exact failure this environment exists to catch.
+`setup-local-db.sh` builds from `schema-legacy.sql` (the schema before
+migration-08) plus the fixtures and the migrations listed in the script, so
+migrations are developed against rows that predate them. It deliberately skips
+`migration-09`: applying it would hide the exact failure this environment
+exists to catch. For a clean, empty database at the current schema, use
+`../schema.sql` and `../seed-lines.sql` (see `../README.md`).
 
 ## Reverting to the file store
 
