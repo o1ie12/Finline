@@ -56,3 +56,6 @@ docs/design/private/
 /docs/archive/playtest-05/screens-390x844/
 /docs/archive/design/screens/
 docs/archive/design/private/
+
+# A person's own Claude Code permissions. The shared dev-server config (.claude/launch.json) stays tracked.
+.claude/settings.local.json
