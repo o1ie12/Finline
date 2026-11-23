@@ -34,28 +34,20 @@
   font: 400 14px/1.65 var(--font-voice);
   color: var(--ink-2);
 }
+/* Wraps rather than overflows: whatever the font, no button leaves the card. */
 .foot {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
+  justify-content: flex-end;
   gap: 4px;
   margin-top: 12px;
 }
-.dots {
-  display: flex;
-  align-items: center;
-  gap: 4px;
+.count {
   margin-right: auto;
-}
-.dots i {
-  display: block;
-  width: 5px;
-  height: 5px;
-  border-radius: 3px;
-  background: var(--hairline-strong, rgba(20, 23, 26, 0.16));
-}
-.dots i[data-on] {
-  width: 14px;
-  background: var(--ink);
+  font: 500 13px/1 var(--font-ui);
+  color: var(--ink-3);
+  font-variant-numeric: tabular-nums;
 }
 .text {
   min-height: 36px;

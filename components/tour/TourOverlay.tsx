@@ -29,7 +29,7 @@ import t from "./tour.module.css";
 
 const GAP = 12; // between target edge and popover
 const MARGIN = 16; // minimum distance from the viewport edge
-const WIDE = 300; // popover width where there is room
+const WIDE = 330; // popover width where there is room
 const NARROW_MAX = 420; // below this, stack vertically and go near-full-width
 const PAD = 6; // how far the cut-out sits back from the target
 const CENTRED = 360; // a step with no target: a centred card, a little wider
@@ -467,8 +467,10 @@ export default function TourOverlay({
           </div>
         ) : (
           <div className={t.foot}>
-            <span className={t.dots} aria-hidden="true">
-              {steps.length > 1 ? steps.map((s, i) => <i key={s.id} data-on={i === index || undefined} />) : null}
+            {/* A count, not a row of dots: ten dots beside three buttons pushed
+                下一步 past the card's edge with some system fonts. */}
+            <span className={t.count} aria-hidden="true">
+              {steps.length > 1 ? `${index + 1} / ${steps.length}` : null}
             </span>
             <button type="button" onClick={onSkip} className={t.text}>
               跳過
