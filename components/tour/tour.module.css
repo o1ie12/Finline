@@ -1,0 +1,112 @@
+/*
+  The tour (2026-11-23 restyle): calm, like the rest of the site. A soft dim
+  with a rounded cut-out that follows the target's own corners (no outline),
+  a frosted card like the site's floating menus, and slim text buttons with
+  one small dark pill for the way forward.
+*/
+.spot {
+  position: fixed;
+  pointer-events: none;
+  box-shadow: 0 0 0 9999px rgba(20, 23, 26, 0.42);
+}
+.catch {
+  position: fixed;
+  background: transparent;
+}
+.card {
+  position: fixed;
+  box-sizing: border-box;
+  padding: 16px 18px 14px;
+  border-radius: 16px;
+  /* Solid, not frosted: over a dimmed page the page's own text showed
+     through a translucent card and the two read on top of each other. */
+  background: var(--surface);
+  box-shadow: 0 0 0 1px var(--hairline), 0 16px 40px rgba(20, 23, 26, 0.16);
+  color: var(--ink);
+  outline: none;
+}
+.title {
+  margin: 0;
+  font: 700 15px/1.4 var(--font-voice);
+}
+.body {
+  margin: 6px 0 0;
+  font: 400 14px/1.65 var(--font-voice);
+  color: var(--ink-2);
+}
+.foot {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 12px;
+}
+.dots {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-right: auto;
+}
+.dots i {
+  display: block;
+  width: 5px;
+  height: 5px;
+  border-radius: 3px;
+  background: var(--hairline-strong, rgba(20, 23, 26, 0.16));
+}
+.dots i[data-on] {
+  width: 14px;
+  background: var(--ink);
+}
+.text {
+  min-height: 36px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 999px;
+  background: none;
+  color: var(--ink-3);
+  font: 500 14px/1 var(--font-voice);
+  cursor: pointer;
+  white-space: nowrap;
+}
+.text:hover {
+  color: var(--ink);
+}
+.pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 36px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--ink);
+  color: var(--ink-inv);
+  font: 600 14px/1 var(--font-voice);
+  text-decoration: none;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.pill:hover {
+  background: color-mix(in oklab, var(--ink), #fff 14%);
+}
+.go {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 2px;
+  margin-top: 14px;
+}
+.go .pill {
+  min-height: 40px;
+}
+.text:focus-visible,
+.pill:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .spot,
+  .catch {
+    transition: all 420ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+}

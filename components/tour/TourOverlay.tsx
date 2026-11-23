@@ -3,8 +3,9 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { createPortal } from "react-dom";
-import { FADE_MS, RISE_PX, SLIDE_EASING, SLIDE_MS } from "@/lib/motion";
+import { FADE_MS, RISE_PX } from "@/lib/motion";
 import { resolveCopy, type TourGo, type TourStep, type TourVariant } from "@/lib/tour";
+import t from "./tour.module.css";
 
 /**
  * The tour's spotlight and popover.
@@ -30,7 +31,7 @@ const GAP = 12; // between target edge and popover
 const MARGIN = 16; // minimum distance from the viewport edge
 const WIDE = 300; // popover width where there is room
 const NARROW_MAX = 420; // below this, stack vertically and go near-full-width
-const PAD = 6; // how far the dim panels sit back from the target
+const PAD = 6; // how far the cut-out sits back from the target
 const CENTRED = 360; // a step with no target: a centred card, a little wider
 // Above everything in the app shell (the phone tab bar sits at 10, menus at 50).
 const LAYER = 1000;
@@ -42,6 +43,13 @@ interface Rect {
   left: number;
   width: number;
   height: number;
+  /** The target's own corner radius, so the cut-out follows its shape. */
+  radius: number;
+}
+
+function radiusOf(el: HTMLElement): number {
+  const r = parseFloat(getComputedStyle(el).borderTopLeftRadius);
+  return Number.isFinite(r) ? r : 12;
 }
 
 function sameRect(a: Rect | null, b: Rect | null): boolean {
@@ -50,7 +58,8 @@ function sameRect(a: Rect | null, b: Rect | null): boolean {
     Math.abs(a.top - b.top) < 0.5 &&
     Math.abs(a.left - b.left) < 0.5 &&
     Math.abs(a.width - b.width) < 0.5 &&
-    Math.abs(a.height - b.height) < 0.5
+    Math.abs(a.height - b.height) < 0.5 &&
+    a.radius === b.radius
   );
 }
 
@@ -145,6 +154,7 @@ export default function TourOverlay({
       left: r.left,
       width: r.width,
       height: r.height,
+      radius: radiusOf(el),
     };
     if (!sameRect(rectRef.current, next)) {
       rectRef.current = next;
@@ -170,6 +180,7 @@ export default function TourOverlay({
         left: r.left,
         width: r.width,
         height: r.height,
+        radius: radiusOf(el),
       };
       if (!sameRect(rectRef.current, next)) {
         rectRef.current = next;
@@ -385,25 +396,16 @@ export default function TourOverlay({
 
   if (typeof document === "undefined") return null;
 
-  const dim = "rgba(11, 14, 17, 0.55)"; // --color-board at 55%
-  const panelStyle = (s: React.CSSProperties): React.CSSProperties => ({
-    position: "fixed",
-    zIndex: LAYER,
-    background: dim,
-    ...(reduced
-      ? {}
-      : { transition: `all ${SLIDE_MS}ms ${SLIDE_EASING}` }),
-    ...s,
-  });
-
   const hole = rect
     ? {
         top: rect.top - PAD,
         left: rect.left - PAD,
         width: rect.width + PAD * 2,
         height: rect.height + PAD * 2,
+        radius: Math.min(rect.radius + PAD, 28),
       }
     : null;
+  const layer = (z: number, more: React.CSSProperties): React.CSSProperties => ({ zIndex: z, ...(reduced ? { transition: "none" } : {}), ...more });
 
   return createPortal(
     <div
@@ -412,180 +414,75 @@ export default function TourOverlay({
       aria-labelledby="tour-title"
       aria-describedby="tour-body"
     >
-      {/* A centred step dims the whole page. */}
-      {!hole && step.target === null ? <div onClick={onSkip} style={panelStyle({ inset: 0 })} /> : null}
-      {/* A tap on the dimmed page closes the tour, so a student who tapped a
-          button just as the tour opened is not left with a dead tap (05 A8.6). */}
-      {hole && (
+      {/* The dim with a rounded cut-out: one shadow, no outline. It takes no
+          clicks; the four clear panels around the cut-out do, so a tap on
+          the dimmed page closes the tour (05 A8.6) while the target itself
+          stays visible and clickable. A centred step dims the whole page. */}
+      {hole ? (
         <>
-          <div onClick={onSkip} style={panelStyle({ top: 0, left: 0, right: 0, height: Math.max(0, hole.top) })} />
-          <div
-            onClick={onSkip}
-            style={panelStyle({
-              top: hole.top + hole.height,
-              left: 0,
-              right: 0,
-              bottom: 0,
-            })}
-          />
-          <div
-            onClick={onSkip}
-            style={panelStyle({
-              top: hole.top,
-              left: 0,
-              width: Math.max(0, hole.left),
-              height: hole.height,
-            })}
-          />
-          <div
-            onClick={onSkip}
-            style={panelStyle({
-              top: hole.top,
-              left: hole.left + hole.width,
-              right: 0,
-              height: hole.height,
-            })}
-          />
-          {/* Reinforces the cut-out using the same blue as the app's global
-              focus ring, rather than introducing a colour for the tour. */}
-          <div
-            aria-hidden="true"
-            style={panelStyle({
-              top: hole.top,
-              left: hole.left,
-              width: hole.width,
-              height: hole.height,
-              background: "transparent",
-              border: "2px solid var(--color-line-2)",
-              borderRadius: 14,
-              pointerEvents: "none",
-            })}
-          />
+          <div aria-hidden="true" className={t.spot} style={layer(LAYER, { top: hole.top, left: hole.left, width: hole.width, height: hole.height, borderRadius: hole.radius })} />
+          <div className={t.catch} onClick={onSkip} style={layer(LAYER, { top: 0, left: 0, right: 0, height: Math.max(0, hole.top) })} />
+          <div className={t.catch} onClick={onSkip} style={layer(LAYER, { top: hole.top + hole.height, left: 0, right: 0, bottom: 0 })} />
+          <div className={t.catch} onClick={onSkip} style={layer(LAYER, { top: hole.top, left: 0, width: Math.max(0, hole.left), height: hole.height })} />
+          <div className={t.catch} onClick={onSkip} style={layer(LAYER, { top: hole.top, left: hole.left + hole.width, right: 0, height: hole.height })} />
         </>
-      )}
+      ) : step.target === null ? (
+        <div className={t.catch} onClick={onSkip} style={layer(LAYER, { inset: 0, background: "rgba(20, 23, 26, 0.42)" })} />
+      ) : null}
 
       <div
         ref={popRef}
         tabIndex={-1}
-        className="fixed rounded-2xl border border-hairline bg-surface p-5 shadow-lg outline-none"
+        className={t.card}
         style={{
           top: pos?.top ?? 0,
           left: pos?.left ?? 0,
           width: pos?.width ?? WIDE,
           zIndex: LAYER + 1,
           opacity: pos && visible ? 1 : 0,
-          transform:
-            reduced || (pos && visible) ? "none" : `translateY(${RISE_PX}px)`,
-          ...(reduced
-            ? {}
-            : {
-                // Opacity and lift only. The card is at opacity 0 whenever
-                // it moves between steps, so transitioning top/left animated
-                // nothing a student can see — and on the very first render it
-                // slid in from the corner, because the pre-positioned
-                // fallback really is 0,0.
-                transition: `opacity ${FADE_MS}ms ease, transform ${FADE_MS}ms ease`,
-              }),
+          transform: reduced || (pos && visible) ? "none" : `translateY(${RISE_PX}px)`,
+          // Opacity and lift only: the card is invisible whenever it moves between steps.
+          ...(reduced ? {} : { transition: `opacity ${FADE_MS}ms ease, transform ${FADE_MS}ms ease` }),
         }}
       >
-        {pos && pos.placement !== "none" && (
-          <span
-            aria-hidden="true"
-            className="absolute h-3 w-3 rotate-45 border border-hairline bg-surface"
-            style={
-              pos.placement === "bottom"
-                ? { top: -7, left: pos.arrow - 6, borderRight: "none", borderBottom: "none" }
-                : pos.placement === "top"
-                  ? { bottom: -7, left: pos.arrow - 6, borderLeft: "none", borderTop: "none" }
-                  : pos.placement === "right"
-                    ? { left: -7, top: pos.arrow - 6, borderRight: "none", borderTop: "none" }
-                    : { right: -7, top: pos.arrow - 6, borderLeft: "none", borderBottom: "none" }
-            }
-          />
-        )}
-
-        <p
-          id="tour-title"
-          className="font-display text-base font-bold leading-snug"
-        >
+        <p id="tour-title" className={t.title}>
           {resolveCopy(step.title, variant)}
         </p>
-        <p
-          id="tour-body"
-          className="mt-1.5 text-sm leading-relaxed text-ink-soft"
-        >
+        <p id="tour-body" className={t.body}>
           {resolveCopy(step.body, variant)}
         </p>
+        <span className="sr-only" aria-live="polite">
+          第 {index + 1} 步，共 {steps.length} 步
+        </span>
 
-        {/* The dots get their own row: a nine-step tour beside three buttons
-            squeezed 上一步 into one character per line on a phone. */}
-        <div className="mt-4">
-          <span className="flex items-center gap-1.5" aria-hidden="true" hidden={steps.length < 2}>
-            {steps.map((s, i) => (
-              <span
-                key={s.id}
-                className="h-1.5 rounded-full"
-                style={{
-                  width: i === index ? 16 : 6,
-                  background:
-                    i === index ? "var(--color-ink)" : "var(--color-hairline)",
-                  ...(reduced
-                    ? {}
-                    : { transition: `width ${FADE_MS}ms ease, background ${FADE_MS}ms ease` }),
-                }}
-              />
-            ))}
-          </span>
-          <span className="sr-only" aria-live="polite">
-            第 {index + 1} 步，共 {steps.length} 步
-          </span>
-        </div>
-        {goNow ? null : (
-          <div className="mt-3 flex items-center justify-end gap-1.5 whitespace-nowrap">
-            <button
-              type="button"
-              onClick={onSkip}
-              className="mr-auto min-h-11 rounded-lg px-2.5 text-sm font-medium text-ink-faint transition-colors hover:text-ink"
-            >
+        {goNow ? (
+          <div className={t.go}>
+            {/* Closing the tour records it as seen; the link then goes on. */}
+            <Link href={goNow.href} onClick={onNext} className={t.pill}>
+              {goNow.label}
+            </Link>
+            <button type="button" onClick={onSkip} className={t.text}>
+              自己逛逛
+            </button>
+          </div>
+        ) : (
+          <div className={t.foot}>
+            <span className={t.dots} aria-hidden="true">
+              {steps.length > 1 ? steps.map((s, i) => <i key={s.id} data-on={i === index || undefined} />) : null}
+            </span>
+            <button type="button" onClick={onSkip} className={t.text}>
               跳過
             </button>
             {!isFirst && (
-              <button
-                type="button"
-                onClick={onBack}
-                className="min-h-11 rounded-lg border border-hairline px-3 text-sm font-semibold transition-colors hover:border-ink"
-              >
+              <button type="button" onClick={onBack} className={t.text}>
                 上一步
               </button>
             )}
-            <button
-              type="button"
-              onClick={onNext}
-              className="min-h-11 rounded-lg bg-ink px-3.5 text-sm font-semibold text-white transition-opacity hover:opacity-90"
-            >
+            <button type="button" onClick={onNext} className={t.pill}>
               {isLast ? (variant === "simulate" || steps.some((s) => s.id === "character") ? "開始使用" : "知道了") : isFirst && step.target === null ? "開始" : "下一步"}
             </button>
           </div>
         )}
-        {goNow ? (
-          <div className="mt-3 flex flex-col gap-1">
-            {/* Closing the tour records it as seen; the link then goes on. */}
-            <Link
-              href={goNow.href}
-              onClick={onNext}
-              className="flex min-h-11 items-center justify-center rounded-lg bg-ink px-4 text-sm font-semibold text-white transition-opacity hover:opacity-90"
-            >
-              {goNow.label}
-            </Link>
-            <button
-              type="button"
-              onClick={onSkip}
-              className="min-h-11 rounded-lg px-3 text-sm font-medium text-ink-soft transition-colors hover:text-ink"
-            >
-              自己逛逛
-            </button>
-          </div>
-        ) : null}
       </div>
     </div>,
     document.body,
