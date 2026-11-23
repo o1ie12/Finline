@@ -35,6 +35,7 @@ export function StationRunner({
   initialHook = null,
   guest = false,
   initialRedo = null,
+  unitTourSeen,
   design,
 }: {
   lesson: StationLesson;
@@ -55,6 +56,8 @@ export function StationRunner({
   guest?: boolean;
   /** 錯題夾 (2026-11-13): open on these steps only, the rest carried from the latest attempt. */
   initialRedo?: { steps: string[]; carry: Record<string, unknown> } | null;
+  /** The versions of the unit tours this student has seen (lib/tour.ts). */
+  unitTourSeen?: { unit?: number; check?: number };
   /** Run the Part E flow (06 E8) instead of the older one. */
   design?: { stationName: string; kicker?: string; exitHref: string; short?: boolean; readingHref?: string | null; foldExpert?: boolean; howTo?: boolean };
 }) {
@@ -164,7 +167,7 @@ export function StationRunner({
       howTo: design.howTo,
     };
     const key = `${lesson.task.id}:${attempt}`;
-    return PLAYER_V3 ? <ModulePlayer key={key} {...shared} guest={guest} /> : <StationWorkspace key={key} {...shared} />;
+    return PLAYER_V3 ? <ModulePlayer key={key} {...shared} guest={guest} tourSeen={unitTourSeen} /> : <StationWorkspace key={key} {...shared} />;
   }
   if (design) {
     return (

@@ -13,6 +13,7 @@ import { GUEST, isOpenLesson } from "@/lib/tasks/check";
 import { lessonForPage } from "@/lib/tasks/prepare";
 import { lessonForStation } from "@/lib/tasks/registry";
 import { reviewRedo } from "@/lib/reviewView";
+import { seenVersionOf } from "@/lib/tour";
 import { sanitizeHook } from "@/lib/tasks/sanitize";
 import { lineVars } from "@/lib/design/lineVars";
 
@@ -95,6 +96,7 @@ export default async function StationPage({
       continueHref={redo ? "/review" : LIFE_SIM && lesson.lifeGameTurn ? "/turn" : nextHref}
       continueLabel={redo ? "回錯題夾" : LIFE_SIM ? undefined : last ? "前往期末" : "下一個單元"}
       initialRedo={redo}
+      unitTourSeen={{ unit: seenVersionOf(profile, "unit"), check: seenVersionOf(profile, "check") }}
       initialHook={sanitizeHook(lesson.hook.options, hook)}
       design={{ stationName: mod.station, kicker: `${line.name} · 單元 ${index} / ${line.stationModules.length + 1}${redo ? " · 複習" : ""}`, exitHref: redo ? "/review" : `/line/${line.slug}`, readingHref: `/line/${line.slug}/course/${num}?read=1`, foldExpert: line.stationModules.indexOf(num) > 0, howTo }}
     />

@@ -69,6 +69,8 @@ export const StudentProfileSchema = z.object({
    * and a stored 1 simply falls behind, with no migration and no backfill.
    */
   tutorialSeenVersion: z.number().int().nonnegative().optional(),
+  /** 2026-11-23: the version of each newer tour (lib/tour.ts TOURS) the student has finished or skipped, by tour id. */
+  toursSeen: z.record(z.string().max(20), z.number().int().nonnegative()).optional(),
 
   // --- the threaded financial state -----------------------------------------
   // Each field below is written by exactly one line and read by later ones.

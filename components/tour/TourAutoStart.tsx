@@ -1,50 +1,66 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { useTour } from "@/components/tour/TourProvider";
+import { HOME_TOUR, useTour } from "@/components/tour/TourProvider";
+import { isTourId, type TourGo, type TourId } from "@/lib/tour";
 
 /**
- * Opens the tour on a destination page, for the two reasons it should open
- * by itself: a student who has never seen this version, and a replay that
- * had to travel here from another page.
+ * Opens a tour on the page that has its targets, for the reasons it should
+ * open by itself:
  *
- * Rendered by RouteNetworkView because that is where the student's profile
- * already is — no extra query, and no mirror cookie to keep in step with the
- * stored value.
+ *   - the student (or, without an account, this browser) has not seen this
+ *     version of it;
+ *   - a replay asked for it: 「看使用說明」 on another page routes here with
+ *     `?tour=home` (`?tour=1` from older links), or, on this page, sends a
+ *     `finline:tour` event.
  *
- * The `?tour=1` case exists because the help control sits in the header on
- * every page, while the tour's targets only exist on a destination. Pressing
- * it elsewhere routes here and hands the request over through the URL, which
- * survives the navigation without any shared client state. The parameter is
- * stripped immediately so a reload, a bookmark or a shared link does not
- * replay the tour forever.
+ * Rendered by the page because that is where the student's profile already
+ * is: no extra query. The parameter is stripped at once so a reload, a
+ * bookmark or a shared link does not replay the tour forever.
  */
 export default function TourAutoStart({
+  tour,
   seenVersion,
+  go = null,
 }: {
+  tour: TourId;
   seenVersion: number | undefined;
+  /** Where the tour's closing button leads (the home tour: the next unit). */
+  go?: TourGo | null;
 }) {
-  const { start, autoStart } = useTour();
+  const { autoStart, run, active } = useTour();
   const handled = useRef(false);
 
   useEffect(() => {
-    if (handled.current) return;
-    handled.current = true;
-
-    const params = new URLSearchParams(window.location.search);
-    if (params.get("tour") === "1") {
-      params.delete("tour");
-      const qs = params.toString();
-      window.history.replaceState(
-        null,
-        "",
-        window.location.pathname + (qs ? `?${qs}` : ""),
-      );
-      start();
-      return;
+    if (!handled.current) {
+      handled.current = true;
+      const params = new URLSearchParams(window.location.search);
+      const asked = params.get("tour");
+      if (asked !== null) {
+        params.delete("tour");
+        const qs = params.toString();
+        window.history.replaceState(null, "", window.location.pathname + (qs ? `?${qs}` : ""));
+        const which = asked === "1" ? HOME_TOUR : asked;
+        if (which === tour) {
+          run(tour, go);
+          return;
+        }
+      }
     }
-    autoStart(seenVersion);
-  }, [start, autoStart, seenVersion]);
+    // Asked again each time no tour is showing: a tour that had to wait for
+    // another to close starts then, unless closing the other covered it.
+    if (!active) autoStart(tour, seenVersion, go);
+  }, [autoStart, run, active, tour, seenVersion, go]);
+
+  // A replay asked for from this same page.
+  useEffect(() => {
+    const onAsk = (e: Event) => {
+      const which = (e as CustomEvent).detail;
+      if (isTourId(which) && which === tour) run(tour, go);
+    };
+    window.addEventListener("finline:tour", onAsk);
+    return () => window.removeEventListener("finline:tour", onAsk);
+  }, [run, tour, go]);
 
   return null;
 }

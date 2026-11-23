@@ -390,6 +390,7 @@ export default function RouteNetworkView({
       )}
       {/* First visit, or a replay that arrived here from another page. */}
       <TourAutoStart
+        tour="life"
         seenVersion={readProfile(student.profile).tutorialSeenVersion}
       />
     </div>

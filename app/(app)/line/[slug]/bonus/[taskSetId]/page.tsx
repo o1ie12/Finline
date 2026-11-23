@@ -6,6 +6,7 @@ import { lineVars } from "@/lib/design/lineVars";
 import { LIFE_SIM } from "@/lib/flags";
 import { getLine } from "@/lib/lines";
 import { readProfile } from "@/lib/studentProfile";
+import { seenVersionOf } from "@/lib/tour";
 import { getCurrentStudent } from "@/lib/session";
 import { lessonForPage } from "@/lib/tasks/prepare";
 import { SHORT_KIND, findTaskSet } from "@/lib/tasks/registry";
@@ -47,6 +48,7 @@ export default async function BonusTaskPage({
         studentId={student.id}
         attempt={attempt}
         goal={profile.goal ? { amount: profile.goal.amount, months: profile.goal.months } : null}
+        unitTourSeen={{ unit: seenVersionOf(profile, "unit"), check: seenVersionOf(profile, "check") }}
         mode="library"
         initialHook={sanitizeHook(found.lesson.hook.options, hook)}
         // 10 FLOW-4: the month, then 今天; no ride within a line.

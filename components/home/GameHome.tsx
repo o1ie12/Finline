@@ -152,7 +152,7 @@ export function GameHome({ data, tutorialSeenVersion }: { data: GameHomeData; tu
           current={data.standingAt ? { line: data.standingAt.lineSlug, station: data.standingAt.stationNumber } : null}
         />
       </div>
-      <TourAutoStart seenVersion={tutorialSeenVersion} />
+      <TourAutoStart tour="life" seenVersion={tutorialSeenVersion} />
     </div>
     </HomeTabs>
   );

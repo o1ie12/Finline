@@ -22,6 +22,7 @@ import { weekGoal, weekModules } from "@/lib/review";
 import { reviewGroups, reviewSummary } from "@/lib/reviewView";
 import { routeBoard } from "@/lib/routeBoard";
 import { readProfile } from "@/lib/studentProfile";
+import { seenVersionOf } from "@/lib/tour";
 import { getCurrentStudent } from "@/lib/session";
 import s from "@/components/today/today.module.css";
 
@@ -55,6 +56,7 @@ export default async function TodayPage() {
         courses={programView({ statuses: allLineStatuses(progress, runsByLine, mode, completed), progress, runsByLine, mode })}
         week={{ done: weekModules(taskResults, now), goal: weekGoal(readProfile(student.profile).weeklyGoal) }}
         review={reviewSummary(reviewGroups(taskResults, now))}
+        tourSeen={seenVersionOf(readProfile(student.profile), "home")}
       />
     );
   }

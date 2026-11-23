@@ -47,6 +47,8 @@ import type { StepScore } from "@/lib/tasks/scoring";
 import type { Confidence, TaskStep } from "@/lib/tasks/types";
 import { EndCard } from "./EndCard";
 import { TapSort } from "./TapSort";
+import TourAutoStart from "@/components/tour/TourAutoStart";
+import { TOUR_TARGETS } from "@/lib/tour";
 import p from "./player.module.css";
 
 export interface Checked {
@@ -111,9 +113,12 @@ export function ModulePlayer({
   readingHref,
   foldExpert = false,
   guest = false,
+  tourSeen,
 }: StationWorkspaceProps & {
   /** Played without an account (a course's first module): the end card offers sign-up. */
   guest?: boolean;
+  /** The versions of the unit tours this student has seen (lib/tour.ts). Visitors are checked in the browser instead. */
+  tourSeen?: { unit?: number; check?: number };
 }) {
   const task = lesson.task;
   const head = kicker ?? stationName;
@@ -334,7 +339,7 @@ export function ModulePlayer({
             <span>{head}</span>
             {task.title}
           </p>
-          <ol className={p.segs} aria-label={`共 ${asked.length} 題`}>
+          <ol className={p.segs} aria-label={`共 ${asked.length} 題`} data-tour-id={TOUR_TARGETS.unitProgress}>
             {asked.map((st, i) => {
               const c = checked[st.id];
               const state = c ? (!isScored(st, c.detail) ? "note" : c.detail.credit >= FULL ? "good" : "miss") : hook && i === at ? "on" : "todo";
@@ -355,7 +360,7 @@ export function ModulePlayer({
 
       <div className={p.stage} data-desk={desk}>
         {desk !== "none" ? (
-          <section className={p.desk} aria-label={desk === "brief" ? "這個單元" : "文件"}>
+          <section className={p.desk} aria-label={desk === "brief" ? "這個單元" : "文件"} data-tour-id={desk === "brief" ? undefined : TOUR_TARGETS.unitDoc}>
             {desk === "brief" ? (
               <div className={p.brief}>
                 <div className={p.from}>
@@ -429,7 +434,7 @@ export function ModulePlayer({
                   第 {at + 1} 題{step.scored === false ? " · 沒有標準答案" : ""}
                 </p>
                 {covering ? (
-                  <button type="button" className={p.hintBtn} aria-expanded={hintOpen} onClick={() => setHintOpen((x) => !x)}>
+                  <button type="button" className={p.hintBtn} aria-expanded={hintOpen} onClick={() => setHintOpen((x) => !x)} data-tour-id={TOUR_TARGETS.unitHint}>
                     <Icon name="info" size={16} />
                     {hintOpen ? "收起提示" : "看提示"}
                   </button>
@@ -544,7 +549,11 @@ export function ModulePlayer({
                 </p>
               ) : null}
 
-              <div className={p.actions}>
+              {/* 2026-11-23: the first question opens the unit tour, once; the first
+                  question with the two check buttons explains them, if it has not yet. */}
+              <TourAutoStart tour="unit" seenVersion={tourSeen?.unit} />
+              {!reflective ? <TourAutoStart tour="check" seenVersion={tourSeen?.check} /> : null}
+              <div className={p.actions} data-tour-id={reflective ? undefined : TOUR_TARGETS.unitCheck}>
                 {reflective ? (
                   <button type="button" className={p.primary} onClick={() => void check(null)} aria-busy={checking || undefined}>
                     {checking ? "記下來…" : step.type === "write" ? "寫好了" : "記下來"}

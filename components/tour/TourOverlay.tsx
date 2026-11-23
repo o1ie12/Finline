@@ -1,9 +1,10 @@
 "use client";
 
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import Link from "next/link";
 import { createPortal } from "react-dom";
 import { FADE_MS, RISE_PX, SLIDE_EASING, SLIDE_MS } from "@/lib/motion";
-import { resolveCopy, type TourStep, type TourVariant } from "@/lib/tour";
+import { resolveCopy, type TourGo, type TourStep, type TourVariant } from "@/lib/tour";
 
 /**
  * The tour's spotlight and popover.
@@ -30,8 +31,11 @@ const MARGIN = 16; // minimum distance from the viewport edge
 const WIDE = 300; // popover width where there is room
 const NARROW_MAX = 420; // below this, stack vertically and go near-full-width
 const PAD = 6; // how far the dim panels sit back from the target
+const CENTRED = 360; // a step with no target: a centred card, a little wider
+// Above everything in the app shell (the phone tab bar sits at 10, menus at 50).
+const LAYER = 1000;
 
-type Placement = "bottom" | "top" | "right" | "left";
+type Placement = "bottom" | "top" | "right" | "left" | "none";
 
 interface Rect {
   top: number;
@@ -66,6 +70,7 @@ export default function TourOverlay({
   steps,
   index,
   variant,
+  go,
   onNext,
   onBack,
   onSkip,
@@ -74,6 +79,8 @@ export default function TourOverlay({
   steps: TourStep[];
   index: number;
   variant: TourVariant;
+  /** Where a `go` step's main button leads. Without it, that step ends the tour like any last step. */
+  go: TourGo | null;
   onNext: () => void;
   onBack: () => void;
   onSkip: () => void;
@@ -119,6 +126,14 @@ export default function TourOverlay({
   // as the spotlight's own 480ms move, and the two read as one laggy motion
   // rather than two deliberate ones.
   useLayoutEffect(() => {
+    if (liveTarget === null) {
+      // A centred card: no spotlight, the whole page dimmed.
+      if (rectRef.current !== null) {
+        rectRef.current = null;
+        setRect(null);
+      }
+      return;
+    }
     const el = document.querySelector<HTMLElement>(
       `[data-tour-id="${liveTarget}"]`,
     );
@@ -139,6 +154,7 @@ export default function TourOverlay({
 
   // Re-measure every frame; commit only on a real change. See the note above.
   useEffect(() => {
+    if (liveTarget === null) return;
     let raf = 0;
     const tick = () => {
       const el = document.querySelector<HTMLElement>(
@@ -178,6 +194,15 @@ export default function TourOverlay({
     // jump. Reading the displayed step's own target keeps the card still
     // until its content has actually changed. `rect` stays in the deps so
     // scrolling and resizing still re-attach it.
+    if (step.target === null) {
+      if (!popRef.current) return;
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
+      const width = Math.min(vw - MARGIN * 2, CENTRED);
+      const { height } = popRef.current.getBoundingClientRect();
+      setPos({ top: Math.max(MARGIN, (vh - height) / 2), left: (vw - width) / 2, width, placement: "none", arrow: 0 });
+      return;
+    }
     const anchor = document.querySelector<HTMLElement>(
       `[data-tour-id="${step.target}"]`,
     );
@@ -192,7 +217,8 @@ export default function TourOverlay({
     const vw = window.innerWidth;
     const vh = window.innerHeight;
     const narrow = vw < NARROW_MAX;
-    const width = narrow ? Math.min(vw - MARGIN * 2, WIDE) : WIDE;
+    // On a phone the card takes the screen's width (less the margins).
+    const width = narrow ? vw - MARGIN * 2 : WIDE;
     const { height } = popRef.current.getBoundingClientRect();
 
     const clamp = (v: number, lo: number, hi: number) =>
@@ -286,6 +312,8 @@ export default function TourOverlay({
 
   const isFirst = index === 0;
   const isLast = index === steps.length - 1;
+  // The closing step's main button can take the student straight to where to start.
+  const goNow = isLast && step.go && go ? go : null;
 
   /**
    * Escape closes; Tab stays inside the card.
@@ -360,6 +388,7 @@ export default function TourOverlay({
   const dim = "rgba(11, 14, 17, 0.55)"; // --color-board at 55%
   const panelStyle = (s: React.CSSProperties): React.CSSProperties => ({
     position: "fixed",
+    zIndex: LAYER,
     background: dim,
     ...(reduced
       ? {}
@@ -383,6 +412,8 @@ export default function TourOverlay({
       aria-labelledby="tour-title"
       aria-describedby="tour-body"
     >
+      {/* A centred step dims the whole page. */}
+      {!hole && step.target === null ? <div onClick={onSkip} style={panelStyle({ inset: 0 })} /> : null}
       {/* A tap on the dimmed page closes the tour, so a student who tapped a
           button just as the tour opened is not left with a dead tap (05 A8.6). */}
       {hole && (
@@ -441,7 +472,7 @@ export default function TourOverlay({
           top: pos?.top ?? 0,
           left: pos?.left ?? 0,
           width: pos?.width ?? WIDE,
-          zIndex: 1,
+          zIndex: LAYER + 1,
           opacity: pos && visible ? 1 : 0,
           transform:
             reduced || (pos && visible) ? "none" : `translateY(${RISE_PX}px)`,
@@ -457,7 +488,7 @@ export default function TourOverlay({
               }),
         }}
       >
-        {pos && (
+        {pos && pos.placement !== "none" && (
           <span
             aria-hidden="true"
             className="absolute h-3 w-3 rotate-45 border border-hairline bg-surface"
@@ -486,8 +517,10 @@ export default function TourOverlay({
           {resolveCopy(step.body, variant)}
         </p>
 
-        <div className="mt-4 flex items-center justify-between gap-3">
-          <span className="flex items-center gap-1.5" aria-hidden="true">
+        {/* The dots get their own row: a nine-step tour beside three buttons
+            squeezed 上一步 into one character per line on a phone. */}
+        <div className="mt-4">
+          <span className="flex items-center gap-1.5" aria-hidden="true" hidden={steps.length < 2}>
             {steps.map((s, i) => (
               <span
                 key={s.id}
@@ -506,12 +539,13 @@ export default function TourOverlay({
           <span className="sr-only" aria-live="polite">
             第 {index + 1} 步，共 {steps.length} 步
           </span>
-
-          <span className="flex items-center gap-1.5">
+        </div>
+        {goNow ? null : (
+          <div className="mt-3 flex items-center justify-end gap-1.5 whitespace-nowrap">
             <button
               type="button"
               onClick={onSkip}
-              className="rounded-lg px-2.5 py-1.5 text-sm font-medium text-ink-faint transition-colors hover:text-ink"
+              className="mr-auto min-h-11 rounded-lg px-2.5 text-sm font-medium text-ink-faint transition-colors hover:text-ink"
             >
               跳過
             </button>
@@ -519,7 +553,7 @@ export default function TourOverlay({
               <button
                 type="button"
                 onClick={onBack}
-                className="rounded-lg border border-hairline px-3 py-1.5 text-sm font-semibold transition-colors hover:border-ink"
+                className="min-h-11 rounded-lg border border-hairline px-3 text-sm font-semibold transition-colors hover:border-ink"
               >
                 上一步
               </button>
@@ -527,12 +561,31 @@ export default function TourOverlay({
             <button
               type="button"
               onClick={onNext}
-              className="rounded-lg bg-ink px-3 py-1.5 text-sm font-semibold text-white transition-opacity hover:opacity-90"
+              className="min-h-11 rounded-lg bg-ink px-3.5 text-sm font-semibold text-white transition-opacity hover:opacity-90"
             >
-              {isLast ? "開始使用" : "下一步"}
+              {isLast ? (variant === "simulate" || steps.some((s) => s.id === "character") ? "開始使用" : "知道了") : isFirst && step.target === null ? "開始" : "下一步"}
             </button>
-          </span>
-        </div>
+          </div>
+        )}
+        {goNow ? (
+          <div className="mt-3 flex flex-col gap-1">
+            {/* Closing the tour records it as seen; the link then goes on. */}
+            <Link
+              href={goNow.href}
+              onClick={onNext}
+              className="flex min-h-11 items-center justify-center rounded-lg bg-ink px-4 text-sm font-semibold text-white transition-opacity hover:opacity-90"
+            >
+              {goNow.label}
+            </Link>
+            <button
+              type="button"
+              onClick={onSkip}
+              className="min-h-11 rounded-lg px-3 text-sm font-medium text-ink-soft transition-colors hover:text-ink"
+            >
+              自己逛逛
+            </button>
+          </div>
+        ) : null}
       </div>
     </div>,
     document.body,

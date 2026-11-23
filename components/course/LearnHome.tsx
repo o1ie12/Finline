@@ -5,6 +5,8 @@ import { durationText } from "@/lib/curriculum";
 import type { ProgramCourse } from "@/lib/programView";
 import c from "./catalogue.module.css";
 import { GuestSync } from "@/components/player/GuestSync";
+import TourAutoStart from "@/components/tour/TourAutoStart";
+import { TOUR_TARGETS } from "@/lib/tour";
 import { CourseTile } from "./CourseTile";
 import { WeekGoal } from "./WeekGoal";
 import k from "./kit.module.css";
@@ -23,9 +25,12 @@ export function LearnHome({
   courses,
   week,
   review,
+  tourSeen,
 }: {
   name: string;
   courses: ProgramCourse[];
+  /** The version of the home tour this student has seen (lib/tour.ts); undefined if never. */
+  tourSeen?: number;
   /** Modules worked on since Monday, and the student's own goal (lib/review.ts). */
   week: { done: number; goal: number };
   /** 錯題夾 in numbers: questions due now, questions coming later, and where the first due one opens. */
@@ -43,6 +48,8 @@ export function LearnHome({
   return (
     <div className={s.page}>
       <GuestSync />
+      {/* 2026-11-23: the first-sign-in tour; its closing button opens the unit to do next. */}
+      <TourAutoStart tour="home" seenVersion={tourSeen} go={now ? { href: going && now.nextHref ? now.nextHref : (now.nextHref ?? `/line/${now.slug}`), label: going ? "繼續上課" : "開始第一個單元" } : null} />
       <div className={s.inner}>
         <header className={s.hello}>
           <h1>你好，{name}</h1>
@@ -51,7 +58,7 @@ export function LearnHome({
 
         <div className={s.top}>
           {now ? (
-            <section className={`${k.card} ${s.cont}`} style={now.vars} aria-labelledby="cont-h">
+            <section className={`${k.card} ${s.cont}`} style={now.vars} aria-labelledby="cont-h" data-tour-id={TOUR_TARGETS.homeStart}>
               <div className={s.contMain}>
                 <p className={s.kicker}>
                   <span className={k.plate}>{now.code}</span>
@@ -96,7 +103,7 @@ export function LearnHome({
           ) : null}
 
           {/* The program: how far along, and every course as a mark that fills in. */}
-          <section className={`${k.card} ${s.program}`} aria-labelledby="prog-h">
+          <section className={`${k.card} ${s.program}`} aria-labelledby="prog-h" data-tour-id={TOUR_TARGETS.homeProgram}>
             <h2 id="prog-h" className={s.cardTitle}>
               學程進度
             </h2>
@@ -128,13 +135,13 @@ export function LearnHome({
 
         {/* This week and 錯題夾 (2026-11-13): the two reasons to come back. */}
         <div className={s.back}>
-          <section className={`${k.card} ${s.backCard}`} aria-labelledby="week-h">
+          <section className={`${k.card} ${s.backCard}`} aria-labelledby="week-h" data-tour-id={TOUR_TARGETS.homeWeek}>
             <h2 id="week-h" className={s.cardTitle}>
               本週
             </h2>
             <WeekGoal done={week.done} goal={week.goal} />
           </section>
-          <section className={`${k.card} ${s.backCard}`} aria-labelledby="rev-h">
+          <section className={`${k.card} ${s.backCard}`} aria-labelledby="rev-h" data-tour-id={TOUR_TARGETS.homeReview}>
             <h2 id="rev-h" className={s.cardTitle}>
               錯題夾
             </h2>

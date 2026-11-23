@@ -8,6 +8,7 @@ import { endStation, getLine } from "@/lib/lines";
 import { getCurrentStudent } from "@/lib/session";
 import { turnThenRide } from "@/lib/stationNav";
 import { readProfile } from "@/lib/studentProfile";
+import { seenVersionOf } from "@/lib/tour";
 import { lessonForPage } from "@/lib/tasks/prepare";
 import { sanitizeHook } from "@/lib/tasks/sanitize";
 import { pickTerminal } from "@/lib/tasks/terminalPick";
@@ -51,6 +52,7 @@ export default async function EndStationPage({
         studentId={student.id}
         attempt={attempt}
         goal={profile.goal ? { amount: profile.goal.amount, months: profile.goal.months } : null}
+        unitTourSeen={{ unit: seenVersionOf(profile, "unit"), check: seenVersionOf(profile, "check") }}
         mode="terminal"
         // 2026-11-12: the course's last module returns to the course page.
         continueLabel={LIFE_SIM ? undefined : "回到課程"}
