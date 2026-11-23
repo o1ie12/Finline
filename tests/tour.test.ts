@@ -38,6 +38,7 @@ test("tour-b: every anchor the home and unit tours use is on the page that shows
     [TOUR_TARGETS.tabCourses]: "components/ui/TabBar.tsx",
     [TOUR_TARGETS.tabGrades]: "components/ui/TabBar.tsx",
     [TOUR_TARGETS.tabSettings]: "components/ui/TabBar.tsx",
+    [TOUR_TARGETS.tabHelp]: "components/ui/TabBar.tsx",
     [TOUR_TARGETS.unitDoc]: "components/player/ModulePlayer.tsx",
     [TOUR_TARGETS.unitProgress]: "components/player/ModulePlayer.tsx",
     [TOUR_TARGETS.unitHint]: "components/player/ModulePlayer.tsx",
@@ -81,6 +82,13 @@ test("tour-d: what was seen is read per tour; only the known tours are accepted"
   const api = read("app/api/tour/route.ts");
   assert.match(api, /toursSeen: \{ \.\.\.seen, \[tour\]: version \}/);
   assert.match(api, /const version = TOURS\[tour\]\.version;/);
+});
+
+test("tour-f: the side panel has a 使用說明 button that replays the tour", () => {
+  const bar = read("components/ui/TabBar.tsx");
+  assert.match(bar, /onClick=\{\(\) => tour\?\.start\(\)\} data-tour-id=\{TOUR_TARGETS\.tabHelp\}/);
+  assert.match(bar, /<Icon name="help" size=\{24\} \/>\s*<span>使用說明<\/span>/);
+  assert.match(read("components/ui/ui.module.css"), /\.tabHelp \{\s*display: flex;\s*margin-top: auto;\s*\}/);
 });
 
 test("tour-e: 設定 is reachable on a phone when the life simulation is off", () => {

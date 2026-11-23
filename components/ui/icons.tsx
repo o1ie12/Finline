@@ -24,7 +24,8 @@ export type IconName =
   | "down"
   | "award"
   | "doc"
-  | "chat";
+  | "chat"
+  | "help";
 
 const STROKE: Record<IconName, React.ReactNode> = {
   back: <path d="M15 5l-7 7 7 7" />,
@@ -75,6 +76,12 @@ const STROKE: Record<IconName, React.ReactNode> = {
     </>
   ),
   chat: <path d="M4.5 6a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H11l-4.5 3.5V16h0a2 2 0 0 1-2-2z" />,
+  help: (
+    <>
+      <circle cx="12" cy="12" r="8.5" />
+      <path d="M9.7 9.6a2.4 2.4 0 1 1 3.3 2.2c-.6.3-1 .8-1 1.4v.4M12 16.6v.3" />
+    </>
+  ),
 };
 
 /** Filled forms for the tab bar (inactive and active alike). */

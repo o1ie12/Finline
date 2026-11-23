@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { LIFE_SIM } from "@/lib/flags";
+import { useTourOptional } from "@/components/tour/TourProvider";
 import { TOUR_TARGETS } from "@/lib/tour";
 import { Icon, type IconName } from "./icons";
 import s from "./ui.module.css";
@@ -35,6 +36,7 @@ const TAB_TOUR: Record<string, string | undefined> = { "/map": TOUR_TARGETS.tabC
  */
 export function TabBar() {
   const path = usePathname();
+  const tour = useTourOptional();
   return (
     <nav className={s.tabbar} aria-label="主要分頁">
       {/* Desktop only: the brand at the top of the sidebar. */}
@@ -52,6 +54,11 @@ export function TabBar() {
           </Link>
         );
       })}
+      {/* 2026-11-23: replays the home tour (desktop side panel; on a phone it is in 設定). */}
+      <button type="button" className={`${s.tab} ${s.tabButton} ${s.tabHelp}`} onClick={() => tour?.start()} data-tour-id={TOUR_TARGETS.tabHelp}>
+        <Icon name="help" size={24} />
+        <span>使用說明</span>
+      </button>
       {/* 設定 holds the sign-in code. On a phone it used to be reachable only
           from the life simulation's 狀態 tab; with that off it shows here too. */}
       <Link

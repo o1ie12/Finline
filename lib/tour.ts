@@ -61,6 +61,7 @@ export const TOUR_TARGETS = {
   tabCourses: "tab-courses",
   tabGrades: "tab-grades",
   tabSettings: "tab-settings",
+  tabHelp: "tab-help",
   // a unit (components/player/ModulePlayer.tsx)
   unitDoc: "unit-doc",
   unitProgress: "unit-progress",
@@ -163,6 +164,13 @@ export const HOME_TOUR_STEPS: TourStep[] = [
     target: TOUR_TARGETS.tabSettings,
     title: "設定",
     body: "你的 6 碼登入代碼在這裡，換手機或電腦時要用。這段說明也可以從這裡重看。",
+  },
+  {
+    // The side panel only (it is not on a phone, so this step drops there).
+    id: "help",
+    target: TOUR_TARGETS.tabHelp,
+    title: "想再看一次？",
+    body: "隨時按側邊的「使用說明」，這段說明會從頭再來一次。",
   },
   {
     id: "go",
