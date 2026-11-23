@@ -52,9 +52,11 @@ export function TabBar() {
           </Link>
         );
       })}
+      {/* 設定 holds the sign-in code. On a phone it used to be reachable only
+          from the life simulation's 狀態 tab; with that off it shows here too. */}
       <Link
         href="/settings"
-        className={`${s.tab} ${s.tabSettings}`}
+        className={`${s.tab} ${s.tabSettings} ${LIFE_SIM ? "" : s.tabSettingsPhone}`}
         aria-current={path.startsWith("/settings") ? "page" : undefined}
         data-tour-id={TOUR_TARGETS.tabSettings}
       >

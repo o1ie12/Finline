@@ -642,6 +642,10 @@
 .tabSettings {
   display: none;
 }
+/* 2026-11-23: on a phone too, when the life simulation is off (TabBar.tsx). */
+.tabSettingsPhone {
+  display: flex;
+}
 @media (min-width: 840px) {
   .tabbar {
     position: relative;
