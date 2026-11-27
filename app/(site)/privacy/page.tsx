@@ -16,7 +16,7 @@ export default function PrivacyPage() {
       <p className="font-display text-sm font-semibold text-line-2">
         隱私權政策
       </p>
-      <h1 className="mt-2 text-3xl font-black tracking-tight sm:text-4xl">
+      <h1 className="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">
         錢途隱私權政策
       </h1>
       <p className="mt-3 text-sm text-ink-faint">最後更新日期：{LEGAL_UPDATED_AT}</p>
@@ -67,7 +67,7 @@ export default function PrivacyPage() {
             ))}
           </ul>
           <p className="mt-4">
-            我們不會將您的個人資訊出售給第三方。我們不會使用您的資訊投放廣告——錢途沒有廣告。
+            我們不會將您的個人資訊出售給第三方。我們不會使用您的資訊投放廣告，錢途沒有廣告。
           </p>
         </section>
 
@@ -102,7 +102,7 @@ export default function PrivacyPage() {
             四、未成年使用者
           </h2>
           <p className="mt-3">
-            我們了解錢途的主要使用族群包含未成年人。因此，我們在設計上刻意將資料收集降到最低——預設不需要任何真實個人資訊即可使用完整功能。建議未滿一定年齡的使用者在家長或監護人的知情下使用本平台。
+            我們了解錢途的主要使用族群包含未成年人。因此，我們在設計上刻意將資料收集降到最低：預設不需要任何真實個人資訊即可使用完整功能。建議未滿一定年齡的使用者在家長或監護人的知情下使用本平台。
           </p>
         </section>
 

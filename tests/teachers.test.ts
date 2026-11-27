@@ -303,9 +303,10 @@ test("privacy-e: the technical-data paragraph says what the wrong-code limit kee
   const at = src.indexOf("3. 技術性資料");
   assert.ok(at > 0);
   assert.ok(src.slice(at, at + 400).includes("為了防止有人亂猜房間代碼，我們會暫存一組由你的網路位址轉成、無法還原的代碼，10 分鐘後自動刪除。"));
-  assert.equal(LEGAL_UPDATED_AT, "2026 年 11 月 14 日");
-  assert.equal(LEGAL_CHANGES[0].date, "2026-11-14");
-  assert.equal(LEGAL_CHANGES[0].page, "privacy");
+  // The 2026-11-14 change stays in the log; later edits move the date on.
+  assert.ok(LEGAL_CHANGES.some((c) => c.date === "2026-11-14" && c.page === "privacy"));
+  const [y, m, d] = LEGAL_CHANGES[0].date.split("-").map(Number);
+  assert.equal(String(LEGAL_UPDATED_AT), `${y} 年 ${m} 月 ${d} 日`, "the page date is the newest change's date");
 });
 
 test("classroom-e: results are percent correct per question and the median; no class view ranks by money", () => {

@@ -52,7 +52,6 @@ export default async function TodayPage() {
     const now = new Date();
     return (
       <LearnHome
-        name={student.name}
         courses={programView({ statuses: allLineStatuses(progress, runsByLine, mode, completed), progress, runsByLine, mode })}
         week={{ done: weekModules(taskResults, now), goal: weekGoal(readProfile(student.profile).weeklyGoal) }}
         review={reviewSummary(reviewGroups(taskResults, now))}

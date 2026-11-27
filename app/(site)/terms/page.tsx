@@ -16,14 +16,14 @@ export default function TermsPage() {
       <p className="font-display text-sm font-semibold text-line-2">
         服務條款
       </p>
-      <h1 className="mt-2 text-3xl font-black tracking-tight sm:text-4xl">
+      <h1 className="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">
         錢途服務條款
       </h1>
       <p className="mt-3 text-sm text-ink-faint">最後更新日期：{LEGAL_UPDATED_AT}</p>
 
       <div className="mt-8 space-y-8 text-[16px] leading-[1.85] text-ink/90">
         <p>
-          歡迎使用錢途！請在使用本平台前詳細閱讀以下服務條款。使用錢途即表示您同意本服務條款的所有內容。
+          歡迎使用錢途。請在使用本平台前詳細閱讀以下服務條款。使用錢途即表示您同意本服務條款的所有內容。
         </p>
 
         <section aria-labelledby="t-1">

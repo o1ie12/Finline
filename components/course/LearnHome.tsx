@@ -21,13 +21,11 @@ const TRACK_ORDER: TrackId[] = ["core", "elective", "capstone"];
  * and what is done.
  */
 export function LearnHome({
-  name,
   courses,
   week,
   review,
   tourSeen,
 }: {
-  name: string;
   courses: ProgramCourse[];
   /** The version of the home tour this student has seen (lib/tour.ts); undefined if never. */
   tourSeen?: number;
@@ -52,7 +50,7 @@ export function LearnHome({
       <TourAutoStart tour="home" seenVersion={tourSeen} go={now ? { href: going && now.nextHref ? now.nextHref : (now.nextHref ?? `/line/${now.slug}`), label: going ? "繼續上課" : "開始第一個單元" } : null} />
       <div className={s.inner}>
         <header className={s.hello}>
-          <h1>你好，{name}</h1>
+          <h1>我的學習</h1>
           <p>{now ? (now.state === "started" ? "從上次停下來的地方接著上。" : "挑一門課，開始第一個單元。") : "你已經完成所有課程。"}</p>
         </header>
 
