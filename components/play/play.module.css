@@ -269,7 +269,7 @@
 }
 .lifestyleName {
   font-size: 18px;
-  font-weight: 800;
+  font-weight: 700;
 }
 .lifestyleAmount {
   font-family: var(--font-sign);
@@ -1490,7 +1490,7 @@
   font: 600 0.875rem/1.3rem var(--font-ui);
 }
 :global([data-design="e"]) .dock .allocLeft strong {
-  font: 800 1.125rem/1.4rem var(--font-ui);
+  font: 700 1.125rem/1.4rem var(--font-ui);
 }
 :global([data-design="e"]) .dock .allocBar :global(.g-caption) {
   display: block;

@@ -164,7 +164,7 @@ export default function Quiz({
           <button
             type="submit"
             disabled={!allAnswered}
-            className="inline-flex items-center justify-center rounded-xl bg-ink px-6 py-3 text-base font-semibold text-white transition-transform hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50"
+            className="inline-flex items-center justify-center rounded-xl bg-ink px-6 py-3 text-base font-semibold text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
           >
             送出答案
           </button>
@@ -224,12 +224,12 @@ export default function Quiz({
             {nextHref ? (
               <Link
                 href={nextHref}
-                className="inline-flex items-center justify-center rounded-xl bg-white px-5 py-2.5 text-base font-semibold text-ink hover:-translate-y-0.5"
+                className="inline-flex items-center justify-center rounded-xl bg-white px-5 py-2.5 text-base font-semibold text-ink transition-opacity hover:opacity-90"
               >
                 出發 <span aria-hidden="true" className="ml-1">→</span>
               </Link>
             ) : (
-              <HomeLink className="inline-flex items-center justify-center rounded-xl bg-white px-5 py-2.5 text-base font-semibold text-ink hover:-translate-y-0.5">
+              <HomeLink className="inline-flex items-center justify-center rounded-xl bg-white px-5 py-2.5 text-base font-semibold text-ink transition-opacity hover:opacity-90">
                 出發 <span aria-hidden="true" className="ml-1">→</span>
               </HomeLink>
             )}

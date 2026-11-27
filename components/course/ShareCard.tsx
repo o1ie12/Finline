@@ -95,7 +95,7 @@ async function draw(canvas: HTMLCanvasElement, d: ShareCardData, showName: boole
   ctx.fillText(showName ? `${d.name} 完成了這門課` : "我完成了這門課", x, y);
   y += 130;
   ctx.fillStyle = INK;
-  ctx.font = font(900, 124);
+  ctx.font = font(700, 124);
   ctx.fillText(d.courseName, x, y);
   y += 44;
   ctx.fillStyle = d.color;

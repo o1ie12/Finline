@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import HomeLink from "@/components/HomeLink";
+import { Icon } from "@/components/ui/icons";
 import { FRAUD_CARDS, AFTER_SCAM_STEPS, type FraudOutcome } from "@/lib/sims/fraud";
 import CoachPanel from "@/components/CoachPanel";
 import { useSimRun } from "@/components/sims/useSimRun";
@@ -84,7 +85,7 @@ export default function FraudSim({
     return (
       <div className="space-y-8">
         <PlatformPanel color={color} eyebrow="165 判讀中心 · 結果">
-          <h2 className="text-4xl font-black">
+          <h2 className="text-4xl font-bold">
             <span className="money">{o.correct}</span>
             <span className="text-lg font-semibold text-white/70"> / {o.total} 答對</span>
           </h2>
@@ -155,7 +156,7 @@ export default function FraudSim({
           >
             再玩一次
           </button>
-          <HomeLink className="inline-flex items-center justify-center rounded-xl bg-ink px-5 py-3 text-base font-semibold text-white hover:-translate-y-0.5">
+          <HomeLink className="inline-flex items-center justify-center rounded-xl bg-ink px-5 py-3 text-base font-semibold text-white transition-opacity hover:opacity-90">
             回到我的學習
           </HomeLink>
         </div>
@@ -167,7 +168,7 @@ export default function FraudSim({
     return (
       <div className="space-y-6">
         <PlatformPanel color={color} eyebrow="165 判讀中心">
-          <h2 className="text-2xl font-black">60 秒，判讀真偽</h2>
+          <h2 className="text-2xl font-bold">60 秒，判讀真偽</h2>
           <p className="mt-2 text-[15px] leading-relaxed text-white/85">
             接下來會出現一連串真實風格的訊息。每一則，判斷它是「真」的日常訊息，還是「詐」——詐騙集團常見的話術。答錯會馬上告訴你為什麼，時間到自動結算。
           </p>
@@ -175,7 +176,7 @@ export default function FraudSim({
         <button
           type="button"
           onClick={() => setPhase("playing")}
-          className="inline-flex w-full items-center justify-center rounded-xl bg-ink px-6 py-4 text-base font-semibold text-white transition-transform hover:-translate-y-0.5"
+          className="inline-flex w-full items-center justify-center rounded-xl bg-ink px-6 py-4 text-base font-semibold text-white transition-opacity hover:opacity-90"
         >
           開始判讀
         </button>
@@ -211,7 +212,7 @@ export default function FraudSim({
                 }`}
                 role="status"
               >
-                {feedback.correct ? "✓ 判斷正確" : "✕ 判斷錯誤"} — {feedback.explain}
+                <span className="inline-flex items-center gap-1 align-top"><Icon name={feedback.correct ? "check" : "close"} size={14} strokeWidth={3} />{feedback.correct ? "判斷正確" : "判斷錯誤"}</span>：{feedback.explain}
               </p>
               {feedback.consequence && (
                 <p className="rounded-lg bg-bg px-3.5 py-2.5 text-sm leading-relaxed text-ink/90">
@@ -222,7 +223,7 @@ export default function FraudSim({
                 type="button"
                 onClick={next}
                 disabled={index >= FRAUD_CARDS.length - 1}
-                className="inline-flex w-full items-center justify-center rounded-xl bg-ink px-6 py-3 text-base font-semibold text-white transition-transform hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50"
+                className="inline-flex w-full items-center justify-center rounded-xl bg-ink px-6 py-3 text-base font-semibold text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {index >= FRAUD_CARDS.length - 1 ? "等待結算…" : "下一則 →"}
               </button>

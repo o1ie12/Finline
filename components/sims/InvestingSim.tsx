@@ -198,7 +198,7 @@ function InvestOutcomeView({
       <PlatformPanel color={color} eyebrow="進場站 · 一年後（範圍）">
         {isSpend ? (
           <>
-            <h2 className="text-3xl font-black">你把它花掉了</h2>
+            <h2 className="text-3xl font-bold">你把它花掉了</h2>
             <p className="mt-2 text-[15px] leading-relaxed text-white/85">
               你換到了當下想要的東西，但這筆 {formatNT(outcome.start)}
               {outcome.startFromSavingsLine ? "" : "（預設金額）"}就沒有成長的機會了。花或投資沒有絕對對錯——重點是那是不是你有意識的選擇。
@@ -206,7 +206,7 @@ function InvestOutcomeView({
           </>
         ) : c.certain ? (
           <>
-            <h2 className="text-4xl font-black">
+            <h2 className="text-4xl font-bold">
               <span className="money">{formatNT(c.mid)}</span>
             </h2>
             <p className="mt-2 text-[15px] leading-relaxed text-white/85">
@@ -215,7 +215,7 @@ function InvestOutcomeView({
           </>
         ) : (
           <>
-            <h2 className="text-3xl font-black">
+            <h2 className="text-3xl font-bold">
               <span className="money">{formatNT(c.low)}</span>
               <span className="text-white/60"> ~ </span>
               <span className="money">{formatNT(c.high)}</span>

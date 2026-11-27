@@ -56,7 +56,7 @@
 }
 .barTitle h1 {
   margin: 0;
-  font: 800 1.0625rem/1.5rem var(--font-ui);
+  font: 700 1.0625rem/1.5rem var(--font-ui);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -97,7 +97,7 @@
   border-radius: 10px;
   background: var(--surface);
   color: var(--ink);
-  font: 800 0.75rem/1 var(--font-ui);
+  font: 700 0.75rem/1 var(--font-ui);
 }
 .stops li[data-state="done"] .stopDot {
   background: var(--line, var(--good));
@@ -164,11 +164,11 @@
   border-radius: 22px;
   background: var(--line-soft, var(--surface-2));
   color: var(--line-ink, var(--ink));
-  font: 800 1.125rem/1 var(--font-ui);
+  font: 700 1.125rem/1 var(--font-ui);
 }
 .fromName {
   margin: 0;
-  font: 800 1rem/1.4rem var(--font-ui);
+  font: 700 1rem/1.4rem var(--font-ui);
 }
 .fromRole {
   margin: 0;
@@ -177,7 +177,7 @@
 }
 .message {
   margin: 0;
-  font: 800 1.375rem/2rem var(--font-voice);
+  font: 700 1.375rem/2rem var(--font-voice);
   text-wrap: balance;
 }
 .facts {
@@ -223,7 +223,7 @@
   border-radius: 12px;
   background: var(--ink);
   color: var(--ink-inv);
-  font: 800 0.75rem/1 var(--font-ui);
+  font: 700 0.75rem/1 var(--font-ui);
 }
 
 /* the gut-feeling question */
@@ -240,7 +240,7 @@
 }
 .hookQ {
   margin: 0;
-  font: 800 1.125rem/1.6rem var(--font-voice);
+  font: 700 1.125rem/1.6rem var(--font-voice);
 }
 .hookOpts {
   display: flex;
@@ -345,13 +345,13 @@
   gap: 8px;
 }
 .qNo {
-  font: 800 0.8125rem/1 var(--font-ui);
+  font: 700 0.8125rem/1 var(--font-ui);
   letter-spacing: 0.06em;
   color: var(--line-ink, var(--ink-3));
 }
 .qPrompt {
   margin: 0;
-  font: 800 1.125rem/1.65rem var(--font-voice);
+  font: 700 1.125rem/1.65rem var(--font-voice);
   text-wrap: balance;
 }
 .hintBtn {
@@ -435,7 +435,7 @@
 }
 .rateName {
   margin: 0 0 8px;
-  font: 800 0.9375rem/1.4rem var(--font-ui);
+  font: 700 0.9375rem/1.4rem var(--font-ui);
 }
 .result {
   display: flex;
@@ -469,7 +469,7 @@
 }
 .bannerTitle {
   margin: 4px 0 0;
-  font: 900 2rem/2.5rem var(--font-ui);
+  font: 700 2rem/2.5rem var(--font-ui);
   font-variant-numeric: tabular-nums;
 }
 .bannerTitle span {
@@ -762,7 +762,7 @@
   grid-column: 1 / -1;
   margin: 0;
   scroll-margin-top: 132px;
-  font: 800 1rem/1.4rem var(--font-ui);
+  font: 700 1rem/1.4rem var(--font-ui);
 }
 .taskHead:focus {
   outline: none;

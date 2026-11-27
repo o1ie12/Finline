@@ -210,7 +210,7 @@ function CareerOutcomeView({
     <div className="space-y-8">
       <PlatformPanel color={color} eyebrow="抉擇站 · 五年後">
         <p className="text-sm text-white/70">{outcome.pathName}，五年累積約</p>
-        <h2 className="mt-1 text-4xl font-black">
+        <h2 className="mt-1 text-4xl font-bold">
           <span className="money">{formatNT(outcome.fiveYearTotal)}</span>
         </h2>
         <p className="mt-3 text-[15px] leading-relaxed text-white/85">

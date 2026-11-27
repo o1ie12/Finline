@@ -27,7 +27,7 @@ export default function LineCard({
   return (
     <Link
       href={`/line/${line.slug}`}
-      className="group flex flex-col overflow-hidden rounded-2xl border border-hairline bg-surface transition-transform hover:-translate-y-0.5"
+      className="group flex flex-col overflow-hidden rounded-2xl border border-hairline bg-surface transition-colors hover:border-ink/30"
     >
       <span className="h-1.5 w-full" style={{ background: line.color }} aria-hidden="true" />
       <div className="flex flex-1 flex-col p-5">

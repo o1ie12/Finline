@@ -43,7 +43,7 @@
 }
 .h1 {
   margin: 0;
-  font: 900 2.5rem/1.2 var(--font-voice);
+  font: 700 2.5rem/1.2 var(--font-voice);
   letter-spacing: -0.01em;
 }
 .lead {
@@ -61,7 +61,7 @@
 }
 .h2 {
   margin: 0;
-  font: 800 1.375rem/1.35 var(--font-voice);
+  font: 700 1.375rem/1.35 var(--font-voice);
 }
 .h3 {
   margin: 0;
@@ -254,7 +254,7 @@
 }
 .sheetTitle {
   margin: 0;
-  font: 800 1.375rem/1.3 var(--font-voice);
+  font: 700 1.375rem/1.3 var(--font-voice);
 }
 .sheetName {
   margin: 0;

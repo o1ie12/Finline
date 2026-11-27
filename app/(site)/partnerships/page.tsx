@@ -14,7 +14,7 @@ export default function PartnershipsPage() {
       <p className="font-display text-sm font-semibold uppercase tracking-widest text-line-2">
         合作夥伴
       </p>
-      <h1 className="mt-2 text-3xl font-black tracking-tight sm:text-4xl">
+      <h1 className="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">
         我們正在與致力於財金教育的機構建立合作關係
       </h1>
       <p className="mx-auto mt-4 max-w-md text-[15px] leading-relaxed text-ink-soft">

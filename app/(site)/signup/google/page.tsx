@@ -23,7 +23,7 @@ export default async function GoogleChoicePage() {
   return (
     <div className="mx-auto max-w-md px-4 py-10 sm:px-6 sm:py-14">
       <div className="mb-6">
-        <h1 className="text-3xl font-black tracking-tight">快好了</h1>
+        <h1 className="text-3xl font-bold tracking-tight">快好了</h1>
         <p className="mt-2 text-[15px] leading-relaxed text-ink-soft">
           已經用 Google 帳號（{pending.google_email}）完成登入，但我們還沒看過這個帳號。
         </p>

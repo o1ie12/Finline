@@ -74,11 +74,11 @@
   border-radius: 7px;
   background: var(--line);
   color: var(--line-on);
-  font: 800 0.75rem/1 var(--font-ui);
+  font: 700 0.75rem/1 var(--font-ui);
 }
 .h1 {
   margin: 0;
-  font: 900 2rem/2.6rem var(--font-voice);
+  font: 700 2rem/2.6rem var(--font-voice);
 }
 .sub {
   margin: 0;
@@ -108,7 +108,7 @@
 }
 .cardTitle {
   margin: 0;
-  font: 900 1.25rem/1.7rem var(--font-voice);
+  font: 700 1.25rem/1.7rem var(--font-voice);
 }
 .cardText {
   margin: 0;

@@ -94,7 +94,7 @@ export default function SpendingSim({
         <div className="flex flex-wrap items-baseline justify-between gap-2">
           <span className="text-sm text-ink-soft">還沒分配</span>
           <span
-            className={`money text-2xl font-black ${over ? "text-negative" : ""}`}
+            className={`money text-2xl font-bold ${over ? "text-negative" : ""}`}
           >
             {formatNT(remaining)}
           </span>
@@ -188,7 +188,7 @@ function SpendingOutcomeView({
       <PlatformPanel color={color} eyebrow="分配站 · 月底了">
         {outcome.absorbedShortfall ? (
           <>
-            <h2 className="text-3xl font-black">撐過去了</h2>
+            <h2 className="text-3xl font-bold">撐過去了</h2>
             <p className="mt-2 text-[15px] leading-relaxed text-white/85">
               {SHORTFALL_EVENT.detail}你手上還有{" "}
               <span className="money font-semibold text-white">
@@ -200,7 +200,7 @@ function SpendingOutcomeView({
         ) : (
           <>
             <p className="text-sm text-white/70">月底差了</p>
-            <h2 className="mt-1 text-4xl font-black">
+            <h2 className="mt-1 text-4xl font-bold">
               <span className="money">{formatNT(outcome.shortfallGap)}</span>
             </h2>
             <p className="mt-3 text-[15px] leading-relaxed text-white/85">

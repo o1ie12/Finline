@@ -181,7 +181,7 @@ function StudentLoanOutcomeView({
   return (
     <div className="space-y-8">
       <PlatformPanel color={color} eyebrow="四年後 · 總帳">
-        <h2 className="text-4xl font-black">
+        <h2 className="text-4xl font-bold">
           <span className="money">{formatNT(outcome.grandTotal)}</span>
         </h2>
         <p className="mt-2 text-[15px] leading-relaxed text-white/85">

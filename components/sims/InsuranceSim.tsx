@@ -64,7 +64,7 @@ export default function InsuranceSim({ color, colorInk }: { color: string; color
     return (
       <div className="space-y-8">
         <PlatformPanel color={color} eyebrow="業務員對話 · 結果">
-          <h2 className="text-3xl font-black">
+          <h2 className="text-3xl font-bold">
             {o.allDeclined ? "全部婉拒" : `買了 ${o.bought.length} 項商品`}
           </h2>
           <p className="mt-2 text-[15px] leading-relaxed text-white/85">
@@ -139,7 +139,7 @@ export default function InsuranceSim({ color, colorInk }: { color: string; color
     return (
       <div className="space-y-6">
         <PlatformPanel color={color} eyebrow="業務員對話">
-          <h2 className="text-2xl font-black">結算中…</h2>
+          <h2 className="text-2xl font-bold">結算中…</h2>
         </PlatformPanel>
         {error && (
           <p className="rounded-lg bg-negative/10 px-4 py-3 text-sm text-negative" role="alert">
@@ -161,7 +161,7 @@ export default function InsuranceSim({ color, colorInk }: { color: string; color
       </div>
 
       <PlatformPanel color={color} eyebrow={`業務員對話 · ${product.name}`}>
-        <h2 className="text-xl font-black">「{product.pitch}」</h2>
+        <h2 className="text-xl font-bold">「{product.pitch}」</h2>
         {product.id === "savings" && (
           <p className="mt-3 text-[15px] leading-relaxed text-white/85">
             「每年繳 {formatNT(SAVINGS_POLICY.annualPremium)}，只要繳 {SAVINGS_POLICY.premiumYears} 年，宣告利率{" "}
@@ -187,7 +187,7 @@ export default function InsuranceSim({ color, colorInk }: { color: string; color
           <button
             type="button"
             onClick={() => decide("buy")}
-            className="inline-flex flex-1 items-center justify-center rounded-xl bg-ink px-6 py-4 text-base font-semibold text-white transition-transform hover:-translate-y-0.5"
+            className="inline-flex flex-1 items-center justify-center rounded-xl bg-ink px-6 py-4 text-base font-semibold text-white transition-opacity hover:opacity-90"
           >
             買
           </button>
@@ -225,7 +225,7 @@ export default function InsuranceSim({ color, colorInk }: { color: string; color
             type="button"
             onClick={next}
             disabled={submitting}
-            className="inline-flex w-full items-center justify-center rounded-xl bg-ink px-6 py-4 text-base font-semibold text-white transition-transform hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50"
+            className="inline-flex w-full items-center justify-center rounded-xl bg-ink px-6 py-4 text-base font-semibold text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {round + 1 >= PRODUCTS.length ? (submitting ? "結算中…" : "看結果") : "下一位業務員"}
           </button>

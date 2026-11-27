@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import k from "@/components/course/kit.module.css";
 import { getLine, isLineSlug } from "@/lib/lines";
 import { getPrePostQuestions } from "@/lib/prePostQuestions";
 import { CLASS_COPY } from "@/lib/classRooms";
@@ -101,8 +102,8 @@ export function QuizPlay() {
   if (phase === "join") {
     return (
       <div className="mx-auto max-w-sm px-4 py-14 sm:px-6">
-        <p className="text-xs font-bold tracking-widest text-ink-faint">課堂模式</p>
-        <h1 className="mt-1.5 text-3xl font-black tracking-tight">加入房間</h1>
+        <p className="text-xs font-semibold text-ink-faint">課堂模式</p>
+        <h1 className="mt-1.5 text-3xl font-bold tracking-tight">加入房間</h1>
         <form onSubmit={join} className="mt-6 space-y-4">
           <div>
             <label htmlFor="code" className="text-sm font-semibold">
@@ -113,7 +114,7 @@ export function QuizPlay() {
               value={code}
               onChange={(e) => setCode(e.target.value.toUpperCase())}
               maxLength={6}
-              className="money mt-1.5 w-full rounded-xl border border-hairline bg-surface px-4 py-3 text-lg tracking-[0.15em]"
+              className="money mt-1.5 h-13 w-full rounded-xl border border-black/[.14] bg-white px-4 outline-none focus:border-[var(--focus)] text-lg tracking-[0.15em]"
               placeholder="ABC123"
               required
             />
@@ -127,7 +128,7 @@ export function QuizPlay() {
               value={name}
               onChange={(e) => setName(e.target.value)}
               maxLength={40}
-              className="mt-1.5 w-full rounded-xl border border-hairline bg-surface px-4 py-3 text-base"
+              className="mt-1.5 h-13 w-full rounded-xl border border-black/[.14] bg-white px-4 outline-none focus:border-[var(--focus)] text-base"
               placeholder="讓老師認得出你就好"
               required
             />
@@ -136,7 +137,7 @@ export function QuizPlay() {
           <button
             type="submit"
             disabled={joining}
-            className="inline-flex w-full items-center justify-center rounded-xl bg-ink px-6 py-4 text-base font-semibold text-white transition-transform hover:-translate-y-0.5 disabled:opacity-50"
+            className={`${k.go} w-full disabled:opacity-50`}
           >
             {joining ? "加入中…" : "加入"}
           </button>
@@ -151,7 +152,7 @@ export function QuizPlay() {
   if (phase === "waiting") {
     return (
       <div className="mx-auto max-w-sm px-4 py-14 text-center sm:px-6">
-        <p className="text-2xl font-black">已加入房間</p>
+        <p className="text-2xl font-bold">已加入房間</p>
         <p className="mt-2 text-[15px] leading-relaxed text-ink-soft">
           等老師按下「開始測驗」，畫面會自動開始。
         </p>
@@ -168,7 +169,7 @@ export function QuizPlay() {
     return (
       <div className="mx-auto max-w-2xl px-4 py-10 sm:px-6 sm:py-14">
         <p
-          className="font-display text-xs font-bold uppercase tracking-widest"
+          className="font-display text-xs font-semibold"
           style={{ color: line?.colorInk ?? "var(--color-ink)" }}
         >
           {line?.name}
@@ -208,7 +209,7 @@ export function QuizPlay() {
           type="button"
           onClick={() => submitAll(answers)}
           disabled={!allAnswered}
-          className="mt-6 inline-flex w-full items-center justify-center rounded-xl bg-ink px-6 py-4 text-base font-semibold text-white transition-transform hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50"
+          className={`${k.go} mt-6 w-full disabled:cursor-not-allowed disabled:opacity-50`}
         >
           送出（已作答 {answeredCount} / {questions.length}）
         </button>
@@ -219,13 +220,13 @@ export function QuizPlay() {
   if (phase === "submitted" && result) {
     return (
       <div className="mx-auto max-w-sm px-4 py-14 text-center sm:px-6">
-        <p className="text-2xl font-black">
+        <p className="text-2xl font-bold">
           答對 {result.score} / {result.total} 題
         </p>
         <p className="mt-2 text-[15px] leading-relaxed text-ink-soft">這是你自己的分數。老師的畫面只顯示全班每一題的答對比例。</p>
         <Link
           href="/class"
-          className="mt-6 inline-flex items-center justify-center rounded-xl border border-hairline bg-surface px-5 py-3 text-base font-semibold hover:border-ink"
+          className={`${k.ghost} mt-6`}
         >
           回到課堂模式
         </Link>

@@ -37,7 +37,7 @@ export default function InvestReplayWidget({ view }: { view: SimPortfolioView | 
       <div className="flex items-center justify-between gap-4">
         <div>
           <p className="text-sm text-ink-faint">第 {view.simDayIndex} 個模擬日</p>
-          <p className="money mt-0.5 text-2xl font-black">
+          <p className="money mt-0.5 text-2xl font-bold">
             {formatNT(view.value)}
             <span
               className="ml-2 text-sm font-semibold"

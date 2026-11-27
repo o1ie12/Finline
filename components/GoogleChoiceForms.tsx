@@ -146,7 +146,7 @@ export default function GoogleChoiceForms() {
           <button
             type="submit"
             disabled={linking}
-            className="shrink-0 rounded-lg bg-ink px-5 py-2.5 text-base font-semibold text-white hover:-translate-y-0.5 disabled:opacity-60"
+            className="shrink-0 rounded-lg bg-ink px-5 py-2.5 text-base font-semibold text-white transition-opacity hover:opacity-90 disabled:opacity-60"
           >
             {linking ? "連結中…" : "連結帳號"}
           </button>
@@ -243,7 +243,7 @@ export default function GoogleChoiceForms() {
       <button
         type="submit"
         disabled={creating}
-        className="mt-6 inline-flex w-full items-center justify-center rounded-xl bg-ink px-6 py-3.5 text-base font-semibold text-white transition-transform hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60"
+        className="mt-6 inline-flex w-full items-center justify-center rounded-xl bg-ink px-6 py-3.5 text-base font-semibold text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
       >
         {creating ? "建立中…" : "建立帳號並開始"}
       </button>

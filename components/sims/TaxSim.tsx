@@ -13,6 +13,7 @@ import {
   type TaxFilingOutcome,
 } from "@/lib/sims/taxFiling";
 import { formatNT } from "@/components/Money";
+import { Icon } from "@/components/ui/icons";
 import { Row, SelectCard, SubmitButton, OutcomeActions } from "@/components/sims/ui";
 import { useSimRun } from "@/components/sims/useSimRun";
 import CoachPanel from "@/components/CoachPanel";
@@ -190,7 +191,7 @@ export default function TaxSim({ color }: { color: string }) {
                     borderColor: on ? color : "var(--color-hairline)",
                   }}
                 >
-                  {on ? "✓" : ""}
+                  {on ? <Icon name="check" size={14} strokeWidth={3} /> : null}
                 </span>
               </button>
             );
@@ -309,7 +310,7 @@ function TaxOutcomeView({
         <p className="text-sm text-white/70">
           {outcome.isRefund ? "可以退稅" : "要補繳"}
         </p>
-        <h2 className="mt-1 text-4xl font-black">
+        <h2 className="mt-1 text-4xl font-bold">
           <span className="money">{formatNT(Math.abs(outcome.balance))}</span>
         </h2>
         <p className="mt-3 text-[15px] leading-relaxed text-white/85">

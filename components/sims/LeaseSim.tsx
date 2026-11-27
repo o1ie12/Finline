@@ -60,7 +60,7 @@ export default function LeaseSim({ color, colorInk }: { color: string; colorInk:
     return (
       <div className="space-y-8">
         <PlatformPanel color={color} eyebrow="契約找碴 · 結果">
-          <h2 className="text-4xl font-black">
+          <h2 className="text-4xl font-bold">
             <span className="money">{o.correctFlags}</span>
             <span className="text-lg font-semibold text-white/70"> / {o.totalBad} 找到問題條款</span>
           </h2>
@@ -117,7 +117,7 @@ export default function LeaseSim({ color, colorInk }: { color: string; colorInk:
     return (
       <div className="space-y-6">
         <PlatformPanel color={color} eyebrow="契約找碴">
-          <h2 className="text-2xl font-black">90 秒，找出問題條款</h2>
+          <h2 className="text-2xl font-bold">90 秒，找出問題條款</h2>
           <p className="mt-2 text-[15px] leading-relaxed text-white/85">
             接下來是一份看似正常的租賃合約，共 14 條。裡面藏了幾條違法或對房客不利的條款。點選你認為有問題的條款，時間到自動送出。
           </p>
@@ -125,7 +125,7 @@ export default function LeaseSim({ color, colorInk }: { color: string; colorInk:
         <button
           type="button"
           onClick={() => setPhase("playing")}
-          className="inline-flex w-full items-center justify-center rounded-xl bg-ink px-6 py-4 text-base font-semibold text-white transition-transform hover:-translate-y-0.5"
+          className="inline-flex w-full items-center justify-center rounded-xl bg-ink px-6 py-4 text-base font-semibold text-white transition-opacity hover:opacity-90"
         >
           開始檢查合約
         </button>
@@ -183,7 +183,7 @@ export default function LeaseSim({ color, colorInk }: { color: string; colorInk:
         type="button"
         onClick={submitNow}
         disabled={timeUp || submitting}
-        className="inline-flex w-full items-center justify-center rounded-xl bg-ink px-6 py-4 text-base font-semibold text-white transition-transform hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50"
+        className="inline-flex w-full items-center justify-center rounded-xl bg-ink px-6 py-4 text-base font-semibold text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
       >
         {submitting ? "結算中…" : "送出檢查結果"}
       </button>

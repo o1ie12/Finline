@@ -193,7 +193,7 @@ export default async function LineSimulationPage({
             <div className="mt-5 flex flex-col gap-3 sm:flex-row">
               <Link
                 href="/signup"
-                className="inline-flex items-center justify-center rounded-xl bg-ink px-6 py-3 text-base font-semibold text-white hover:-translate-y-0.5"
+                className="inline-flex items-center justify-center rounded-xl bg-ink px-6 py-3 text-base font-semibold text-white transition-opacity hover:opacity-90"
               >
                 建立帳號
               </Link>

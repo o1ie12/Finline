@@ -19,7 +19,7 @@
 }
 .title {
   margin: 0;
-  font: 900 2rem/2.5rem var(--font-voice);
+  font: 700 2rem/2.5rem var(--font-voice);
 }
 .intro {
   margin: 0;
@@ -100,7 +100,7 @@
 }
 .toolName {
   margin: 0;
-  font: 800 1.0625rem/1.5rem var(--font-ui);
+  font: 700 1.0625rem/1.5rem var(--font-ui);
 }
 .toolLines {
   margin: 0;

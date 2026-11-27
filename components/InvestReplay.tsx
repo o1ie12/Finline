@@ -96,7 +96,7 @@ export default function InvestReplay({ initialView }: { initialView: SimPortfoli
           <p className="font-display text-xs font-bold uppercase tracking-widest" style={{ color: LINE_COLOR }}>
             歷史回放投資模擬
           </p>
-          <h2 className="mt-1.5 text-2xl font-black">你會被指派一個真實的歷史起點</h2>
+          <h2 className="mt-1.5 text-2xl font-bold">你會被指派一個真實的歷史起點</h2>
           <p className="mt-2 text-[15px] leading-relaxed text-white/85">
             用 {formatNT(STARTING_CASH)} 的模擬資金，把錢分配到五支 ETF。你不會知道自己身處哪一年——這是盲測，重點是你的配置決定，不是猜對時機。至少經過 {REVEAL_MIN_SIM_DAYS} 個模擬日後可以隨時揭曉，最晚 {REVEAL_AUTO_SIM_DAYS} 天會自動揭曉。
           </p>
@@ -141,7 +141,7 @@ export default function InvestReplay({ initialView }: { initialView: SimPortfoli
           type="button"
           onClick={allocate}
           disabled={submitting || remaining < 0 || total <= 0}
-          className="inline-flex w-full items-center justify-center rounded-xl bg-ink px-6 py-4 text-base font-semibold text-white transition-transform hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50"
+          className="inline-flex w-full items-center justify-center rounded-xl bg-ink px-6 py-4 text-base font-semibold text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
         >
           {submitting ? "配置中…" : "開始模擬"}
         </button>
@@ -162,7 +162,7 @@ export default function InvestReplay({ initialView }: { initialView: SimPortfoli
           <p className="font-display text-xs font-bold uppercase tracking-widest" style={{ color: LINE_COLOR }}>
             揭曉
           </p>
-          <h2 className="mt-1.5 text-2xl font-black">
+          <h2 className="mt-1.5 text-2xl font-bold">
             你經歷的是 {revealData.startDate} 到 {revealData.endDate}
           </h2>
           {revealData.namedEvent && (
@@ -173,7 +173,7 @@ export default function InvestReplay({ initialView }: { initialView: SimPortfoli
         <div className="grid gap-3 sm:grid-cols-2">
           <div className="rounded-2xl border border-hairline bg-surface p-5">
             <p className="text-sm text-ink-faint">你的配置</p>
-            <p className="money mt-1 text-2xl font-black" style={{ color: gain >= 0 ? "var(--color-positive)" : "var(--color-negative)" }}>
+            <p className="money mt-1 text-2xl font-bold" style={{ color: gain >= 0 ? "var(--color-positive)" : "var(--color-negative)" }}>
               {gain >= 0 ? "+" : ""}
               {gainPct.toFixed(1)}%
             </p>
@@ -181,7 +181,7 @@ export default function InvestReplay({ initialView }: { initialView: SimPortfoli
           </div>
           <div className="rounded-2xl border border-hairline bg-surface p-5">
             <p className="text-sm text-ink-faint">均分買進持有（對照組）</p>
-            <p className="money mt-1 text-2xl font-black" style={{ color: benchGain >= 0 ? "var(--color-positive)" : "var(--color-negative)" }}>
+            <p className="money mt-1 text-2xl font-bold" style={{ color: benchGain >= 0 ? "var(--color-positive)" : "var(--color-negative)" }}>
               {benchGain >= 0 ? "+" : ""}
               {((benchGain / 100000) * 100).toFixed(1)}%
             </p>
@@ -207,7 +207,7 @@ export default function InvestReplay({ initialView }: { initialView: SimPortfoli
         <p className="font-display text-xs font-bold uppercase tracking-widest" style={{ color: LINE_COLOR }}>
           第 {simDayIndex} 個模擬日
         </p>
-        <h2 className="mt-1.5 text-3xl font-black">
+        <h2 className="mt-1.5 text-3xl font-bold">
           {formatNT(value)}
           <span
             className="money ml-2 text-lg font-semibold"
@@ -235,7 +235,7 @@ export default function InvestReplay({ initialView }: { initialView: SimPortfoli
             type="button"
             onClick={reveal}
             disabled={submitting}
-            className="mt-3 inline-flex items-center justify-center rounded-xl bg-ink px-5 py-3 text-base font-semibold text-white hover:-translate-y-0.5 disabled:opacity-50"
+            className="mt-3 inline-flex items-center justify-center rounded-xl bg-ink px-5 py-3 text-base font-semibold text-white transition-opacity hover:opacity-90 disabled:opacity-50"
           >
             揭曉結果
           </button>

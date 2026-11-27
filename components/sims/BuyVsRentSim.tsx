@@ -278,7 +278,7 @@ function BuyVsRentOutcomeView({
         {bought && !outcome.canCoverDownPayment ? (
           <>
             <p className="text-sm text-white/70">頭期款還差</p>
-            <h2 className="mt-1 text-4xl font-black">
+            <h2 className="mt-1 text-4xl font-bold">
               <span className="money">{formatNT(outcome.downPaymentShortfall)}</span>
             </h2>
             <p className="mt-3 text-[15px] leading-relaxed text-white/85">
@@ -294,7 +294,7 @@ function BuyVsRentOutcomeView({
         ) : bought ? (
           <>
             <p className="text-sm text-white/70">每個月要繳</p>
-            <h2 className="mt-1 text-4xl font-black">
+            <h2 className="mt-1 text-4xl font-bold">
               <span className="money">{formatNT(outcome.monthlyMortgage)}</span>
             </h2>
             <p className="mt-3 text-[15px] leading-relaxed text-white/85">
@@ -307,7 +307,7 @@ function BuyVsRentOutcomeView({
         ) : (
           <>
             <p className="text-sm text-white/70">每個月房租</p>
-            <h2 className="mt-1 text-4xl font-black">
+            <h2 className="mt-1 text-4xl font-bold">
               <span className="money">{formatNT(outcome.monthlyRent)}</span>
             </h2>
             <p className="mt-3 text-[15px] leading-relaxed text-white/85">

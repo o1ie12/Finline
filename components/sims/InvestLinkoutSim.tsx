@@ -144,7 +144,7 @@ export default function InvestLinkoutSim({
           <span className="text-sm text-ink-soft">
             你手上大約有 {formatNT(available)}
           </span>
-          <span className="money text-2xl font-black">{formatNT(planned)}</span>
+          <span className="money text-2xl font-bold">{formatNT(planned)}</span>
         </div>
         <input
           id="planned"
@@ -262,7 +262,7 @@ function ReflectionOutcomeView({
         {outcome.beyondPosition ? (
           <>
             <p className="text-sm text-white/70">超出你手上的金額</p>
-            <h2 className="mt-1 text-4xl font-black">
+            <h2 className="mt-1 text-4xl font-bold">
               <span className="money">{formatNT(outcome.overCommitment)}</span>
             </h2>
             <p className="mt-3 text-[15px] leading-relaxed text-white/85">
@@ -273,7 +273,7 @@ function ReflectionOutcomeView({
         ) : outcome.hasInvested ? (
           <>
             <p className="text-sm text-white/70">你規劃投入</p>
-            <h2 className="mt-1 text-4xl font-black">
+            <h2 className="mt-1 text-4xl font-bold">
               <span className="money">{formatNT(outcome.plannedAmount)}</span>
             </h2>
             <p className="mt-3 text-[15px] leading-relaxed text-white/85">
@@ -282,7 +282,7 @@ function ReflectionOutcomeView({
           </>
         ) : (
           <>
-            <h2 className="text-3xl font-black">這次先不投入</h2>
+            <h2 className="text-3xl font-bold">這次先不投入</h2>
             <p className="mt-2 text-[15px] leading-relaxed text-white/85">
               不投入也是一個決定，而且是一個需要理由的決定。
             </p>

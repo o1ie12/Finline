@@ -32,7 +32,7 @@ export default function EntrepreneurSim({ color }: { color: string; colorInk: st
     return (
       <div className="space-y-8">
         <PlatformPanel color={o.survived ? color : "#c8102e"} eyebrow="手搖飲攤位 · 結果">
-          <h2 className="text-3xl font-black">
+          <h2 className="text-3xl font-bold">
             {o.survived ? `撐過 30 天，現金 ` : `第 ${o.bankruptDay} 天倒閉，現金 `}
             <span className="money">{formatNT(Math.max(0, o.finalCash))}</span>
           </h2>
@@ -135,7 +135,7 @@ export default function EntrepreneurSim({ color }: { color: string; colorInk: st
       return (
         <div className="space-y-6">
           <PlatformPanel color="#c8102e" eyebrow={`手搖飲攤位 · 第 ${sofar.bankruptDay} 天`}>
-            <h2 className="text-2xl font-black">還沒撐到第 {COST_SHOCK_DAY} 天，現金就見底了</h2>
+            <h2 className="text-2xl font-bold">還沒撐到第 {COST_SHOCK_DAY} 天，現金就見底了</h2>
           </PlatformPanel>
           <button
             type="button"
@@ -151,7 +151,7 @@ export default function EntrepreneurSim({ color }: { color: string; colorInk: st
     return (
       <div className="space-y-6">
         <PlatformPanel color={sofar.survived ? color : "#c8102e"} eyebrow={`手搖飲攤位 · 第 ${COST_SHOCK_DAY} 天`}>
-          <h2 className="text-2xl font-black">茶葉批發價上漲了</h2>
+          <h2 className="text-2xl font-bold">茶葉批發價上漲了</h2>
           <p className="mt-2 text-[15px] leading-relaxed text-white/85">
             前 {sofar.days.length} 天你賣了 {sofar.days.reduce((n, d) => n + d.cupsSold, 0)} 杯，現金{" "}
             {formatNT(last?.cash ?? 0)}
@@ -192,7 +192,7 @@ export default function EntrepreneurSim({ color }: { color: string; colorInk: st
   return (
     <div className="space-y-8">
       <PlatformPanel color={color} eyebrow="手搖飲攤位">
-        <h2 className="text-2xl font-black">選定價與備料規模</h2>
+        <h2 className="text-2xl font-bold">選定價與備料規模</h2>
         <p className="mt-2 text-[15px] leading-relaxed text-white/85">
           用 NT$5,000 起始資金經營一個手搖飲攤位，30 個模擬營業日中會遇到颱風、原料漲價、競爭對手開幕等事件。撐到最後，還是提早收攤？
         </p>

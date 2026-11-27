@@ -119,7 +119,7 @@ export default function RouteNetworkView({
           <p className="font-display text-xs font-bold uppercase tracking-[0.14em] text-ink-faint">
             {simulateOnly ? "模擬" : "我的路線圖"}
           </p>
-          <h1 className="mt-1.5 text-3xl font-black tracking-tight sm:text-4xl">
+          <h1 className="mt-1.5 text-3xl font-bold tracking-tight sm:text-4xl">
             {simulateOnly ? `${student.name} 的模擬` : `${student.name} 的路網`}
           </h1>
           <p className="mt-1 text-sm text-ink-soft">
@@ -183,7 +183,7 @@ export default function RouteNetworkView({
                       目前位置 · {next.line.name}
                     </span>
                   </span>
-                  <p className="font-display text-[26px] font-black leading-tight text-white">
+                  <p className="font-display text-[26px] font-bold leading-tight text-white">
                     {simulateOnly ? "接下來：" : "下一站："}
                     {bannerLabel}
                   </p>
@@ -198,7 +198,7 @@ export default function RouteNetworkView({
               </Link>
             ) : (
               <div className="text-center">
-                <p className="text-2xl font-black text-white">
+                <p className="text-2xl font-bold text-white">
                   {simulateOnly
                     ? `${LINES.filter((l) => l.sim.ready).length} 個模擬都跑過了！`
                     : "所有線都跑完了！"}

@@ -240,7 +240,7 @@
 }
 .flowTitle {
   margin: 0;
-  font: 800 1rem/1.4rem var(--font-ui);
+  font: 700 1rem/1.4rem var(--font-ui);
 }
 .flowList {
   display: flex;
@@ -281,7 +281,7 @@
   height: 24px;
   border-radius: 12px;
   background: var(--surface-2);
-  font: 800 0.75rem/1 var(--font-ui);
+  font: 700 0.75rem/1 var(--font-ui);
 }
 .flowList li[data-state="on"] .flowDot {
   background: var(--ink);
@@ -308,7 +308,7 @@
 }
 .flowNums dd {
   margin: 2px 0 0;
-  font: 800 1rem/1.4rem var(--font-ui);
+  font: 700 1rem/1.4rem var(--font-ui);
   font-variant-numeric: tabular-nums;
 }
 .flowNote {

@@ -29,7 +29,7 @@
 }
 .hello h1 {
   margin: 0;
-  font: 800 2rem/1.25 var(--font-voice);
+  font: 700 2rem/1.25 var(--font-voice);
 }
 .hello p {
   margin: 4px 0 0;
@@ -83,7 +83,7 @@
 }
 .contTitle {
   margin: 4px 0 0;
-  font: 800 2.25rem/1.2 var(--font-voice);
+  font: 700 2.25rem/1.2 var(--font-voice);
 }
 .contText {
   margin: 0;

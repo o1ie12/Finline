@@ -247,7 +247,7 @@
   border: 1px solid var(--card-border);
   border-radius: var(--radius-card);
   box-shadow: var(--shadow-card);
-  transition: transform var(--dur-quick) var(--ease-out);
+  transition: border-color var(--dur-quick) var(--ease-out);
 }
 .game-shell .g-card--strong {
   background: var(--card-strong);
@@ -260,7 +260,7 @@
 }
 @media (hover: hover) {
   .game-shell .g-card--lift:hover {
-    transform: translateY(-2px);
+    border-color: var(--hairline-strong);
   }
 }
 .game-shell .g-card-head {
@@ -881,7 +881,7 @@
 }
 .game-shell .g-reader-title {
   font-size: 20px;
-  font-weight: 800;
+  font-weight: 700;
   line-height: 1.35;
 }
 .game-shell .g-reader-page {

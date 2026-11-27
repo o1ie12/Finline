@@ -35,7 +35,7 @@ export default async function InvestReplayPage() {
   if (!student) {
     return (
       <div className="mx-auto max-w-md px-4 py-14 sm:px-6">
-        <h1 className="text-3xl font-black tracking-tight">歷史回放投資模擬</h1>
+        <h1 className="text-3xl font-bold tracking-tight">歷史回放投資模擬</h1>
         <p className="mt-3 text-[15px] leading-relaxed text-ink-soft">
           {notConfigured
             ? "系統的資料庫尚未設定，暫時無法使用這個功能。"
@@ -44,7 +44,7 @@ export default async function InvestReplayPage() {
         {!notConfigured && (
           <Link
             href="/signup"
-            className="mt-6 inline-flex items-center justify-center rounded-xl bg-ink px-5 py-3 text-base font-semibold text-white hover:-translate-y-0.5"
+            className="mt-6 inline-flex items-center justify-center rounded-xl bg-ink px-5 py-3 text-base font-semibold text-white transition-opacity hover:opacity-90"
           >
             建立帳號或輸入代碼
           </Link>
@@ -56,13 +56,13 @@ export default async function InvestReplayPage() {
   if (!unlocked) {
     return (
       <div className="mx-auto max-w-md px-4 py-14 sm:px-6">
-        <h1 className="text-3xl font-black tracking-tight">歷史回放投資模擬</h1>
+        <h1 className="text-3xl font-bold tracking-tight">歷史回放投資模擬</h1>
         <p className="mt-3 text-[15px] leading-relaxed text-ink-soft">
           完成投資線的終點模擬（進場站）後才會解鎖這個功能。
         </p>
         <Link
           href="/line/touzi"
-          className="mt-6 inline-flex items-center justify-center rounded-xl bg-ink px-5 py-3 text-base font-semibold text-white hover:-translate-y-0.5"
+          className="mt-6 inline-flex items-center justify-center rounded-xl bg-ink px-5 py-3 text-base font-semibold text-white transition-opacity hover:opacity-90"
         >
           前往投資線
         </Link>

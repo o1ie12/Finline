@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { pageMeta } from "@/lib/pageMeta";
+import k from "@/components/course/kit.module.css";
 import { CONTACT_EMAIL, CONTACT_UNAVAILABLE_TEXT } from "@/lib/site";
 
 export const metadata: Metadata = pageMeta({
@@ -29,16 +30,16 @@ const TEAM = [
 export default function AboutPage() {
   return (
     <div className="mx-auto max-w-2xl px-4 py-10 sm:px-6 sm:py-14">
-      <p className="font-display text-sm font-semibold uppercase tracking-widest text-line-2">
+      <p className="font-display text-sm font-semibold text-ink-soft">
         關於我們
       </p>
-      <h1 className="mt-2 text-3xl font-black tracking-tight sm:text-4xl">
+      <h1 className="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">
         錢途，是給台灣高中生的第一堂真正用得到的理財課
       </h1>
 
       <div className="mt-8 space-y-5 text-[16px] leading-[1.85] text-ink/90">
         <p>
-          我們是兩個還在念高中的學生。開始做這個平台，是因為發現學校教育幾乎不談「錢」這件事——沒人教我們怎麼看懂薪資單、怎麼避開卡債陷阱、怎麼分辨真投資跟詐騙。等到真的出社會才學，往往已經付出代價。
+          我們是兩個還在念高中的學生。開始做這個平台，是因為發現學校教育幾乎不談「錢」這件事：沒人教我們怎麼看懂薪資單、怎麼避開卡債陷阱、怎麼分辨真投資跟詐騙。等到真的出社會才學，往往已經付出代價。
         </p>
         <p>
           錢途用台灣自己的金融制度、真實的數據、貼近生活的情境，把理財變成可以互動、可以練習、甚至會出錯的體驗，而不是背誦名詞。我們相信理財教育不該是有錢家庭的特權，所以錢途完全免費。
@@ -53,7 +54,7 @@ export default function AboutPage() {
           {TEAM.map((t) => (
             <li
               key={t.name}
-              className="rounded-2xl border border-hairline bg-surface px-5 py-4"
+              className={`${k.card} px-5 py-4`}
             >
               <p className="font-bold">{t.name}</p>
               <p className="mt-0.5 text-sm font-medium text-ink-soft">{t.role}</p>
@@ -73,7 +74,7 @@ export default function AboutPage() {
         {CONTACT_EMAIL ? (
           <a
             href={`mailto:${CONTACT_EMAIL}`}
-            className="mt-4 inline-flex items-center justify-center rounded-xl bg-ink px-6 py-3 text-base font-semibold text-white hover:-translate-y-0.5"
+            className={`${k.go} mt-4`}
           >
             {CONTACT_EMAIL}
           </a>

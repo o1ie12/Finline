@@ -121,7 +121,7 @@ export function OutcomeActions({
       >
         {resetLabel}
       </button>
-      <HomeLink className="inline-flex items-center justify-center rounded-xl bg-ink px-5 py-3 text-base font-semibold text-white hover:-translate-y-0.5">
+      <HomeLink className="inline-flex items-center justify-center rounded-xl bg-ink px-5 py-3 text-base font-semibold text-white transition-opacity hover:opacity-90">
         回到我的學習
       </HomeLink>
     </div>
@@ -147,7 +147,7 @@ export function SubmitButton({
       type="button"
       onClick={onClick}
       disabled={disabled || submitting}
-      className="inline-flex w-full items-center justify-center rounded-xl bg-ink px-6 py-4 text-base font-semibold text-white transition-transform hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50"
+      className="inline-flex w-full items-center justify-center rounded-xl bg-ink px-6 py-4 text-base font-semibold text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
     >
       {submitting ? "計算中…" : disabled ? disabledLabel : idleLabel}
     </button>

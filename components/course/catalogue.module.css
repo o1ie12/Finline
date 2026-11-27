@@ -66,7 +66,7 @@
 }
 .h1 {
   margin: 0;
-  font: 800 2.25rem/1.2 var(--font-voice);
+  font: 700 2.25rem/1.2 var(--font-voice);
   letter-spacing: 0.01em;
 }
 @media (min-width: 840px) {
@@ -423,7 +423,7 @@
   color: var(--ink-2);
 }
 .tileName {
-  font: 800 1.5rem/1.25 var(--font-voice);
+  font: 700 1.5rem/1.25 var(--font-voice);
 }
 .tileDots {
   color: var(--line);

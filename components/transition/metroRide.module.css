@@ -82,7 +82,7 @@
 }
 .title {
   margin: 6px 0 0;
-  font: 900 1.75rem/1.25 var(--font-voice);
+  font: 700 1.75rem/1.25 var(--font-voice);
 }
 .hint {
   font-size: 0.8125rem;
@@ -111,7 +111,7 @@
   animation: bob 1.6s ease-in-out infinite;
 }
 .swipe span {
-  font-weight: 800;
+  font-weight: 700;
   letter-spacing: 0.12em;
   animation: glow 1.2s ease-in-out infinite;
 }
@@ -208,7 +208,7 @@
 }
 .cardName {
   padding: 0 20px;
-  font: 900 1.1875rem/1.2 var(--font-voice);
+  font: 700 1.1875rem/1.2 var(--font-voice);
   letter-spacing: 0.04em;
 }
 .cardSub {
@@ -360,7 +360,7 @@
   color: var(--ink-2);
 }
 .carText strong {
-  font: 900 3.75rem/1.1 var(--font-voice);
+  font: 700 3.75rem/1.1 var(--font-voice);
   letter-spacing: 0.04em;
   color: var(--ink);
 }

@@ -202,7 +202,7 @@
   background: var(--line);
 }
 .ticketKicker {
-  font: 800 0.75rem/1 var(--font-ui);
+  font: 700 0.75rem/1 var(--font-ui);
   letter-spacing: 0.14em;
   color: var(--board-amber);
 }
@@ -415,7 +415,7 @@
 }
 .blockTitle {
   margin: 0;
-  font: 800 1.0625rem/1.5rem var(--font-ui);
+  font: 700 1.0625rem/1.5rem var(--font-ui);
 }
 .goodList {
   display: flex;

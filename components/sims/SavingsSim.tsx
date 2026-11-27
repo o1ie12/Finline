@@ -13,6 +13,7 @@ import {
   type SavingsScenario,
 } from "@/lib/sims/savings";
 import { formatNT } from "@/components/Money";
+import { Icon } from "@/components/ui/icons";
 import { SelectCard, SubmitButton, OutcomeActions } from "@/components/sims/ui";
 import { useSimRun } from "@/components/sims/useSimRun";
 import CoachPanel from "@/components/CoachPanel";
@@ -237,7 +238,7 @@ export default function SavingsSim({
               className={`money text-lg font-semibold ${preview.resistAll.reachedGoal ? "text-positive" : "text-negative"}`}
             >
               {preview.resistAll.reachedGoal
-                ? "已達標 ✓"
+                ? <span className="inline-flex items-center gap-1">已達標<Icon name="check" size={16} strokeWidth={3} /></span>
                 : formatNT(Math.abs(preview.resistAll.gap))}
             </p>
           </div>
@@ -282,7 +283,7 @@ function ScenarioCard({
       <p
         className={`mt-1 text-xs font-semibold ${s.reachedGoal ? "text-positive" : "text-negative"}`}
       >
-        {s.reachedGoal ? "達成目標 ✓" : `還差 ${formatNT(Math.abs(s.gap))}`}
+        {s.reachedGoal ? <span className="inline-flex items-center gap-1">達成目標<Icon name="check" size={12} strokeWidth={3} /></span> : `還差 ${formatNT(Math.abs(s.gap))}`}
       </p>
     </div>
   );
@@ -309,12 +310,12 @@ function SavingsOutcomeView({
   return (
     <div className="space-y-8">
       <PlatformPanel color={color} eyebrow={`目標站 · ${outcome.months} 個月後`}>
-        <h2 className="text-4xl font-black">
+        <h2 className="text-4xl font-bold">
           <span className="money">{formatNT(user.finalAmount)}</span>
         </h2>
         <p className="mt-2 text-[15px] leading-relaxed text-white/85">
           你為「{goal.label}」（{formatNT(goal.amount)}）努力存錢，照你的選擇，最後大約存到這麼多。
-          {user.reachedGoal ? "你達成目標了！" : `離目標還差 ${formatNT(Math.abs(user.gap))}。`}
+          {user.reachedGoal ? "你達成目標了。" : `離目標還差 ${formatNT(Math.abs(user.gap))}。`}
         </p>
         <StampReveal outcomeTitle={outcomeTitle} pointsAwarded={pointsAwarded} />
       </PlatformPanel>

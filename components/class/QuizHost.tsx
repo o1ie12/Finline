@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import k from "@/components/course/kit.module.css";
 import { LINES } from "@/lib/lines";
 import type { LineSlug } from "@/lib/lines";
 import type { RoomResults } from "@/lib/classRooms";
@@ -111,8 +112,8 @@ export function QuizHost({ initialLine }: { initialLine: LineSlug | null }) {
   if (!room) {
     return (
       <div className="mx-auto max-w-md px-4 py-14 sm:px-6">
-        <p className="text-xs font-bold tracking-widest text-ink-faint">課堂模式</p>
-        <h1 className="mt-1.5 text-3xl font-black tracking-tight">開一個房間</h1>
+        <p className="text-xs font-semibold text-ink-faint">課堂模式</p>
+        <h1 className="mt-1.5 text-3xl font-bold tracking-tight">開一個房間</h1>
         <p className="mt-3 text-[15px] leading-relaxed text-ink-soft">選一門課，題目來自那門課的前後測題庫。</p>
 
         <fieldset className="mt-6 space-y-2">
@@ -144,7 +145,7 @@ export function QuizHost({ initialLine }: { initialLine: LineSlug | null }) {
           type="button"
           onClick={createRoom}
           disabled={creating}
-          className="mt-6 inline-flex w-full items-center justify-center rounded-xl bg-ink px-6 py-4 text-base font-semibold text-white transition-transform hover:-translate-y-0.5 disabled:opacity-50"
+          className={`${k.go} mt-6 w-full disabled:opacity-50`}
         >
           {creating ? "建立中…" : "建立房間"}
         </button>
@@ -157,13 +158,13 @@ export function QuizHost({ initialLine }: { initialLine: LineSlug | null }) {
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-10 sm:px-6 sm:py-14">
-      <p className="text-xs font-bold tracking-widest" style={{ color: line.colorInk }}>
+      <p className="text-xs font-semibold" style={{ color: line.colorInk }}>
         課堂模式 · {line.name}
       </p>
 
       <div className="mt-3 rounded-2xl bg-ink p-8 text-center text-white">
         <p className="text-sm text-white/70">房間代碼</p>
-        <p className="money mt-1 text-6xl font-black tracking-[0.15em]">{room.code}</p>
+        <p className="money mt-1 text-6xl font-bold tracking-[0.15em]">{room.code}</p>
         <p className="mt-3 text-sm text-white/70">
           學生到 <span className="font-semibold text-white">/class/play</span> 輸入這組代碼加入
         </p>
@@ -174,7 +175,7 @@ export function QuizHost({ initialLine }: { initialLine: LineSlug | null }) {
           <button
             type="button"
             onClick={() => setRoomStatus("active")}
-            className="inline-flex items-center justify-center rounded-xl bg-ink px-6 py-3 text-base font-semibold text-white hover:-translate-y-0.5"
+            className={k.go}
           >
             開始測驗
           </button>
@@ -183,7 +184,7 @@ export function QuizHost({ initialLine }: { initialLine: LineSlug | null }) {
           <button
             type="button"
             onClick={() => setRoomStatus("finished")}
-            className="inline-flex items-center justify-center rounded-xl border border-hairline bg-surface px-6 py-3 text-base font-semibold hover:border-ink"
+            className={k.ghost}
           >
             結束這場
           </button>

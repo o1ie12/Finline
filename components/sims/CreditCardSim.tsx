@@ -147,7 +147,7 @@ export default function CreditCardSim({
               is where that lands. */}
           <div className="mt-4 rounded-2xl border border-hairline bg-surface p-5">
             <p className="text-sm text-ink-soft">本期應繳金額</p>
-            <p className="money mt-1 text-3xl font-black">
+            <p className="money mt-1 text-3xl font-bold">
               {formatNT(currentBill.totalOwed)}
             </p>
           </div>
@@ -231,7 +231,7 @@ function CreditCardOutcomeView({
         {outcome.totalInterest > 0 ? (
           <>
             <p className="text-sm text-white/70">三個月下來，你產生了</p>
-            <h2 className="mt-1 text-4xl font-black">
+            <h2 className="mt-1 text-4xl font-bold">
               <span className="money">{formatNT(outcome.totalInterest)}</span>
               <span className="ml-2 text-lg font-normal text-white/60">
                 總利息成本
@@ -264,7 +264,7 @@ function CreditCardOutcomeView({
           </>
         ) : (
           <>
-            <h2 className="text-3xl font-black">零利息</h2>
+            <h2 className="text-3xl font-bold">零利息</h2>
             <p className="mt-2 text-[15px] leading-relaxed text-white/85">
               你每期都全額繳清，消費了{" "}
               {formatNT(outcome.totalIfNoInterest)}，就付了{" "}

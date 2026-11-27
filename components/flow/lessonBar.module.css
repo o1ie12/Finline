@@ -39,7 +39,7 @@
 }
 .title h1 {
   margin: 0;
-  font: 800 1rem/1.4rem var(--font-ui);
+  font: 700 1rem/1.4rem var(--font-ui);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -82,7 +82,7 @@
 }
 .stop[data-state="on"] .name {
   color: var(--ink);
-  font-weight: 800;
+  font-weight: 700;
 }
 @media (min-width: 840px) {
   .bar {

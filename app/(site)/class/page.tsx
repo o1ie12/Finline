@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import k from "@/components/course/kit.module.css";
 
 export const metadata: Metadata = {
   title: "課堂模式",
@@ -9,7 +10,7 @@ export const metadata: Metadata = {
 export default function ClassLandingPage() {
   return (
     <div className="mx-auto max-w-md px-4 py-14 sm:px-6">
-      <h1 className="text-3xl font-black tracking-tight">課堂模式</h1>
+      <h1 className="text-3xl font-bold tracking-tight">課堂模式</h1>
       <p className="mt-3 text-[15px] leading-relaxed text-ink-soft">
         老師開一場即時測驗，學生用房間代碼加入。題目直接使用各門課的前後測題庫，不用另外準備。
       </p>
@@ -17,21 +18,21 @@ export default function ClassLandingPage() {
       <div className="mt-8 space-y-3">
         <Link
           href="/class/host"
-          className="block rounded-2xl bg-ink px-6 py-5 text-white transition-transform hover:-translate-y-0.5"
+          className="block rounded-2xl bg-ink px-6 py-5 text-white transition-opacity hover:opacity-90"
         >
           <p className="text-lg font-bold">我是老師</p>
           <p className="mt-1 text-sm text-white/70">開一個房間，選一門課的題庫，取得房間代碼。</p>
         </Link>
         <Link
           href="/class/play"
-          className="block rounded-2xl border border-hairline bg-surface px-6 py-5 transition-colors hover:border-ink"
+          className={`${k.tile} px-6 py-5`}
         >
           <p className="text-lg font-bold">我是學生</p>
           <p className="mt-1 text-sm text-ink-soft">輸入老師給的房間代碼加入。</p>
         </Link>
         <Link
           href="/class/life/host"
-          className="block rounded-2xl border border-hairline bg-surface px-6 py-5 transition-colors hover:border-ink"
+          className={`${k.tile} px-6 py-5`}
         >
           <p className="text-lg font-bold">人生賽局</p>
           <p className="mt-1 text-sm text-ink-soft">全班分隊，每隊經營同一個人生，看誰的財務最健康。</p>

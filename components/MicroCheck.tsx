@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Icon } from "@/components/ui/icons";
 
 /**
  * Inline retrieval-practice question (build spec section 2c) — backed by
@@ -61,8 +62,8 @@ export function MicroCheck({
             >
               {opt}
               {answered && isCorrect && (
-                <span className="ml-1.5 text-xs" style={{ color: "var(--color-positive)" }}>
-                  ✓ 正確答案
+                <span className="ml-1.5 inline-flex items-center gap-1 align-middle text-xs" style={{ color: "var(--color-positive)" }}>
+                  <Icon name="check" size={12} strokeWidth={3} />正確答案
                 </span>
               )}
             </button>
