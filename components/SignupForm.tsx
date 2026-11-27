@@ -108,7 +108,7 @@ export default function SignupForm({ googleLogin = null, next = null }: { google
   if (code) {
     return (
       <div
-        className="rounded-[32px] border border-white/80 bg-white/70 p-6 shadow-[inset_0_1px_0_rgba(255,255,255,.95),0_18px_48px_rgba(20,23,26,.09)] [backdrop-filter:var(--glass-blur)] sm:p-8"
+        className="rounded-2xl bg-surface p-6 shadow-[0_0_0_1px_var(--hairline),0_1px_2px_rgba(20,23,26,0.04)] sm:p-8"
         aria-live="polite"
       >
         <p className="font-display text-sm font-semibold text-line-3">
@@ -116,7 +116,7 @@ export default function SignupForm({ googleLogin = null, next = null }: { google
         </p>
         <h2 className="mt-2 text-2xl font-bold">這是你的專屬代碼</h2>
         <p className="mt-2 text-[15px] leading-relaxed text-ink-soft">
-          把它記下來或拍照存好。換一台電腦或手機時，用它就能找回你的進度——沒有它就無法復原。
+          把它記下來或拍照存好。換一台電腦或手機時，用它就能找回你的進度。沒有它就無法復原。
         </p>
 
         <div className="mt-5 flex items-center justify-between gap-3 rounded-xl border-2 border-dashed border-ink/30 bg-bg px-5 py-4">
@@ -136,7 +136,7 @@ export default function SignupForm({ googleLogin = null, next = null }: { google
             then rides on to 今天. */}
         <Link
           href={next ?? "/today"}
-          className="mt-6 inline-flex w-full items-center justify-center rounded-xl bg-ink px-6 py-3.5 text-base font-semibold text-white transition-transform hover:-translate-y-0.5"
+          className="mt-6 inline-flex w-full items-center justify-center rounded-xl bg-ink px-6 py-3.5 text-base font-semibold text-white transition-opacity hover:opacity-90"
         >
           開始上課
         </Link>
@@ -149,10 +149,10 @@ export default function SignupForm({ googleLogin = null, next = null }: { google
     <div className="space-y-6">
       <form
         onSubmit={handleCreate}
-        className="rounded-[32px] border border-white/80 bg-white/70 p-6 shadow-[inset_0_1px_0_rgba(255,255,255,.95),0_18px_48px_rgba(20,23,26,.09)] [backdrop-filter:var(--glass-blur)] sm:p-8"
+        className="rounded-2xl bg-surface p-6 shadow-[0_0_0_1px_var(--hairline),0_1px_2px_rgba(20,23,26,0.04)] sm:p-8"
         noValidate
       >
-        <h2 className="text-[22px] font-extrabold">你的學習卡</h2>
+        <h2 className="text-[22px] font-bold">你的學習卡</h2>
         <p className="mt-1 text-sm text-ink-soft">
           只需要暱稱，學校選填。不收真實姓名、電話或金融帳號。
         </p>
@@ -171,7 +171,7 @@ export default function SignupForm({ googleLogin = null, next = null }: { google
               autoComplete="off"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="mt-2 h-[52px] w-full rounded-[14px] border border-black/[.14] bg-white px-4 text-base outline-none focus:border-[#0070bd]"
+              className="mt-2 h-13 w-full rounded-xl border border-black/[.14] bg-white px-4 text-base outline-none focus:border-[var(--focus)]"
               placeholder="例如：小明"
             />
           </div>
@@ -188,7 +188,7 @@ export default function SignupForm({ googleLogin = null, next = null }: { google
               autoComplete="off"
               value={school}
               onChange={(e) => setSchool(e.target.value)}
-              className="mt-2 h-[52px] w-full rounded-[14px] border border-black/[.14] bg-white px-4 text-base outline-none focus:border-[#0070bd]"
+              className="mt-2 h-13 w-full rounded-xl border border-black/[.14] bg-white px-4 text-base outline-none focus:border-[var(--focus)]"
               placeholder="例如：市立第一高中"
             />
           </div>
@@ -202,7 +202,7 @@ export default function SignupForm({ googleLogin = null, next = null }: { google
               name="grade"
               value={grade}
               onChange={(e) => setGrade(e.target.value)}
-              className="mt-2 h-[52px] w-full rounded-[14px] border border-black/[.14] bg-white px-4 text-base outline-none focus:border-[#0070bd]"
+              className="mt-2 h-13 w-full rounded-xl border border-black/[.14] bg-white px-4 text-base outline-none focus:border-[var(--focus)]"
             >
               {GRADES.map((g) => (
                 <option key={g} value={g}>
@@ -225,7 +225,7 @@ export default function SignupForm({ googleLogin = null, next = null }: { google
         <button
           type="submit"
           disabled={submitting}
-          className="mt-6 inline-flex h-14 w-full items-center justify-center rounded-full bg-ink px-6 text-[17px] font-bold text-white transition-transform hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60"
+          className="mt-6 inline-flex h-13 w-full items-center justify-center rounded-xl bg-ink px-6 text-base font-bold text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
         >
           {submitting ? "建立中…" : "建立並開始上課"}
         </button>
@@ -234,7 +234,7 @@ export default function SignupForm({ googleLogin = null, next = null }: { google
       <form
         id="login"
         onSubmit={handleResume}
-        className="rounded-[32px] border border-white/80 bg-white/70 p-6 shadow-[inset_0_1px_0_rgba(255,255,255,.95),0_18px_48px_rgba(20,23,26,.09)] [backdrop-filter:var(--glass-blur)] sm:p-8"
+        className="rounded-2xl bg-surface p-6 shadow-[0_0_0_1px_var(--hairline),0_1px_2px_rgba(20,23,26,0.04)] sm:p-8"
         noValidate
       >
         <h2 className="text-lg font-bold">已經有代碼了？</h2>
@@ -253,13 +253,13 @@ export default function SignupForm({ googleLogin = null, next = null }: { google
             maxLength={6}
             value={resumeCode}
             onChange={(e) => setResumeCode(e.target.value.toUpperCase())}
-            className="money h-[52px] w-full flex-1 rounded-[14px] border border-black/[.14] bg-white px-4 text-lg tracking-[0.2em] outline-none focus:border-[#0070bd]"
+            className="money h-13 w-full flex-1 rounded-xl border border-black/[.14] bg-white px-4 text-lg tracking-[0.2em] outline-none focus:border-[var(--focus)]"
             placeholder="輸入 6 碼"
           />
           <button
             type="submit"
             disabled={resuming}
-            className="h-[52px] shrink-0 rounded-full border border-ink bg-surface px-6 text-base font-semibold hover:bg-ink hover:text-white disabled:opacity-60"
+            className="h-13 shrink-0 rounded-xl border border-ink bg-surface px-6 text-base font-semibold transition-colors hover:bg-ink hover:text-white disabled:opacity-60"
           >
             {resuming ? "查詢中…" : "找回進度"}
           </button>

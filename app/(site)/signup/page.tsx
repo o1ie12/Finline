@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { pageMeta } from "@/lib/pageMeta";
 import { safeNext } from "@/lib/safeNext";
 import Link from "next/link";
+import { Icon } from "@/components/ui/icons";
 import SignupForm from "@/components/SignupForm";
 import GoogleSignInButton from "@/components/GoogleSignInButton";
 import { isGoogleAuthConfigured } from "@/lib/supabaseAuth";
@@ -49,13 +50,14 @@ export default async function SignupPage({
         <div className="flex flex-col gap-5">
           {tap ? (
             <div className="flex items-center gap-2.5">
-              <span className="flex h-7 items-center rounded-lg bg-[#3ddc84] px-2.5 text-[13px] font-extrabold tracking-[0.06em] text-[#0b3b22]">
-                ✓ 已感應
+              <span className="flex h-7 items-center gap-1 rounded-lg bg-[var(--good-soft)] px-2.5 text-[13px] font-semibold text-[var(--good)]">
+                <Icon name="check" size={14} strokeWidth={3} />
+                已感應
               </span>
-              <span className="text-sm text-ink-soft">嗶！最後一步</span>
+              <span className="text-sm text-ink-soft">最後一步</span>
             </div>
           ) : null}
-          <h1 className="text-5xl font-black leading-[1.08] tracking-[-0.02em] sm:text-[64px]">
+          <h1 className="text-5xl font-bold leading-[1.08] tracking-[-0.02em] sm:text-[64px]">
             拿一張
             <br />
             學習卡。
@@ -67,13 +69,13 @@ export default async function SignupPage({
           <p className="max-w-[460px] text-base font-semibold leading-[1.7] text-ink">未滿 18 歲請讓家長或老師知道你在使用。</p>
           <div
             aria-hidden="true"
-            className="mt-2 hidden h-[188px] w-[300px] -rotate-[4deg] overflow-hidden rounded-[22px] bg-[#14171a] shadow-[0_30px_60px_rgba(20,23,26,.3)] lg:block"
+            className="mt-2 hidden h-[188px] w-[300px] -rotate-[4deg] overflow-hidden rounded-[20px] bg-ink shadow-[0_16px_40px_rgba(20,23,26,.18)] lg:block"
           >
             <div className="h-2.5" style={{ background: "var(--stripe)" }} />
-            <div className="flex flex-col gap-1.5 px-6 py-[22px] text-white">
-              <span className="text-[22px] font-black tracking-[0.04em]">錢途 學習卡</span>
-              <span className="text-[11px] tracking-[0.16em] text-[#8792a0]">FINLINE · STUDENT</span>
-              <span className="mt-[26px] text-[22px] font-bold tracking-[0.3em] text-[#ffb81c]">• • • • • •</span>
+            <div className="flex flex-col gap-1.5 px-6 py-6 text-white">
+              <span className="text-[22px] font-bold">錢途 學習卡</span>
+              <span className="text-xs text-white/60">Finline · Student</span>
+              <span className="mt-6 text-[22px] font-bold tracking-[0.3em] text-[var(--metro-yellow)]">• • • • • •</span>
             </div>
           </div>
         </div>

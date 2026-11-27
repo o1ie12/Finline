@@ -65,6 +65,8 @@
   --board-ink: #f2f3f4;
   --board-dim: #8792a0;
   --board-amber: #ffb81c;
+  /* The fare reader's go light and screen. */
+  --board-go: #3ddc84;
   /* Behind sheets and the alert on Regular width (E3, E7.14). */
   --backdrop: rgba(14, 20, 27, 0.45);
 

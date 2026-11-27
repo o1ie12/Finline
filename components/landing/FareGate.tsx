@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { Icon } from "@/components/ui/icons";
 import { useRef, useState, type PointerEvent } from "react";
 import { Arrow, SectionTag } from "./bits";
 import s from "./landing.module.css";
@@ -73,9 +74,9 @@ export function FareGate({ code = "FL06" }: { /** The section's stop number on t
   return (
     <div className={`${s.glass} ${s.gate}`}>
       <div className={s.gateText}>
-        <SectionTag code={code} color="var(--metro-yellow)">
+        <SectionTag code={code}>
           <h2 id="go-h" className={s.h2} aria-live="polite">
-            {through ? "嗶！歡迎上車" : "刷卡上車"}
+            {through ? "嗶，歡迎上車" : "刷卡上車"}
           </h2>
         </SectionTag>
         <p className={s.gateBody}>免費，沒有廣告，不收你的真實姓名、電話或金融帳號。拿一組代碼就能開始，換一台裝置也接得上。</p>
@@ -98,12 +99,19 @@ export function FareGate({ code = "FL06" }: { /** The section's stop number on t
           <div className={s.hint} aria-hidden="true">
             <span className={s.hintText}>
               <b>滑動刷卡</b>
-              <small>SWIPE TO BOARD</small>
             </span>
           </div>
         ) : null}
         <div ref={reader} className={`${s.reader} ${through ? s.readerOk : s.readerWait}`} aria-hidden="true">
-          <div className={s.readerScreen}>{through ? "✓ 嗶！" : "感應區"}</div>
+          <div className={s.readerScreen}>
+            {through ? (
+              <span className={s.readerDone}>
+                <Icon name="check" size={20} strokeWidth={3} />嗶
+              </span>
+            ) : (
+              "感應區"
+            )}
+          </div>
           <div className={s.readerLight} />
         </div>
         <div
@@ -121,7 +129,7 @@ export function FareGate({ code = "FL06" }: { /** The section's stop number on t
           <span className={s.cardStripe} />
           <div className={s.cardBody}>
             <b>錢途 學習卡</b>
-            <small>FINLINE · STUDENT</small>
+            <small>Finline · Student</small>
           </div>
         </div>
       </div>

@@ -26,11 +26,11 @@ const MAX_MINUTES = Math.max(...ALL_MINUTES);
 // and the old landing showed; the 0.3% stock rate is pinned by tests/regressions.
 // 11 VERIFY-1: every figure has a primary source (content/sources.ts),
 // shown under it.
-const TAIWAN: { color: string; title: string; body: string; figure: string; unit: string; source: SourceId }[] = [
-  { color: "var(--metro-red)", title: "股票價差不課所得稅", body: "個人買賣上市櫃股票和 ETF 的價差，目前停徵所得稅；改在賣出時課證交稅，賺賠都收。", figure: "0.1%", unit: "ETF 證交稅（股票 0.3%）", source: "securitiesTax" },
-  { color: "var(--metro-green)", title: "勞退自動幫你存", body: "一上工，雇主依法每月提繳至少月薪的 6% 到你的勞退個人專戶，不用申請。", figure: "6%", unit: "雇主每月至少提繳", source: "pension" },
-  { color: "var(--metro-yellow)", title: "全民健保自動納保", body: "上班族的保費由自己、雇主和政府分攤，不綁定任何一家私人保險公司。", figure: "3 方", unit: "分攤保費", source: "healthInsurance" },
-  { color: "var(--metro-blue)", title: "信用卡利率有上限", body: "信用卡循環利率最高 15%；只繳最低應繳時，沒繳的部分就用這個利率算利息。", figure: "15%", unit: "循環利率上限", source: "revolvingCap" },
+const TAIWAN: { title: string; body: string; figure: string; unit: string; source: SourceId }[] = [
+  { title: "股票價差不課所得稅", body: "個人買賣上市櫃股票和 ETF 的價差，目前停徵所得稅；改在賣出時課證交稅，賺賠都收。", figure: "0.1%", unit: "ETF 證交稅（股票 0.3%）", source: "securitiesTax" },
+  { title: "勞退自動幫你存", body: "一上工，雇主依法每月提繳至少月薪的 6% 到你的勞退個人專戶，不用申請。", figure: "6%", unit: "雇主每月至少提繳", source: "pension" },
+  { title: "全民健保自動納保", body: "上班族的保費由自己、雇主和政府分攤，不綁定任何一家私人保險公司。", figure: "3 方", unit: "分攤保費", source: "healthInsurance" },
+  { title: "信用卡利率有上限", body: "信用卡循環利率最高 15%；只繳最低應繳時，沒繳的部分就用這個利率算利息。", figure: "15%", unit: "循環利率上限", source: "revolvingCap" },
 ];
 
 // 2026-11-17: the 誰在做錢途 section had only placeholders. Set this to true
@@ -62,7 +62,7 @@ export function Landing() {
       {/* FL01 起點站 */}
       <section className={s.hero}>
         <div className={s.heroText}>
-          <SectionTag code="FL01" color="var(--ink)">
+          <SectionTag code="FL01">
             <span className={s.heroStation}>
               起點站
             </span>
@@ -151,7 +151,7 @@ export function Landing() {
       {/* FL02 one real question (2026-11-13): what a module asks, before anything else is explained */}
       {sample ? (
         <section className={s.section} aria-labelledby="try-h" style={lineVars(credit)}>
-          <SectionTag code="FL02" color="var(--metro-red)">
+          <SectionTag code="FL02">
             <h2 id="try-h" className={s.h2}>
               先做一題看看
             </h2>
@@ -164,7 +164,7 @@ export function Landing() {
       {/* FL03 the first lines */}
       <section className={s.section} aria-labelledby="lines-h">
         <div className={s.sectionHead}>
-          <SectionTag code="FL03" color="var(--metro-blue)">
+          <SectionTag code="FL03">
             <h2 id="lines-h" className={s.h2}>
               從核心課程開始
             </h2>
@@ -206,7 +206,7 @@ export function Landing() {
 
       {/* FL04 Taiwan's rules */}
       <section className={s.section} aria-labelledby="tw-h">
-        <SectionTag code="FL04" color="var(--metro-green)">
+        <SectionTag code="FL04">
           <h2 id="tw-h" className={s.h2}>
             這裡不是美國
           </h2>
@@ -215,7 +215,7 @@ export function Landing() {
         <dl className={s.rules}>
           {TAIWAN.map((r) => (
             <div key={r.title} className={s.rule}>
-              <span className={s.ruleBar} style={{ background: r.color }} aria-hidden="true" />
+              <span className={s.ruleBar} aria-hidden="true" />
               <dt>{r.title}</dt>
               <dd className={s.ruleBody}>{r.body}</dd>
               <dd className={s.ruleFigure}>
@@ -248,7 +248,7 @@ export function Landing() {
           to show (SHOW_TEAM above): empty frames read as an unfinished site. */}
       {SHOW_TEAM ? (
       <section className={s.section} aria-labelledby="who-h">
-        <SectionTag code="FL05" color="var(--metro-yellow)">
+        <SectionTag code="FL05">
           <h2 id="who-h" className={s.h2}>
             誰在做錢途
           </h2>
